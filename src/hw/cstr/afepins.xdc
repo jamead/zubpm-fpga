@@ -32,12 +32,12 @@ set_property IOSTANDARD LVCMOS33 [get_ports afe_sw_rffe_n]
 
 
 # Digital Attenuators  (Bank 13 - 1.8v)
-set_property PACKAGE_PIN E15 [get_ports dsa0_clk]
-set_property IOSTANDARD LVCMOS33 [get_ports dsa0_clk]
-set_property PACKAGE_PIN B13 [get_ports dsa0_sdata]
-set_property IOSTANDARD LVCMOS33 [get_ports dsa0_sdata]
-set_property PACKAGE_PIN A12 [get_ports dsa0_latch]
-set_property IOSTANDARD LVCMOS33 [get_ports dsa0_latch]
+set_property PACKAGE_PIN E15 [get_ports dsa_clk]
+set_property IOSTANDARD LVCMOS33 [get_ports dsa_clk]
+set_property PACKAGE_PIN B13 [get_ports dsa_sdata]
+set_property IOSTANDARD LVCMOS33 [get_ports dsa_sdata]
+set_property PACKAGE_PIN A12 [get_ports dsa_latch]
+set_property IOSTANDARD LVCMOS33 [get_ports dsa_latch]
 
 # Thermistor Readback  LTC2986
 set_property PACKAGE_PIN A15 [get_ports therm_sclk]
@@ -278,6 +278,7 @@ set_property IOSTANDARD LVDS [get_ports {adc_sdata_p[15]}]
 set_property IOSTANDARD LVDS [get_ports {adc_sdata_n[15]}]
 set_property DIFF_TERM_ADV TERM_100 [get_ports {adc_sdata_p[15]}]
 set_property DIFF_TERM_ADV TERM_100 [get_ports {adc_sdata_n[15]}]
+
 
 
 

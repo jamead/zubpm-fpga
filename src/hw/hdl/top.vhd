@@ -47,9 +47,9 @@ generic(
     ad9510_sdo              : in std_logic;   
     
    -- rf digital attenuator
-    dsa0_clk                : out std_logic;
-    dsa0_sdata              : out std_logic;
-    dsa0_latch              : out std_logic;   
+    dsa_clk                 : out std_logic;
+    dsa_sdata               : out std_logic;
+    dsa_latch               : out std_logic;   
     
    -- Thermistor Readback (LT2986)
     therm_sclk              : out std_logic;
@@ -109,8 +109,7 @@ architecture behv of top is
   signal m_axi4_s2m   : t_pl_regs_s2m;
  
   signal adc_clk_in   : std_logic;
-  signal adc_data     : ADC_RAW_TYPE;
-  signal adc_data_lat : ADC_RAW_TYPE;
+  signal adc_data     : t_adc_raw; 
   signal adc_dbg      : std_logic_vector(3 downto 0);
   
   signal adc_spi_we      : std_logic;
@@ -124,11 +123,18 @@ architecture behv of top is
   signal ad9510_we		 : std_logic;
   signal ad9510_data     : std_logic_vector(31 downto 0);  
   
+  signal dsa_we		     : std_logic;
+  signal dsa_data        : std_logic_vector(7 downto 0);    
+
+
+
 
   attribute mark_debug     : string;
   --attribute mark_debug of reg_o: signal is "true";
-
-
+  attribute mark_debug of dsa_clk: signal is "true";
+  attribute mark_debug of dsa_sdata: signal is "true";
+  attribute mark_debug of dsa_latch: signal is "true";  
+ 
 
 begin
 
@@ -199,7 +205,6 @@ adc_inst: entity work.adc_ltc2195
     adc_sdata_n => adc_sdata_n,   
     adc_clk_out => adc_clk,
     adc_data => adc_data,
-    adc_data_lat => adc_data_lat,
     dbg => adc_dbg
     );     
 
@@ -219,6 +224,19 @@ pll_spi: entity work.spi_ad9510
   );  
 
 
+--programmable attenuator for rf chain  
+atten_pt: entity work.spi_pe43701 
+  port map(
+    clk => pl_clk0,                  
+    reset => pl_reset,                         
+    strobe => dsa_we,
+	wrdata => dsa_data,
+    sclk => dsa_clk,                         
+    sdi => dsa_sdata, 
+    csb => dsa_latch,                         
+    debug => open
+  );    
+
 
 
 ps_pl: entity work.ps_io
@@ -229,6 +247,7 @@ ps_pl: entity work.ps_io
     m_axi4_s2m => m_axi4_s2m, 
     fp_leds => fp_led,
     adc_spi_we => adc_spi_we,
+    adc_data => adc_data,
     adc_spi_wdata => adc_spi_wdata, 
     adc_spi_rdata => adc_spi_rdata, 
     adc_idly_wrval => adc_idly_wrval, 
@@ -236,7 +255,9 @@ ps_pl: entity work.ps_io
     adc_idly_rdval => adc_idly_rdval,       
     adc_fco_dlystr => adc_fco_dlystr,
     ad9510_we => ad9510_we,
-    ad9510_data => ad9510_data       
+    ad9510_data => ad9510_data,
+    dsa_we => dsa_we,
+    dsa_data => dsa_data       
    
   );
 

@@ -25,23 +25,29 @@
 
 
 //IO Bus Registers
-#define PLL_LOCKED_REG 0
-#define FP_LEDS_REG 0x100
 #define AD9510_REG 0x28
-#define RF_DSA_REG 3
+#define RF_DSA_REG 0x2C
 #define ADC_IDLYVAL_REG 0x30
 #define ADC_IDLYSTR_REG 0x34
 #define ADC_FCOMMCM_REG 0x38
+
+#define ADC_RAWCHA_REG 0x50
+#define ADC_RAWCHB_REG 0x54
+#define ADC_RAWCHC_REG 0x58
+#define ADC_RAWCHD_REG 0x5C
+
+#define FP_LEDS_REG 0x100
+
+
+
+
+
+#define PLL_LOCKED_REG 0
 #define INT_TRIG_ENB_REG 7  
 #define ADC_FIFOWREN_REG 8
 #define TRIG_EVRINT_SEL_REG 9
 #define ADC_SPI_REG 18 //0x48
 #define GTH_RST_REG 15
-#define ADC_RAWCHA_REG 16
-#define ADC_RAWCHB_REG 17
-#define ADC_RAWCHC_REG 18
-#define ADC_RAWCHD_REG 19
-
 
 #define KX_REG 36
 #define KY_REG 37

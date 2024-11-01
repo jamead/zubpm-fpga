@@ -14,12 +14,13 @@ use xil_defaultlib.bpm_package.ALL;
 
 entity ps_io is
   port (  
-     pl_clock : in std_logic;
-     pl_reset : in std_logic;
+     pl_clock         : in std_logic;
+     pl_reset         : in std_logic;
    
-     m_axi4_m2s   : in t_pl_regs_m2s;
-     m_axi4_s2m   : out t_pl_regs_s2m;   
+     m_axi4_m2s       : in t_pl_regs_m2s;
+     m_axi4_s2m       : out t_pl_regs_s2m;   
      
+     adc_data        : in t_adc_raw;
      adc_spi_we      : out std_logic;
      adc_spi_wdata   : out std_logic_vector(31 downto 0);
      adc_spi_rdata   : in std_logic_vector(31 downto 0);
@@ -28,8 +29,10 @@ entity ps_io is
      adc_idly_rdval  : in std_logic_vector(8 downto 0);       
      adc_fco_dlystr  : out std_logic_vector(1 downto 0); 
 	 ad9510_we		 : out std_logic;
-	 ad9510_data     : out std_logic_vector(31 downto 0);      
-     fp_leds  : out std_logic_vector(7 downto 0)
+	 ad9510_data     : out std_logic_vector(31 downto 0); 
+	 dsa_we		     : out std_logic;
+	 dsa_data        : out std_logic_vector(7 downto 0); 	      
+     fp_leds         : out std_logic_vector(7 downto 0)
   );
 end ps_io;
 
@@ -61,6 +64,14 @@ adc_fco_dlystr <= reg_o.adc_mmcmdlystr.data.data;
 
 ad9510_we <= reg_o.pll_spi.data.swmod;                
 ad9510_data <= reg_o.pll_spi.data.data;
+
+dsa_we <= reg_o.dsa_spi.data.swmod;
+dsa_data <= reg_o.dsa_spi.data.data;
+
+reg_i.adc_cha.data.data <= adc_data(0);
+reg_i.adc_chb.data.data <= adc_data(1);
+reg_i.adc_chc.data.data <= adc_data(2);
+reg_i.adc_chd.data.data <= adc_data(3);
 
 
 regs: pl_regs

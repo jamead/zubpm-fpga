@@ -223,6 +223,7 @@ int main()
 {
 	unsigned int *fpgabase;
     u32 i;
+    u32 val;
 
 	xil_printf("zuBPM ...\r\n");
 
@@ -233,7 +234,13 @@ int main()
     xil_printf("Setting to Internal Mode (no EVR)\r\n");
     fpgabase[7] = 0;
 
-
+    //write DSA
+    val = Xil_In32(XPAR_M_AXI_BASEADDR + 0x2C);
+    xil_printf("DSA = %d\r\n",val);  
+    Xil_Out32(XPAR_M_AXI_BASEADDR + 0x2C, 0x5);
+    val = Xil_In32(XPAR_M_AXI_BASEADDR + 0x2C);
+    xil_printf("DSA = %d\r\n",val);
+    
 	prog_ad9510(fpgabase);
 	ltc2195_init(fpgabase);
 	init_i2c();

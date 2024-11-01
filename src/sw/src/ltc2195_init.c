@@ -15,6 +15,7 @@ void ltc2195_init(unsigned int *fpgabase)
 {
 
    int i, regAddr, regVal;
+   s16 cha, chb, chc, chd;
 
    xil_printf("Programming LTC2195 (ADC)...    ");
 
@@ -43,16 +44,20 @@ void ltc2195_init(unsigned int *fpgabase)
 
    //read and print 20 ADC samples
    for (i=0;i<10;i++) {
-      xil_printf("%d\t%d\t%d\t%d\r\n",fpgabase[ADC_RAWCHA_REG],fpgabase[ADC_RAWCHB_REG],
-    		                          fpgabase[ADC_RAWCHC_REG],fpgabase[ADC_RAWCHD_REG]);
+	  cha = (s16) Xil_In16(XPAR_M_AXI_BASEADDR + ADC_RAWCHA_REG);
+	  chb = (s16) Xil_In16(XPAR_M_AXI_BASEADDR + ADC_RAWCHB_REG);
+	  chc = (s16) Xil_In16(XPAR_M_AXI_BASEADDR + ADC_RAWCHC_REG);
+	  chd = (s16) Xil_In16(XPAR_M_AXI_BASEADDR + ADC_RAWCHD_REG);
+
+      xil_printf("%d\t%d\t%d\t%d\r\n",cha,chb,chc,chd);
       usleep(100000);
    }
 
-   for (i=0;i<10;i++) {
-      xil_printf("%d\t%d\t%d\t%d\r\n",fpgabase[SA_CHA_REG],fpgabase[SA_CHB_REG],
-    		                          fpgabase[SA_CHC_REG],fpgabase[SA_CHD_REG]);
-      usleep(100000);
-   }
+   //for (i=0;i<10;i++) {
+   //   xil_printf("%d\t%d\t%d\t%d\r\n",fpgabase[SA_CHA_REG],fpgabase[SA_CHB_REG],
+   // 		                          fpgabase[SA_CHC_REG],fpgabase[SA_CHD_REG]);
+   //   usleep(100000);
+   //}
 
 
    xil_printf("Programming Complete\r\n");

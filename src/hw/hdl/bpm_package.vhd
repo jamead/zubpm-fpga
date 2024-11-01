@@ -8,7 +8,7 @@ use ieee.std_logic_unsigned.all;
   
 package bpm_package is
 
-type adc_raw_type is array(0 to 3) of std_logic_vector(15 downto 0);
+type t_adc_raw is array(0 to 3) of std_logic_vector(15 downto 0);
 
 type sfp_i2c_data_type is array(0 to 5) of std_logic_vector(15 downto 0);
 

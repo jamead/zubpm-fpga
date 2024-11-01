@@ -63,8 +63,7 @@ entity adc_ltc2195 is
     adc_sdata_p     : in std_logic_vector(15 downto 0);
     adc_sdata_n     : in std_logic_vector(15 downto 0);
     adc_clk_out     : out std_logic;
-    adc_data        : out ADC_RAW_TYPE;
-    adc_data_lat    : out ADC_RAW_TYPE;
+    adc_data        : out t_adc_raw;
     dbg             : out std_logic_vector(3 downto 0)    
   );
 end adc_ltc2195;
@@ -137,7 +136,7 @@ end component;
   signal adcc_data       : std_logic_vector(15 downto 0);
   signal adcd_data       : std_logic_vector(15 downto 0);  
   
-  signal adc_data_s      : adc_raw_type;    
+  signal adc_data_s      : t_adc_raw;    
 
   
   signal adc0_fifo_wren : std_logic;

@@ -16,11 +16,13 @@ proc setSources {} {
 
   variable Sources 
   lappend Sources {"../hdl/top.vhd" "VHDL 2008"} 
+  lappend Sources {"../hdl/ps_io.vhd" "VHDL 2008"} 
   lappend Sources {"../hdl/bpm_package.vhd" "VHDL 2008"} 
   lappend Sources {"../hdl/adc_ltc2195.vhd" "VHDL 2008"} 
   lappend Sources {"../hdl/adc_s2p.vhd" "VHDL 2008"} 
   lappend Sources {"../hdl/ltc2195_spi.vhd" "VHDL 2008"} 
   lappend Sources {"../hdl/spi_ad9510.vhd" "VHDL 2008"} 
+  lappend Sources {"../hdl/spi_pe43712.vhd" "VHDL 2008"} 
 
   lappend Sources {"../cstr/pins.xdc"  "XDC"}
   lappend Sources {"../cstr/afepins.xdc"  "XDC"}

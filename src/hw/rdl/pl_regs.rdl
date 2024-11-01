@@ -86,6 +86,14 @@ reg {
   } pll_spi @0x28;
  
  
+ reg {
+    desc="DSA SPI";
+    default sw = rw;
+    default hw = r;
+    default swmod=true;
+    field {} data[8];
+  } dsa_spi @0x2C;
+ 
 
 reg {
     desc="ADC IDLY value";
@@ -126,6 +134,37 @@ reg {
     default swmod=true;
     field {} data[32];
   } adc_spi @0x48;
+
+
+reg {
+    desc="ADC ChA Raw Data";
+    default sw = r;
+    default hw = w;
+    field {} data[16];
+  } adc_cha @0x50;
+
+reg {
+    desc="ADC ChB Raw Data";
+    default sw = r;
+    default hw = w;
+    field {} data[16];
+  } adc_chb @0x54;
+  
+reg {
+    desc="ADC ChC Raw Data";
+    default sw = r;
+    default hw = w;
+    field {} data[16];
+  } adc_chc @0x58;
+  
+reg {
+    desc="ADC ChD Raw Data";
+    default sw = r;
+    default hw = w;
+    field {} data[16];
+  } adc_chd @0x5C;
+  
+
 
 
  reg {
