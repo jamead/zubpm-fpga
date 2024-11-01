@@ -6,7 +6,6 @@ use UNISIM.VCOMPONENTS.ALL;
 
 library desyrdl;
 use desyrdl.common.all;
-
 use desyrdl.pkg_pl_regs.all;
 
 library xil_defaultlib;
@@ -108,25 +107,33 @@ architecture behv of top is
   
   signal m_axi4_m2s   : t_pl_regs_m2s;
   signal m_axi4_s2m   : t_pl_regs_s2m;
-  
-  signal reg_i        : t_addrmap_pl_regs_in;
-  signal reg_o        : t_addrmap_pl_regs_out;
-  
+ 
   signal adc_clk_in   : std_logic;
   signal adc_data     : ADC_RAW_TYPE;
   signal adc_data_lat : ADC_RAW_TYPE;
   signal adc_dbg      : std_logic_vector(3 downto 0);
   
+  signal adc_spi_we      : std_logic;
+  signal adc_spi_wdata   : std_logic_vector(31 downto 0);
+  signal adc_spi_rdata   : std_logic_vector(31 downto 0);
+  signal adc_idly_wrval  : std_logic_vector(8 downto 0);
+  signal adc_idly_wrstr  : std_logic_vector(15 downto 0);
+  signal adc_idly_rdval  : std_logic_vector(8 downto 0);       
+  signal adc_fco_dlystr  : std_logic_vector(1 downto 0);    
+  
+  signal ad9510_we		 : std_logic;
+  signal ad9510_data     : std_logic_vector(31 downto 0);  
+  
 
   attribute mark_debug     : string;
-  attribute mark_debug of reg_o: signal is "true";
+  --attribute mark_debug of reg_o: signal is "true";
 
 
 
 begin
 
 afe_pwrenb <= '1';
-ad9510_func <= '1';
+
 
 
 dbg(0) <= pl_clk0;
@@ -162,8 +169,6 @@ adc_clk_inst  : IBUFDS  port map (O => adc_clk_in, I => adc_clk_p, IB => adc_clk
 
 pl_reset <= not pl_resetn;
 
-fp_led <= reg_o.FP_LEDS.val.data;
---fp_led(7 downto 0) <= "01010101"; --gpio_leds_i(5 downto 0);
 
 
 
@@ -174,26 +179,24 @@ adc_inst: entity work.adc_ltc2195
   )
   port map(
     sys_clk => pl_clk0,
-    sys_rst => pl_reset,                 
-    adc_spi_we => reg_o.adc_spi.data.swmod, --adc_spi_we, 
-    adc_spi_wdata => reg_o.adc_spi.data.data, --adc_spi_wdata,
-    adc_spi_rdata => reg_i.adc_spi.data.data, --adc_spi_rdata, 
+    sys_rst => pl_reset,  
+    adc_spi_we => adc_spi_we,  
+    adc_spi_wdata => adc_spi_wdata, 
+    adc_spi_rdata => adc_spi_rdata,     
+    adc_idly_wrval => adc_idly_wrval,   
+    adc_idly_wrstr => adc_idly_wrstr,  
+    adc_idly_rdval => open, 
+    adc_fco_dlystr => adc_fco_dlystr,                       
     adc_csb => adc_csb,
     adc_sdi => adc_sdi,
     adc_sdo => adc_sdo,
-    adc_sclk => adc_sclk, 
-    adc_idly_wrval => reg_o.adc_idlyval.data.data,  
-    adc_idly_wrstr => reg_o.adc_idlystr.data.data, --add swmod as qualifier 
-    adc_idly_rdval => open, --reg_i.adc_idlyval.data.data, 
-    adc_fco_dlystr => reg_o.adc_mmcmdlystr.data.data, --add swmod as qualifier,        
+    adc_sclk => adc_sclk,     
     adc_fco_p => adc_fco_p, 
     adc_fco_n => adc_fco_n, 
     adc_dco_p => adc_dco_p, 
     adc_dco_n => adc_dco_n,    
     adc_sdata_p => adc_sdata_p, 
     adc_sdata_n => adc_sdata_n,   
-    adc_fifo_wren => '0', --adcltc_fifo_wren,
-    adc_fifo_rst => '0', --adcltc_fifo_rst,
     adc_clk_out => adc_clk,
     adc_data => adc_data,
     adc_data_lat => adc_data_lat,
@@ -206,32 +209,35 @@ pll_spi: entity work.spi_ad9510
   port map(
     clk => pl_clk0,
     reset => pl_reset,  
-    we => reg_o.pll_spi.data.swmod, --ad9510_we, 
-	data => reg_o.pll_spi.data.data, --ad9510_data, 
+    we => ad9510_we, 
+	data => ad9510_data,  
     sclk => ad9510_sclk, 
-	sdo	=> ad9510_sdo, 		--input from ad9510
+	sdo	=> ad9510_sdo, 		
     sdi => ad9510_sdata,
     csb => ad9510_lat, 
-    debug => open --ad9510_debug
+    func => ad9510_func
   );  
 
 
 
 
-
-
-
-regs: pl_regs
+ps_pl: entity work.ps_io
   port map (
-    pi_clock => pl_clk0, 
-    pi_reset => not pl_resetn, 
-    -- TOP subordinate memory mapped interface
-    --pi_s_reset => '0', 
-    pi_s_top => m_axi4_m2s, 
-    po_s_top => m_axi4_s2m, 
-    -- to logic interface
-    pi_addrmap => reg_i,  
-    po_addrmap => reg_o
+    pl_clock => pl_clk0, 
+    pl_reset => not pl_resetn, 
+    m_axi4_m2s => m_axi4_m2s, 
+    m_axi4_s2m => m_axi4_s2m, 
+    fp_leds => fp_led,
+    adc_spi_we => adc_spi_we,
+    adc_spi_wdata => adc_spi_wdata, 
+    adc_spi_rdata => adc_spi_rdata, 
+    adc_idly_wrval => adc_idly_wrval, 
+    adc_idly_wrstr => adc_idly_wrstr, 
+    adc_idly_rdval => adc_idly_rdval,       
+    adc_fco_dlystr => adc_fco_dlystr,
+    ad9510_we => ad9510_we,
+    ad9510_data => ad9510_data       
+   
   );
 
 

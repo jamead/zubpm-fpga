@@ -30,6 +30,9 @@ use UNISIM.VComponents.all;
 library work;
 use work.bpm_package.ALL;
  
+library desyrdl;
+use desyrdl.common.all;
+use desyrdl.pkg_pl_regs.all; 
 
 
 
@@ -43,22 +46,22 @@ entity adc_ltc2195 is
     adc_spi_we      : in std_logic;
     adc_spi_wdata   : in std_logic_vector(31 downto 0);
     adc_spi_rdata   : out std_logic_vector(31 downto 0);
+    adc_idly_wrval  : in std_logic_vector(8 downto 0);
+    adc_idly_wrstr  : in std_logic_vector(15 downto 0);
+    adc_idly_rdval  : out std_logic_vector(8 downto 0);       
+    adc_fco_dlystr  : in std_logic_vector(1 downto 0);      
+
     adc_csb         : out std_logic_vector(1 downto 0);
     adc_sdi         : out std_logic_vector(1 downto 0);
     adc_sdo         : in std_logic_vector(1 downto 0);
     adc_sclk        : out std_logic_vector(1 downto 0); 
-    adc_fco_dlystr  : in std_logic_vector(1 downto 0);  
-    adc_idly_wrval  : in std_logic_vector(8 downto 0);
-    adc_idly_wrstr  : in std_logic_vector(15 downto 0);
-    adc_idly_rdval  : out std_logic_vector(8 downto 0);     
+
     adc_fco_p       : in std_logic_vector(1 downto 0);
     adc_fco_n       : in std_logic_vector(1 downto 0);
     adc_dco_p       : in std_logic_vector(1 downto 0);
     adc_dco_n       : in std_logic_vector(1 downto 0);
     adc_sdata_p     : in std_logic_vector(15 downto 0);
     adc_sdata_n     : in std_logic_vector(15 downto 0);
-    adc_fifo_wren   : in std_logic;
-    adc_fifo_rst    : in std_logic;
     adc_clk_out     : out std_logic;
     adc_data        : out ADC_RAW_TYPE;
     adc_data_lat    : out ADC_RAW_TYPE;
@@ -157,22 +160,16 @@ end component;
    attribute mark_debug of adc0_fco_mmcm_locked: signal is "true";   
    attribute mark_debug of adc1_fco_mmcm_psdone: signal is "true";   
    attribute mark_debug of adc1_fco_mmcm_locked: signal is "true";
-   
-   
-      
-   attribute mark_debug of adc_idly_wrval: signal is "true";
-   attribute mark_debug of adc_idly_wrstr: signal is "true";
-   attribute mark_debug of adc_idly_rdval: signal is "true";
+
    --attribute mark_debug of cntval_dco0: signal is "true";
    --attribute mark_debug of cntval_fco0: signal is "true";
    --attribute mark_debug of cntval_dco1: signal is "true";
    --attribute mark_debug of cntval_fco1: signal is "true";
-   attribute mark_debug of adc_fifo_full: signal is "true";
-   attribute mark_debug of adc_fifo_empty: signal is "true";
-   attribute mark_debug of adc_fifo_wren: signal is "true";
-   attribute mark_debug of adc0_fifo_wren: signal is "true";
-   attribute mark_debug of adc1_fifo_wren: signal is "true";
-   attribute mark_debug of adc_fifo_rst: signal is "true";
+   --attribute mark_debug of adc_fifo_full: signal is "true";
+   --attribute mark_debug of adc_fifo_empty: signal is "true";
+   --attribute mark_debug of adc0_fifo_wren: signal is "true";
+   --attribute mark_debug of adc1_fifo_wren: signal is "true";
+
 
 
 begin
@@ -181,7 +178,6 @@ dbg(0) <= '0'; --adc_fco_dlystr(0);
 dbg(1) <= '0'; --adc0_fco_mmcm_psdone;
 dbg(2) <= adc1_fco_bufg;
 dbg(3) <= adc1_fco_mmcm;
-
 
 
 

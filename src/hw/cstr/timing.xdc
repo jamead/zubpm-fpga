@@ -20,3 +20,4 @@ set_clock_groups -name sysclk_adcclks -asynchronous -group [get_clocks clk_pl_0]
 #set_false_path -from [get_clocks adc_dco1] -to [get_clocks -of_objects [get_pins adc_inst/adc1_fco_pll/inst/mmcme4_adv_inst/CLKOUT0]]
 
 
+

@@ -286,3 +286,4 @@ set_property DIFF_TERM_ADV TERM_100 [get_ports {adc_sdata_n[15]}]
 
 
 
+
