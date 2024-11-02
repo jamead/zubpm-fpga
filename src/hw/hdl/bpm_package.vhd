@@ -12,6 +12,50 @@ type t_adc_raw is array(0 to 3) of std_logic_vector(15 downto 0);
 
 type sfp_i2c_data_type is array(0 to 5) of std_logic_vector(15 downto 0);
 
+  
+
+type t_reg_o_adc_cntrl is record
+   spi_we     : std_logic;
+   spi_wdata  : std_logic_vector(31 downto 0);
+   idly_wval  : std_logic_vector(8 downto 0);
+   idly_wstr  : std_logic_vector(15 downto 0);
+   fco_dlystr : std_logic_vector(1 downto 0);
+end record t_reg_o_adc_cntrl;
+
+type t_reg_i_adc_status is record
+   spi_rdata   : std_logic_vector(31 downto 0);
+   idly_rval   : std_logic_vector(8 downto 0);
+end record t_reg_i_adc_status;
+
+
+
+
+type t_reg_i_adc_fifo_rdout is record
+   dout     : std_logic_vector(31 downto 0);
+   rdcnt    : std_logic_vector(31 downto 0); 
+end record t_reg_i_adc_fifo_rdout;
+
+type t_reg_o_adc_fifo_rdout is record
+   enb      : std_logic;
+   rst      : std_logic;
+   rdstr    : std_logic;
+end record t_reg_o_adc_fifo_rdout;
+
+
+
+type t_reg_o_dsa is record
+   str      : std_logic;
+   data     : std_logic_vector(7 downto 0);
+end record t_reg_o_dsa;
+
+
+
+type t_reg_o_pll is record
+   str      : std_logic;
+   data     : std_logic_vector(31 downto 0);
+end record t_reg_o_pll;
+
+
 
 type sdi_cntrl_type is record
    reset       : std_logic_vector(15 downto 0);
@@ -119,7 +163,7 @@ type rffe_sw_params_type is record
 end record rffe_sw_params_type;
 
 
-type tbt_params_type is record
+type t_tbt_params is record
     kx          : std_logic_vector(31 downto 0);
     ky          : std_logic_vector(31 downto 0);
     cha_gain    : std_logic_vector(15 downto 0);
@@ -130,7 +174,7 @@ type tbt_params_type is record
     ypos_offset : std_logic_vector(31 downto 0); 
     gate_delay  : std_logic_vector(8 downto 0); 
     gate_width  : std_logic_vector(8 downto 0);
-end record tbt_params_type;
+end record t_tbt_params;
 
 
 type dma_params_type is record

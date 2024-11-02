@@ -235,20 +235,22 @@ int main()
     fpgabase[7] = 0;
 
     //write DSA
-    val = Xil_In32(XPAR_M_AXI_BASEADDR + 0x2C);
-    xil_printf("DSA = %d\r\n",val);  
-    Xil_Out32(XPAR_M_AXI_BASEADDR + 0x2C, 0x5);
-    val = Xil_In32(XPAR_M_AXI_BASEADDR + 0x2C);
-    xil_printf("DSA = %d\r\n",val);
+    for (i=0;i<5;i++) {
+       val = Xil_In32(XPAR_M_AXI_BASEADDR + RF_DSA_REG);
+       xil_printf("DSA = %d\r\n",val);  
+       Xil_Out32(XPAR_M_AXI_BASEADDR + RF_DSA_REG, i);
+       val = Xil_In32(XPAR_M_AXI_BASEADDR + RF_DSA_REG);
+       xil_printf("DSA = %d\r\n",val);
+    }
     
 	prog_ad9510(fpgabase);
 	ltc2195_init(fpgabase);
 	init_i2c();
 	init_sysmon();
 
-	for (i=0;i<1000;i++) {
+	for (i=0;i<10;i++) {
 	   Xil_Out32(XPAR_M_AXI_BASEADDR + 0x100, i);
-	   sleep(1);
+	   sleep(0.1);
 	}
 
 

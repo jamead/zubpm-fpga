@@ -23,6 +23,9 @@ proc setSources {} {
   lappend Sources {"../hdl/ltc2195_spi.vhd" "VHDL 2008"} 
   lappend Sources {"../hdl/spi_ad9510.vhd" "VHDL 2008"} 
   lappend Sources {"../hdl/spi_pe43712.vhd" "VHDL 2008"} 
+  lappend Sources {"../hdl/adc2fifo.vhd" "VHDL 2008"}   
+  lappend Sources {"../hdl/dsp_cntrl.vhd" "VHDL 2008"}    
+  
 
   lappend Sources {"../cstr/pins.xdc"  "XDC"}
   lappend Sources {"../cstr/afepins.xdc"  "XDC"}
@@ -53,6 +56,7 @@ proc doOnCreate {} {
    
   source ${TclPath}/system.tcl
   source ${TclPath}/adc_fco_phaseshift.tcl
+  source ${TclPath}/adcbuf_fifo.tcl
 
   addSources "Sources" 
 

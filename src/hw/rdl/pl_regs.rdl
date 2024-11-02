@@ -165,6 +165,120 @@ reg {
   } adc_chd @0x5C;
   
 
+reg {
+    desc="Kx";
+    default sw = rw;
+    default hw = r;
+    field {} data[32];
+  } kx @0x90;
+ 
+reg {
+    desc="Ky";
+    default sw = rw;
+    default hw = r;
+    field {} data[32];
+  } ky @0x94;
+ 
+ reg {
+    desc="ChA Gain";
+    default sw = rw;
+    default hw = r;
+    field {} data[16];
+  } cha_gain @0x98;
+ 
+reg {
+    desc="ChB Gain";
+    default sw = rw;
+    default hw = r;
+    field {} data[16];
+  } chb_gain @0x9C;
+ 
+ reg {
+    desc="ChC Gain";
+    default sw = rw;
+    default hw = r;
+    field {} data[16];
+  } chc_gain @0xA0;
+ 
+ reg {
+    desc="ChD Gain";
+    default sw = rw;
+    default hw = r;
+    field {} data[16];
+  } chd_gain @0xA4;
+ 
+reg {
+    desc="X position offset";
+    default sw = rw;
+    default hw = r;
+    field {} data[32];
+  } xpos_offset @0xA8;
+ 
+ reg {
+    desc="Y position offset";
+    default sw = rw;
+    default hw = r;
+    field {} data[32];
+  } ypos_offset @0xAC;
+  
+reg {
+    desc="TbT Gate Delay";
+    default sw = rw;
+    default hw = r;
+    field {} data[9];
+  } gate_delay @0xB0;
+ 
+ 
+ reg {
+    desc="TbT Gate Width";
+    default sw = rw;
+    default hw = r;
+    field {} data[9];
+  } gate_width @0xB4;
+   
+ 
+ reg {
+    desc="SA Counter";
+    default sw = r;
+    default hw = w;
+    field {} val[32];
+  } sa_cnt @0xC0;
+
+
+ 
+ 
+/* ADC FIFO Readout Registers */
+reg {
+    desc="ADC FIFO Readout Enable";
+    default sw = rw;
+    default hw = r;
+    field {} data[1];
+  } adcfifo_streamenb @0x200;
+     
+reg {
+    desc="ADC FIFO Reset";
+    default sw = rw;
+    default hw = r;
+    field {} data[1];
+  } adcfifo_reset @0x204;
+   
+reg {
+    desc="ADC FIFO Data Out";
+    default sw = r;
+    default hw = w;
+    default swacc=true;   
+    field {} data[32];
+  } adcfifo_data @0x208;
+   
+reg {
+    desc="ADC FIFO Word Count";
+    default sw = r;
+    default hw = w;
+    field {} data[32];
+  } adcfifo_rdcnt @0x20C;
+   
+
+
 
 
  reg {

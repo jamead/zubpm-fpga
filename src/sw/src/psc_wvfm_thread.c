@@ -281,28 +281,19 @@ void ReadLiveTbTWvfm(volatile unsigned int *fpgabase, char *msg) {
 
 
 
-void ReadLiveADCWvfm(volatile unsigned int *fpgabase, char *msg) {
+void ReadLiveADCWvfm(char *msg) {
 
     int i;
     u16 *msg_u16ptr;
     u32 *msg_u32ptr;
-    //int hdr, ts_s, ts_ns;
-    int regVal;
+    int regval;
 
-
-    fpgabase[ADCFIFO_STREAMENB_REG] = 1;
-    fpgabase[ADCFIFO_STREAMENB_REG] = 0;
+    Xil_Out32(XPAR_M_AXI_BASEADDR + ADCFIFO_STREAMENB_REG, 1);
+    Xil_Out32(XPAR_M_AXI_BASEADDR + ADCFIFO_STREAMENB_REG, 0);
     usleep(10000);
     //xil_printf("Reading ADC FIFO...\r\n");
-    //xil_printf("\tWords in ADC FIFO = %d\r\n",fpgabase[ADCFIFO_CNT_REG]);
-    // first 2 words is 0x80000000 and 0x00000000
-    //xil_printf("\tADC header: %x\r\n",fpgabase[ADCFIFO_DATA_REG]);
-    //hdr = fpgabase[ADCFIFO_DATA_REG];
-    // next 2 words are the timestamp trigger
-    //ts_s = fpgabase[ADCFIFO_DATA_REG];
-    //ts_ns = fpgabase[ADCFIFO_DATA_REG];
-    //xil_printf("\tTrigger Timestamp: %d   %d\r\n",ts_s,ts_ns);
-
+    regval = Xil_In32(XPAR_M_AXI_BASEADDR + ADCFIFO_CNT_REG);
+    //xil_printf("\tWords in ADC FIFO = %d\r\n",regval);
 
     //write the PSC Header
      msg_u32ptr = (u32 *)msg;
@@ -317,19 +308,19 @@ void ReadLiveADCWvfm(volatile unsigned int *fpgabase, char *msg) {
     msg_u16ptr = (u16 *) &msg[MSGHDRLEN];
     for (i=0;i<8000;i++) {
         //chA and chB are in a single 32 bit word
-    	regVal = fpgabase[ADCFIFO_DATA_REG];
-        *msg_u16ptr++ = (short int) ((regVal & 0xFFFF0000) >> 16);
-        *msg_u16ptr++ = (short int) (regVal & 0xFFFF);
+    	regval = Xil_In32(XPAR_M_AXI_BASEADDR + ADCFIFO_DATA_REG);
+        *msg_u16ptr++ = (short int) ((regval & 0xFFFF0000) >> 16);
+        *msg_u16ptr++ = (short int) (regval & 0xFFFF);
         //chC and chD are in a single 32 bit word
-        regVal = fpgabase[ADCFIFO_DATA_REG];
-        *msg_u16ptr++ = (short int) ((regVal & 0xFFFF0000) >> 16);
-        *msg_u16ptr++ = (short int) (regVal & 0xFFFF);
+        regval = Xil_In32(XPAR_M_AXI_BASEADDR + ADCFIFO_DATA_REG);
+        *msg_u16ptr++ = (short int) ((regval & 0xFFFF0000) >> 16);
+        *msg_u16ptr++ = (short int) (regval & 0xFFFF);
     }
 
     //printf("Resetting FIFO...\n");
-    fpgabase[ADCFIFO_RST_REG] = 0x1;
+    Xil_Out32(XPAR_M_AXI_BASEADDR + ADCFIFO_RST_REG, 1);
     usleep(1);
-    fpgabase[ADCFIFO_RST_REG] = 0x0;
+    Xil_Out32(XPAR_M_AXI_BASEADDR + ADCFIFO_RST_REG, 0);
     usleep(10);
 
 
@@ -401,10 +392,11 @@ reconnect:
     //Set DMA ADC data to test pattern (counter)
     //fpgaiobase[DMA_TESTDATAENB_REG] = 1;
 
-    dma_adclen = 1e6;
-    dma_tbtlen = 100e3;
-    dma_falen  = 20e3;  // 2 seconds
-    dma_arm(fpgaiobase, dmaadcbase, dmatbtbase, dmafabase, dma_adclen, dma_tbtlen, dma_falen);
+
+    //dma_adclen = 1e6;
+    //dma_tbtlen = 100e3;
+    //dma_falen  = 20e3;  // 2 seconds
+    //dma_arm(fpgaiobase, dmaadcbase, dmatbtbase, dmafabase, dma_adclen, dma_tbtlen, dma_falen);
 
 
 	while (1) {
@@ -412,7 +404,7 @@ reconnect:
 		//xil_printf("Wvfm: In main waveform loop...\r\n");
 		loopcnt++;
 		vTaskDelay(pdMS_TO_TICKS(100));
-
+        /*
 		trignum = fpgaiobase[DMA_TRIGCNT_REG];
 		if (trignum != prevtrignum)  {
 			//received a DMA trigger
@@ -463,11 +455,11 @@ reconnect:
             dma_arm(fpgaiobase, dmaadcbase, dmatbtbase, dmafabase, dma_adclen, dma_tbtlen, dma_falen);
 
 		}
-
+        */
 
         if (loopcnt % 10 == 0) {
             //xil_printf("Wvfm(%d) Sending Live Data...\r\n",loopcnt);
-        	ReadLiveADCWvfm(fpgalivebase,msgid51_buf);
+        	ReadLiveADCWvfm(msgid51_buf);
         	//write out Live ADC data (msg51)
         	Host2NetworkConvWvfm(msgid51_buf,sizeof(msgid51_buf)+MSGHDRLEN);
         	n = write(newsockfd,msgid51_buf,MSGID51LEN+MSGHDRLEN);
@@ -477,7 +469,7 @@ reconnect:
         		goto reconnect;
         	}
 
-
+            /*
         	//xil_printf("%8d:  Reading TbT Waveform...\r\n",loopcnt);
         	ReadLiveTbTWvfm(fpgalivebase,msgid52_buf);
         	//write out Live TbT data (msg52)
@@ -488,7 +480,7 @@ reconnect:
         		close(newsockfd);
         		goto reconnect;
         	}
-
+            */
         }
 
 

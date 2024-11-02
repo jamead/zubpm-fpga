@@ -43,13 +43,15 @@ entity adc_ltc2195 is
   port ( 
     sys_clk         : in std_logic;
     sys_rst         : in std_logic;
-    adc_spi_we      : in std_logic;
-    adc_spi_wdata   : in std_logic_vector(31 downto 0);
-    adc_spi_rdata   : out std_logic_vector(31 downto 0);
-    adc_idly_wrval  : in std_logic_vector(8 downto 0);
-    adc_idly_wrstr  : in std_logic_vector(15 downto 0);
-    adc_idly_rdval  : out std_logic_vector(8 downto 0);       
-    adc_fco_dlystr  : in std_logic_vector(1 downto 0);      
+    reg_o           : in t_reg_o_adc_cntrl;
+	reg_i           : out t_reg_i_adc_status; 
+    --adc_spi_we      : in std_logic;
+    --adc_spi_wdata   : in std_logic_vector(31 downto 0);
+    --adc_spi_rdata   : out std_logic_vector(31 downto 0);
+    --adc_idly_wrval  : in std_logic_vector(8 downto 0);
+    --adc_idly_wrstr  : in std_logic_vector(15 downto 0);
+    --adc_idly_rdval  : out std_logic_vector(8 downto 0);       
+    --adc_fco_dlystr  : in std_logic_vector(1 downto 0);      
 
     adc_csb         : out std_logic_vector(1 downto 0);
     adc_sdi         : out std_logic_vector(1 downto 0);
@@ -146,15 +148,17 @@ end component;
   
 
    attribute mark_debug     : string;
+   attribute mark_debug of reg_o: signal is "true";
+   attribute mark_debug of reg_i: signal is "true";
    attribute mark_debug of adca_data: signal is "true";
    attribute mark_debug of adcb_data: signal is "true";
    attribute mark_debug of adcc_data: signal is "true";
    attribute mark_debug of adcd_data: signal is "true";
    attribute mark_debug of adc_data: signal is "true";
-   attribute mark_debug of adc_idly_wrval: signal is "true";
-   attribute mark_debug of adc_idly_rdval: signal is "true";
-   attribute mark_debug of adc_idly_wrstr: signal is "true";
-   attribute mark_debug of adc_fco_dlystr: signal is "true";
+   --attribute mark_debug of adc_idly_wrval: signal is "true";
+   --attribute mark_debug of adc_idly_rdval: signal is "true";
+   --attribute mark_debug of adc_idly_wrstr: signal is "true";
+   --attribute mark_debug of adc_fco_dlystr: signal is "true";
    attribute mark_debug of adc0_fco_mmcm_psdone: signal is "true";
    attribute mark_debug of adc0_fco_mmcm_locked: signal is "true";   
    attribute mark_debug of adc1_fco_mmcm_psdone: signal is "true";   
@@ -218,7 +222,7 @@ port map (
   --clk_in1_n => adc_fco_n(0),
   clk_out1 => adc0_fco_mmcm,               
   psclk => sys_clk,
-  psen => adc_fco_dlystr(0), 
+  psen => reg_o.fco_dlystr(0), 
   psincdec => '1', 
   psdone => adc0_fco_mmcm_psdone,
   locked => adc0_fco_mmcm_locked 
@@ -232,7 +236,7 @@ port map (
   --clk_in1_n => adc_fco_n(1),
   clk_out1 => adc1_fco_mmcm,               
   psclk => sys_clk, 
-  psen => adc_fco_dlystr(1), 
+  psen => reg_o.fco_dlystr(1), 
   psincdec => '1', --psincdec,
   psdone => adc1_fco_mmcm_psdone,
   locked => adc1_fco_mmcm_locked
@@ -275,8 +279,8 @@ adc_cha: entity work.adc_s2p
     sys_clk => sys_clk,
     adc_dclk => adc0_dco_bufg,
     adc_fclk => adc0_fco_mmcm, 
-    adc_idly_wrval => adc_idly_wrval,
-    adc_idly_wrstr => adc_idly_wrstr(3 downto 0),
+    adc_idly_wrval => reg_o.idly_wval,
+    adc_idly_wrstr => reg_o.idly_wstr(3 downto 0),
     adc_idly_rdval => open, --adc_idly_rdval,
     adc_sdata => adca_sdata, 
     adc_out => adca_data
@@ -288,8 +292,8 @@ adc_chb: entity work.adc_s2p
     sys_clk => sys_clk,
     adc_dclk => adc0_dco_bufg,
     adc_fclk => adc0_fco_mmcm, 
-    adc_idly_wrval => adc_idly_wrval,
-    adc_idly_wrstr => adc_idly_wrstr(7 downto 4),
+    adc_idly_wrval => reg_o.idly_wval,
+    adc_idly_wrstr => reg_o.idly_wstr(7 downto 4),
     adc_idly_rdval => open, --adc_idly_rdval,    
     adc_sdata => adcb_sdata, 
     adc_out => adcb_data
@@ -301,8 +305,8 @@ adc_chc: entity work.adc_s2p
     sys_clk => sys_clk,  
     adc_dclk => adc1_dco_bufg,
     adc_fclk => adc1_fco_mmcm, 
-    adc_idly_wrval => adc_idly_wrval,
-    adc_idly_wrstr => adc_idly_wrstr(11 downto 8),
+    adc_idly_wrval => reg_o.idly_wval,
+    adc_idly_wrstr => reg_o.idly_wstr(11 downto 8),
     adc_idly_rdval => open, --adc_idly_rdval,      
     adc_sdata => adcc_sdata, 
     adc_out => adcc_data
@@ -314,8 +318,8 @@ adc_chd: entity work.adc_s2p
     sys_clk => sys_clk,
     adc_dclk => adc1_dco_bufg,
     adc_fclk => adc1_fco_mmcm, 
-    adc_idly_wrval => adc_idly_wrval,
-    adc_idly_wrstr => adc_idly_wrstr(15 downto 12),
+    adc_idly_wrval => reg_o.idly_wval,
+    adc_idly_wrstr => reg_o.idly_wstr(15 downto 12),
     adc_idly_rdval => open, --adc_idly_rdval,    
     adc_sdata => adcd_sdata, 
     adc_out => adcd_data
@@ -441,9 +445,9 @@ adc_spi: ltc2195_spi
   port map (
     clk => sys_clk,                     
     reset => sys_rst,                     
-    adc_spi_we => adc_spi_we, 
-    adc_spi_wdata => adc_spi_wdata,
-    adc_spi_rdata => adc_spi_rdata, 
+    adc_spi_we => reg_o.spi_we, 
+    adc_spi_wdata => reg_o.spi_wdata,
+    adc_spi_rdata => reg_i.spi_rdata, 
     csb => adc_csb,
     sdi => adc_sdi,
     sdo => adc_sdo,

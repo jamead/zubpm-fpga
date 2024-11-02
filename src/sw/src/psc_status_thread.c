@@ -440,8 +440,8 @@ reconnect:
 		//loop here until next 10Hz event
 		do {
 		   sa_trigwait++;
-		   sa_cnt = fpgabase[SA_TRIGNUM_REG];
-		   //xil_printf("SA CNT: %d    %d\r\n",sa_cnt, sa_cnt_prev);
+		   sa_cnt = Xil_In32(XPAR_M_AXI_BASEADDR + SA_TRIGNUM_REG);
+		   xil_printf("SA CNT: %d    %d\r\n",sa_cnt, sa_cnt_prev);
 		   vTaskDelay(pdMS_TO_TICKS(10));
 		}
 	    while (sa_cnt_prev == sa_cnt);

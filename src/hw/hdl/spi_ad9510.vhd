@@ -6,19 +6,17 @@ use ieee.std_logic_unsigned.all;
 library UNISIM;
 use UNISIM.VComponents.all;
 
-library desyrdl;
-use desyrdl.common.all;
-use desyrdl.pkg_pl_regs.all; 
+
+library work;
+use work.bpm_package.ALL;  
 
  
 entity spi_ad9510 is
   
   port (
     clk         : in  std_logic;                    
-    reset 	    : in  std_logic;  
-	we		    : in  std_logic;
-	data        : in  std_logic_vector(31 downto 0);
-                 
+    reset 	    : in  std_logic; 
+    reg_o       : in  t_reg_o_pll;              
     sclk        : out std_logic;                   
 	sdo			: in std_logic;
     sdi 	    : out std_logic;
@@ -43,8 +41,6 @@ architecture rtl of spi_ad9510 is
   signal xfer_done      : std_logic;                      
   signal rwn	        : std_logic;     
 
-
-  
   signal clk_cnt        : std_logic_vector(7 downto 0);  
   signal clk_enb        : std_logic;
   signal strobe_cnt		: std_logic_vector(15 downto 0);  
@@ -57,8 +53,7 @@ architecture rtl of spi_ad9510 is
   
   
    attribute mark_debug     : string;
-   attribute mark_debug of we: signal is "true";
-   attribute mark_debug of data: signal is "true";
+   attribute mark_debug of reg_o: signal is "true";
    attribute mark_debug of sclk: signal is "true";
    attribute mark_debug of csb: signal is "true";   
    attribute mark_debug of sdi: signal is "true";   
@@ -75,9 +70,9 @@ process (clk, reset)
     if (reset = '1') OR (we_lat_clr = '1') then
 	  we_lat <= '0';
     elsif (clk'event and clk = '1') then
-	  if (we = '1') then
+	  if (reg_o.str = '1') then
 	    we_lat <= '1';
-		spi_data <= data(23 downto 0);
+		spi_data <= reg_o.data(23 downto 0);
 	  end if;
     end if;
 end process;
