@@ -24,3 +24,6 @@ set_clock_groups -name sysclk_adcclks -asynchronous -group [get_clocks clk_pl_0]
 
 
 
+
+
+

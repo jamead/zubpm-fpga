@@ -104,6 +104,7 @@ architecture behv of top is
   signal adc_clk      : std_logic;
   signal pl_resetn    : std_logic;
   signal pl_reset     : std_logic;
+  signal ps_leds      : std_logic_vector(7 downto 0);
   
   signal m_axi4_m2s   : t_pl_regs_m2s;
   signal m_axi4_s2m   : t_pl_regs_s2m;
@@ -122,13 +123,21 @@ architecture behv of top is
   
   signal reg_o_adcfifo   : t_reg_o_adc_fifo_rdout;
   signal reg_i_adcfifo   : t_reg_i_adc_fifo_rdout;
+  signal reg_o_tbtfifo   : t_reg_o_tbt_fifo_rdout;
+  signal reg_i_tbtfifo   : t_reg_i_tbt_fifo_rdout;
+
+  
   signal reg_o_dsa       : t_reg_o_dsa;  
   signal reg_o_pll       : t_reg_o_pll;
   signal reg_o_adc       : t_reg_o_adc_cntrl;
   signal reg_i_adc       : t_reg_i_adc_status; 
+  signal reg_o_tbt       : t_reg_o_tbt;
+  
+  signal tbt_data        : t_tbt_data;    
+  signal sa_data         : t_sa_data;
+  signal fa_data         : t_fa_data;
   
   signal tbt_extclk      : std_logic;  
-  signal tbt_params      : t_tbt_params;
   
   signal inttrig_enb      : std_logic_vector(3 downto 0);
   signal trig_evrintsel   : std_logic;
@@ -137,6 +146,7 @@ architecture behv of top is
   signal pt_trig          : std_logic;
   signal fa_trig          : std_logic;
   signal sa_trig          : std_logic;
+  signal sa_trig_stretch  : std_logic;
   signal dma_trig         : std_logic;
   
   signal sa_cnt           : std_logic_vector(31 downto 0);
@@ -190,6 +200,15 @@ fp_out(1) <= adc_clk_in;
 fp_out(2) <= adc_clk; --'0'; --tbt_trig;
 fp_out(3) <= tbt_trig; --'0'; --sa_trig;
 
+fp_led(7) <= '0'; --dma_fa_active;
+fp_led(6) <= '0'; --dma_adc_active; 
+fp_led(5) <= '0'; --dma_tbt_active; --trig_stretch; --'0';
+fp_led(4) <= ad9510_status; --dma_trig_stretch;
+fp_led(3 downto 1) <= ps_leds(2 downto 0); --"0000";
+fp_led(0) <= sa_trig_stretch;
+
+
+
 
 adc_clk_inst  : IBUFDS  port map (O => adc_clk_in, I => adc_clk_p, IB => adc_clk_n); 
 tbt_clk_inst  : IBUFDS  port map (O => tbt_extclk, I => tbt_clk_p, IB => tbt_clk_n); 
@@ -226,6 +245,44 @@ adc_inst: entity work.adc_ltc2195
     );     
 
 
+tbt_engine: entity work.tbt_dsp 
+  port map( 
+    rst => pl_reset, 
+    clk => adc_clk, 
+    adc_data => adc_data, 
+    tbt_trig => tbt_trig, 
+    tbt_data => tbt_data,
+    tbt_params => reg_o_tbt
+);
+
+
+sa_engine: entity work.sa_dsp
+  port map(
+    rst => pl_reset,
+    clk => adc_clk,
+    tbt_data => tbt_data,
+    tbt_trig => tbt_trig,
+    sa_trig => sa_trig, 
+    sa_data => sa_data
+);
+
+
+fa_engine: entity work.fa_dsp
+  port map(
+    rst => pl_reset,
+    clk => adc_clk,
+    tbt_data => tbt_data,
+    tbt_trig => tbt_trig,
+    fa_data => fa_data,
+    fa_cnt => open, 
+    fa_trig => fa_trig
+);
+
+
+
+
+
+
 --AD9510 PLL: generates adc_clk
 pll_spi: entity work.spi_ad9510 
   port map(
@@ -252,6 +309,26 @@ atten_pt: entity work.spi_pe43712
   );    
 
 
+
+trig: entity work.trig_logic
+  port map (
+    adc_clk => adc_clk,  
+    reset => pl_reset, 
+    soft_trig => '0', --soft_trig,
+    evr_trig => '0', --evr_dma_trig,
+    trig_evrintsel => '1', --trig_evrintsel, 
+    trig_dly_reg => x"00000000", 
+    dma_adc_active => '0', --dma_adc_active,
+    dma_tbt_active => '0', --dma_tbt_active, 
+    dma_fa_active => '0', --dma_fa_active,
+    trig_cnt => open, --dma_trig_cnt, 
+    evr_ts => (others => '0'), --evr_ts,
+    evr_ts_lat => open, --evr_ts_lat, 
+    dma_trig => open --dma_trig
+  );    
+
+
+
 -- provides dsp trigger signals
 dsp_trigs : entity work.dsp_cntrl 
   port map(
@@ -259,7 +336,7 @@ dsp_trigs : entity work.dsp_cntrl
 	tbt_extclk => tbt_extclk, --evr_tbt_trig, 
 	reset => pl_reset,
 	machine_sel => ("101"), 
-	tbt_params => tbt_params,
+	tbt_params => reg_o_tbt,
     inttrig_enb => 4d"0", --inttrig_enb, 
     evrsync_cnt => '0', --evr_trig2, 
     evr_fa_trig => '0', --evr_fa_trig,
@@ -269,7 +346,7 @@ dsp_trigs : entity work.dsp_cntrl
     pt_trig => pt_trig,
 	fa_trig => fa_trig, 
     sa_trig => sa_trig, 
-    sa_count => sa_cnt
+    sa_count => open --sa_cnt
   );  
 
 
@@ -285,6 +362,19 @@ adcstream:  entity work.adc2fifo
 );    
 
 
+tbtstream: entity work.tbt2fifo
+  port map(
+    adc_clk => adc_clk,
+    sys_clk => pl_clk0, 
+    reset => pl_reset,  
+    reg_o => reg_o_tbtfifo,
+	reg_i => reg_i_tbtfifo,                         
+	tbt_data => tbt_data,
+	tbt_trig => tbt_trig
+);    
+
+
+
 
 
 ps_pl: entity work.ps_io
@@ -293,14 +383,16 @@ ps_pl: entity work.ps_io
     pl_reset => not pl_resetn, 
     m_axi4_m2s => m_axi4_m2s, 
     m_axi4_s2m => m_axi4_s2m, 
-    fp_leds => fp_led,
+    fp_leds => ps_leds,
     adc_data => adc_data,
-    tbt_params => tbt_params,
-    sa_cnt => sa_cnt,
+    sa_data => sa_data,
+    reg_o_tbt => reg_o_tbt,
     reg_o_adc => reg_o_adc,
     reg_i_adc => reg_i_adc,
     reg_o_adcfifo => reg_o_adcfifo, 
 	reg_i_adcfifo => reg_i_adcfifo,
+	reg_o_tbtfifo => reg_o_tbtfifo, 
+	reg_i_tbtfifo => reg_i_tbtfifo,
 	reg_o_dsa => reg_o_dsa,
 	reg_o_pll => reg_o_pll 
           
@@ -335,6 +427,19 @@ system_i: component system
     m_axi_wstrb => m_axi4_m2s.wstrb,
     m_axi_wvalid => m_axi4_m2s.wvalid
     );
+
+
+
+
+--stretch the sa_trig signal so can be seen on LED
+sa_led : entity work.stretch
+  port map (
+	clk => adc_clk,
+	reset => pl_reset, 
+	sig_in => sa_trig, 
+	len => 3000000, -- ~25ms;
+	sig_out => sa_trig_stretch
+);	  	
 
 
 

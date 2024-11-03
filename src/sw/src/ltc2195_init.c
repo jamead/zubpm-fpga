@@ -11,7 +11,7 @@
 
 
 
-void ltc2195_init(unsigned int *fpgabase)
+void ltc2195_init()
 {
 
    int i, regAddr, regVal;
@@ -20,27 +20,26 @@ void ltc2195_init(unsigned int *fpgabase)
    xil_printf("Programming LTC2195 (ADC)...    ");
 
    //Initialize SPI registers on LTC2195
-   // SPI port on LTC2195 mapped to register 14
+   // SPI port on LTC2195 mapped to register ADC_SPI_REG
    //set 2's complement
    regAddr = 1;
    regVal = 0x20;
-   fpgabase[ADC_SPI_REG] = regAddr<<8 | regVal;
+   Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_SPI_REG, regAddr<<8 | regVal);
    usleep(1000);
 
    //set 4 lane output
    regAddr = 2;
    regVal = 1;
-   fpgabase[ADC_SPI_REG] = regAddr<<8 | regVal;
+   Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_SPI_REG, regAddr<<8 | regVal);
+   //fpgabase[ADC_SPI_REG] = regAddr<<8 | regVal;
    usleep(1000);
 
    //set idly value for sdata bits
-   //Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_IDLYVAL_REG, 200);  
-   fpgabase[12] = 200;
+   Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_IDLYWVAL_REG, 300);
    //strobe the idly value into all 16 idly registers
-   //Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_IDLYSTR_REG, 0xFFFF);
-   fpgabase[13] = 0xFFFF;
-   //Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_IDLYSTR_REG, 0);  
-   fpgabase[13] = 0;
+   Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_IDLYSTR_REG, 0xFFFF);
+   Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_IDLYSTR_REG, 0);
+
 
    //read and print 20 ADC samples
    for (i=0;i<10;i++) {

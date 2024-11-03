@@ -35,7 +35,7 @@ entity dsp_cntrl is
     tbt_extclk      : in std_logic;  
     reset	        : in std_logic; 
     machine_sel     : in std_logic_vector(2 downto 0);
-    tbt_params      : in t_tbt_params;
+    tbt_params      : in t_reg_o_tbt;
     inttrig_enb     : in  std_logic_vector(3 downto 0);
     evrsync_cnt     : in  std_logic;
     evr_sa_trig     : in  std_logic;

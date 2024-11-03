@@ -52,12 +52,12 @@ architecture rtl of spi_ad9510 is
   
   
   
-   attribute mark_debug     : string;
-   attribute mark_debug of reg_o: signal is "true";
-   attribute mark_debug of sclk: signal is "true";
-   attribute mark_debug of csb: signal is "true";   
-   attribute mark_debug of sdi: signal is "true";   
-   attribute mark_debug of we_lat: signal is "true";
+--   attribute mark_debug     : string;
+--   attribute mark_debug of reg_o: signal is "true";
+--   attribute mark_debug of sclk: signal is "true";
+--   attribute mark_debug of csb: signal is "true";   
+--   attribute mark_debug of sdi: signal is "true";   
+--   attribute mark_debug of we_lat: signal is "true";
   
   
 begin  

@@ -23,8 +23,11 @@ type t_reg_o_adc_cntrl is record
 end record t_reg_o_adc_cntrl;
 
 type t_reg_i_adc_status is record
-   spi_rdata   : std_logic_vector(31 downto 0);
-   idly_rval   : std_logic_vector(8 downto 0);
+   spi_rdata     : std_logic_vector(31 downto 0);
+   idlycha_rval  : std_logic_vector(8 downto 0);
+   idlychb_rval  : std_logic_vector(8 downto 0);
+   idlychc_rval  : std_logic_vector(8 downto 0);
+   idlychd_rval  : std_logic_vector(8 downto 0);      
 end record t_reg_i_adc_status;
 
 
@@ -40,6 +43,21 @@ type t_reg_o_adc_fifo_rdout is record
    rst      : std_logic;
    rdstr    : std_logic;
 end record t_reg_o_adc_fifo_rdout;
+
+
+type t_reg_i_tbt_fifo_rdout is record
+   dout     : std_logic_vector(31 downto 0);
+   rdcnt    : std_logic_vector(31 downto 0); 
+end record t_reg_i_tbt_fifo_rdout;
+
+type t_reg_o_tbt_fifo_rdout is record
+   enb      : std_logic;
+   rst      : std_logic;
+   rdstr    : std_logic;
+end record t_reg_o_tbt_fifo_rdout;
+
+
+
 
 
 
@@ -108,7 +126,7 @@ end record afe_regs_type;
 
 
 
-type tbt_data_type is record
+type t_tbt_data is record
     cha_mag    : signed(31 downto 0);
     cha_phs    : signed(31 downto 0);
     cha_i      : signed(31 downto 0);
@@ -130,10 +148,11 @@ type tbt_data_type is record
     xpos_nm    : signed(31 downto 0);
     ypos_nm    : signed(31 downto 0);
     sum        : signed(31 downto 0);
-end record tbt_data_type;
+end record t_tbt_data;
 
 
-type sa_data_type is record
+type t_sa_data is record
+    cnt        : std_logic_vector(31 downto 0);
     cha_mag    : signed(31 downto 0);
     chb_mag    : signed(31 downto 0);
     chc_mag    : signed(31 downto 0);
@@ -141,10 +160,10 @@ type sa_data_type is record
     xpos       : signed(31 downto 0);
     ypos       : signed(31 downto 0);
     sum        : signed(31 downto 0);
-end record sa_data_type;
+end record t_sa_data;
 
 
-type fa_data_type is record
+type t_fa_data is record
     cha_mag    : signed(31 downto 0);
     chb_mag    : signed(31 downto 0);
     chc_mag    : signed(31 downto 0); 
@@ -152,7 +171,7 @@ type fa_data_type is record
     xpos       : signed(31 downto 0);
     ypos       : signed(31 downto 0);
     sum        : signed(31 downto 0);
-end record fa_data_type;
+end record t_fa_data;
 
 
 type rffe_sw_params_type is record
@@ -163,7 +182,7 @@ type rffe_sw_params_type is record
 end record rffe_sw_params_type;
 
 
-type t_tbt_params is record
+type t_reg_o_tbt is record
     kx          : std_logic_vector(31 downto 0);
     ky          : std_logic_vector(31 downto 0);
     cha_gain    : std_logic_vector(15 downto 0);
@@ -174,7 +193,7 @@ type t_tbt_params is record
     ypos_offset : std_logic_vector(31 downto 0); 
     gate_delay  : std_logic_vector(8 downto 0); 
     gate_width  : std_logic_vector(8 downto 0);
-end record t_tbt_params;
+end record t_reg_o_tbt;
 
 
 type dma_params_type is record

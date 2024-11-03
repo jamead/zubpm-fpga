@@ -40,14 +40,14 @@ architecture rtl of spi_pe43712 is
   signal spi_data           : std_logic_vector(7 downto 0); 
 
 
-  attribute mark_debug     : string;
-  attribute mark_debug of reg_o: signal is "true";
-  attribute mark_debug of sclk: signal is "true";
-  attribute mark_debug of sdi: signal is "true";  
-  attribute mark_debug of csb: signal is "true";
-  attribute mark_debug of state: signal is "true";
-  attribute mark_debug of str_lat: signal is "true";
-  attribute mark_debug of str_lat_clr: signal is "true";   
+--  attribute mark_debug     : string;
+--  attribute mark_debug of reg_o: signal is "true";
+--  attribute mark_debug of sclk: signal is "true";
+--  attribute mark_debug of sdi: signal is "true";  
+--  attribute mark_debug of csb: signal is "true";
+--  attribute mark_debug of state: signal is "true";
+--  attribute mark_debug of str_lat: signal is "true";
+--  attribute mark_debug of str_lat_clr: signal is "true";   
  
   
   

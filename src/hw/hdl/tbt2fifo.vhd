@@ -1,13 +1,12 @@
 -------------------------------------------------------------------------------
--- Title         : AXI Data Generator
+-- Title         : TbT FIFO
 -------------------------------------------------------------------------------
--- File          : axi_data_gen.vhd
+-- File          : tbt2fifo.vhd
 -- Author        : Joseph Mead  mead@bnl.gov
 -- Created       : 01/11/2013
 -------------------------------------------------------------------------------
 -- Description:
--- Provides logic to send adc or test data to FIFO interface.
--- A testdata_en input permits test counters to be sent for verification 
+-- Provides logic to send tbt data to FIFO interface.
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -- Modification history:
@@ -23,27 +22,28 @@ use ieee.numeric_std.ALL;
 library work;
 use work.bpm_package.ALL;  
   
-entity adc2fifo is
+entity tbt2fifo is
   port (
     sys_clk          	: in  std_logic;
     adc_clk             : in  std_logic;
-    reset     			: in  std_logic;   
-	reg_o               : in  t_reg_o_adc_fifo_rdout;
-	reg_i               : out t_reg_i_adc_fifo_rdout;  
-    tbt_trig            : in std_logic;                    	
-	adc_data            : in t_adc_raw
+    reset     			: in  std_logic; 
+    reg_o               : in  t_reg_o_tbt_fifo_rdout;
+	reg_i               : out t_reg_i_tbt_fifo_rdout;                       	
+	tbt_data            : in t_tbt_data;
+	tbt_trig            : in std_logic
 );    
-end adc2fifo;
+end tbt2fifo;
 
-architecture behv of adc2fifo is
+architecture behv of tbt2fifo is
   
-  
- component adcbuf_fifo IS
+
+component tbtbuf_fifo IS
   port (
-    rst : IN STD_LOGIC;
     wr_clk : IN STD_LOGIC;
+    wr_rst : IN STD_LOGIC;
     rd_clk : IN STD_LOGIC;
-    din : IN STD_LOGIC_VECTOR(63 DOWNTO 0);
+    rd_rst : IN STD_LOGIC;
+    din : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
     wr_en : IN STD_LOGIC;
     rd_en : IN STD_LOGIC;
     dout : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -51,48 +51,39 @@ architecture behv of adc2fifo is
     empty : OUT STD_LOGIC;
     rd_data_count : OUT STD_LOGIC_VECTOR(14 DOWNTO 0)
   );
-END component; 
-
-
+end component;
 
 
   
-  type     state_type is (IDLE, ARM, WR_FIFO);                   
+  type     state_type is (IDLE, ARM, WR_V0, WR_V1, WAITFORTBTTRIG);                   
   signal   state   : state_type;  
  
   
-  signal fifo_din          : std_logic_vector(63 downto 0);
+  signal fifo_din          : std_logic_vector(31 downto 0);
   signal fifo_full         : std_logic;
   signal fifo_empty        : std_logic;
   signal fifo_rd_data_cnt  : std_logic_vector(14 downto 0);
- 
   signal fifo_wren         : std_logic;
-  
   signal fifo_rdstr_prev   : std_logic;
   signal fifo_rdstr_fe     : std_logic;
-  
-  signal adc_stream_enb_sr : std_logic_vector(2 downto 0);
-  signal adc_stream_enb_s  : std_logic;
-
+  signal tbt_stream_enb_sr : std_logic_vector(2 downto 0);
+  signal tbt_stream_enb_s  : std_logic;
   signal sample_num        : std_logic_vector(31 downto 0);
   
- 
---  attribute mark_debug     : string;
---  attribute mark_debug of reg_o: signal is "true";
---  attribute mark_debug of reg_i: signal is "true";
   
   
 --  attribute mark_debug              : string;
-
+--  attribute mark_debug of reg_o: signal is "true";
+--  attribute mark_debug of reg_i: signal is "true";
+--  attribute mark_debug of tbt_trig: signal is "true";
+--  attribute mark_debug of tbt_data: signal is "true";
 --  attribute mark_debug of state: signal is "true";
-  
 --  attribute mark_debug of fifo_din: signal is "true";
 --  attribute mark_debug of fifo_wren: signal is "true";
---  attribute mark_debug of adc_fifo_rst: signal is "true";
---  attribute mark_debug of adc_stream_enb_sr: signal is "true";
---  attribute mark_debug of adc_stream_enb_s: signal is "true";
---  attribute mark_debug of adc_stream_enb: signal is "true";
---  attribute mark_debug of adc_fifo_dout: signal is "true";
+
+--  attribute mark_debug of tbt_stream_enb_sr: signal is "true";
+--  attribute mark_debug of tbt_stream_enb_s: signal is "true";
+
 --  attribute mark_debug of fifo_rdstr_fe: signal is "true";
 --  attribute mark_debug of fifo_rd_data_cnt: signal is "true";
 
@@ -129,16 +120,16 @@ process (adc_clk)
 begin
   if (rising_edge(adc_clk)) then
 	if (reset = '1') then
-	  adc_stream_enb_sr <= "000";
+	  tbt_stream_enb_sr <= "000";
     else
-      adc_stream_enb_sr(0) <= reg_o.enb;
-      adc_stream_enb_sr(1) <= adc_stream_enb_sr(0);
-      adc_stream_enb_sr(2) <= adc_stream_enb_sr(1);
+      tbt_stream_enb_sr(0) <= reg_o.enb;
+      tbt_stream_enb_sr(1) <= tbt_stream_enb_sr(0);
+      tbt_stream_enb_sr(2) <= tbt_stream_enb_sr(1);
     end if;
-    if (adc_stream_enb_sr(2) = '0' and adc_stream_enb_sr(1) = '1') then
-      adc_stream_enb_s <= '1';
+    if (tbt_stream_enb_sr(2) = '0' and tbt_stream_enb_sr(1) = '1') then
+      tbt_stream_enb_s <= '1';
     else
-      adc_stream_enb_s <= '0';
+      tbt_stream_enb_s <= '0';
     end if;
   end if;
 end process;
@@ -150,18 +141,19 @@ end process;
 
 
 
-adcfifo : adcbuf_fifo
+tbtfifo : tbtbuf_fifo
   PORT MAP (
-    rst => reg_o.rst,
-    wr_clk => adc_clk,
-    wr_en => fifo_wren,  
-    din => fifo_din,    
-    rd_clk => sys_clk,
-    rd_en => fifo_rdstr_fe,
-    dout => reg_i.dout,
-    full => fifo_full,
-    empty => fifo_empty,
-    rd_data_count => fifo_rd_data_cnt
+    wr_clk          => adc_clk,
+    wr_rst          => reg_o.rst,
+    wr_en           => fifo_wren,  
+    din             => fifo_din,    
+    rd_clk          => sys_clk,
+    rd_rst          => reg_o.rst,
+    rd_en           => fifo_rdstr_fe,
+    dout            => reg_i.dout,
+    full            => fifo_full,
+    empty           => fifo_empty,
+    rd_data_count   => fifo_rd_data_cnt
   );
 
 
@@ -181,23 +173,32 @@ process(adc_clk)
            when IDLE =>  
              fifo_wren <= '0'; 
              sample_num <= (others => '0');    
-             if (adc_stream_enb_s = '1') then
+             if (tbt_stream_enb_s = '1') then
                 state <= arm;
              end if;
              
            when ARM =>  
              if (tbt_trig = '1') then
-                state <= wr_fifo;
+                state <= wr_v0;
              end if;
-             
-           when WR_FIFO =>
+           
+           when WR_V0 => 
               fifo_wren <= '1';
-              fifo_din <= adc_data(1) & adc_data(0) & adc_data(3) & adc_data(2); 
+              fifo_din <= std_logic_vector(tbt_data.xpos_nm);
+              state <= wr_v1;             
+                                   
+           when WR_V1 =>
+              fifo_din <= std_logic_vector(tbt_data.ypos_nm);
               sample_num <= sample_num + 1;
+              state <= waitfortbttrig;      
+              
+           when WAITFORTBTTRIG =>             
+              fifo_din <= x"01234567"; --(others => '0');
+              fifo_wren <= '0';  
               if (sample_num = 32d"8010") then
-                state <= idle;
-              else
-                sample_num <= sample_num + 1;
+                 state <= idle;
+              elsif (tbt_trig = '1') then
+                 state <= wr_V0;
               end if;
               
           when OTHERS => 

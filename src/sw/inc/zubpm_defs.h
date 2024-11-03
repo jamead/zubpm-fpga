@@ -21,8 +21,8 @@
 
 
 
-void prog_ad9510(unsigned int *);
-void ltc2195_init(unsigned int *);
+void prog_ad9510();
+void ltc2195_init();
 
 void psc_control_thread();
 void psc_status_thread();

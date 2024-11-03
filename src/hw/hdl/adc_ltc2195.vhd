@@ -131,7 +131,7 @@ end component;
   signal adca_sdata      : std_logic_vector(3 downto 0);
   signal adcb_sdata      : std_logic_vector(3 downto 0);
   signal adcc_sdata      : std_logic_vector(3 downto 0);
-  signal adcd_sdata      : std_logic_vector(3 downto 0);
+  signal adcd_sdata      : std_logic_vector(3 downto 0);     
  
   signal adca_data       : std_logic_vector(15 downto 0);
   signal adcb_data       : std_logic_vector(15 downto 0);
@@ -155,23 +155,13 @@ end component;
    attribute mark_debug of adcc_data: signal is "true";
    attribute mark_debug of adcd_data: signal is "true";
    attribute mark_debug of adc_data: signal is "true";
-   --attribute mark_debug of adc_idly_wrval: signal is "true";
-   --attribute mark_debug of adc_idly_rdval: signal is "true";
-   --attribute mark_debug of adc_idly_wrstr: signal is "true";
-   --attribute mark_debug of adc_fco_dlystr: signal is "true";
    attribute mark_debug of adc0_fco_mmcm_psdone: signal is "true";
    attribute mark_debug of adc0_fco_mmcm_locked: signal is "true";   
    attribute mark_debug of adc1_fco_mmcm_psdone: signal is "true";   
    attribute mark_debug of adc1_fco_mmcm_locked: signal is "true";
+          
+     
 
-   --attribute mark_debug of cntval_dco0: signal is "true";
-   --attribute mark_debug of cntval_fco0: signal is "true";
-   --attribute mark_debug of cntval_dco1: signal is "true";
-   --attribute mark_debug of cntval_fco1: signal is "true";
-   --attribute mark_debug of adc_fifo_full: signal is "true";
-   --attribute mark_debug of adc_fifo_empty: signal is "true";
-   --attribute mark_debug of adc0_fifo_wren: signal is "true";
-   --attribute mark_debug of adc1_fifo_wren: signal is "true";
 
 
 
@@ -281,7 +271,7 @@ adc_cha: entity work.adc_s2p
     adc_fclk => adc0_fco_mmcm, 
     adc_idly_wrval => reg_o.idly_wval,
     adc_idly_wrstr => reg_o.idly_wstr(3 downto 0),
-    adc_idly_rdval => open, --adc_idly_rdval,
+    adc_idly_rdval => reg_i.idlycha_rval,
     adc_sdata => adca_sdata, 
     adc_out => adca_data
 );
@@ -294,7 +284,7 @@ adc_chb: entity work.adc_s2p
     adc_fclk => adc0_fco_mmcm, 
     adc_idly_wrval => reg_o.idly_wval,
     adc_idly_wrstr => reg_o.idly_wstr(7 downto 4),
-    adc_idly_rdval => open, --adc_idly_rdval,    
+    adc_idly_rdval => reg_i.idlychb_rval,    
     adc_sdata => adcb_sdata, 
     adc_out => adcb_data
 );
@@ -307,7 +297,7 @@ adc_chc: entity work.adc_s2p
     adc_fclk => adc1_fco_mmcm, 
     adc_idly_wrval => reg_o.idly_wval,
     adc_idly_wrstr => reg_o.idly_wstr(11 downto 8),
-    adc_idly_rdval => open, --adc_idly_rdval,      
+    adc_idly_rdval => reg_i.idlychc_rval,     
     adc_sdata => adcc_sdata, 
     adc_out => adcc_data
 );
@@ -320,7 +310,7 @@ adc_chd: entity work.adc_s2p
     adc_fclk => adc1_fco_mmcm, 
     adc_idly_wrval => reg_o.idly_wval,
     adc_idly_wrstr => reg_o.idly_wstr(15 downto 12),
-    adc_idly_rdval => open, --adc_idly_rdval,    
+    adc_idly_rdval => reg_i.idlychd_rval,    
     adc_sdata => adcd_sdata, 
     adc_out => adcd_data
 );

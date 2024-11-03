@@ -243,8 +243,8 @@ int main()
        xil_printf("DSA = %d\r\n",val);
     }
     
-	prog_ad9510(fpgabase);
-	ltc2195_init(fpgabase);
+	prog_ad9510();
+	ltc2195_init();
 	init_i2c();
 	init_sysmon();
 

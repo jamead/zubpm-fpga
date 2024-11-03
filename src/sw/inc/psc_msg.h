@@ -135,6 +135,7 @@ typedef struct StatusMsg {
 #define SOFT_TRIG_MSG1 0
 #define FP_LED_MSG1 4
 #define PILOT_TONE_ENB_MSG1 8
+#define ADC_IDLY_MSG1 12
 #define DMA_TRIG_SRC_MSG1 52
 #define MACHINE_SEL_MSG1 76
 #define PILOT_TONE_SPI_MSG1 104

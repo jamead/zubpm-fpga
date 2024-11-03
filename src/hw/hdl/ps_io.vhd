@@ -24,16 +24,18 @@ entity ps_io is
      m_axi4_s2m       : out t_pl_regs_s2m;   
      
      adc_data        : in t_adc_raw;
+     sa_data         : in t_sa_data;
      
 	 reg_o_dsa       : out t_reg_o_dsa;
 	 reg_o_pll       : out t_reg_o_pll;
-	 tbt_params      : out t_tbt_params;	
+	 reg_o_tbt       : out t_reg_o_tbt;	
 	 reg_o_adcfifo   : out t_reg_o_adc_fifo_rdout;
 	 reg_i_adcfifo   : in  t_reg_i_adc_fifo_rdout; 
+	 reg_o_tbtfifo   : out t_reg_o_tbt_fifo_rdout;
+	 reg_i_tbtfifo   : in  t_reg_i_tbt_fifo_rdout; 	 
 	 reg_o_adc       : out t_reg_o_adc_cntrl;
 	 reg_i_adc       : in  t_reg_i_adc_status; 
-	 sa_cnt          : in std_logic_vector(31 downto 0);
-   
+ 
      fp_leds         : out std_logic_vector(7 downto 0)
   );
 end ps_io;
@@ -61,7 +63,12 @@ reg_o_adc.spi_wdata <= reg_o.adc_spi.data.data;
 reg_i.adc_spi.data.data <= reg_i_adc.spi_rdata;    
 reg_o_adc.idly_wval <= reg_o.adc_idlyval.data.data;  
 reg_o_adc.idly_wstr <= reg_o.adc_idlystr.data.data; 
-reg_o_adc.fco_dlystr <= reg_o.adc_mmcmdlystr.data.data;     
+reg_o_adc.fco_dlystr <= reg_o.adc_mmcmdlystr.data.data;  
+reg_i.adc_idlychardval.data.data <= reg_i_adc.idlycha_rval;   
+reg_i.adc_idlychbrdval.data.data <= reg_i_adc.idlychb_rval; 
+reg_i.adc_idlychcrdval.data.data <= reg_i_adc.idlychc_rval; 
+reg_i.adc_idlychdrdval.data.data <= reg_i_adc.idlychd_rval; 
+
 
 reg_o_pll.str <= reg_o.pll_spi.data.swmod;                
 reg_o_pll.data <= reg_o.pll_spi.data.data;
@@ -74,24 +81,39 @@ reg_i.adc_chb.data.data <= adc_data(1);
 reg_i.adc_chc.data.data <= adc_data(2);
 reg_i.adc_chd.data.data <= adc_data(3);
 
-tbt_params.kx <= reg_o.kx.data.data;
-tbt_params.ky <= reg_o.ky.data.data;
-tbt_params.cha_gain <= reg_o.cha_gain.data.data;
-tbt_params.chb_gain <= reg_o.chb_gain.data.data;
-tbt_params.chc_gain <= reg_o.chc_gain.data.data;
-tbt_params.chd_gain <= reg_o.chd_gain.data.data;
-tbt_params.xpos_offset <= reg_o.xpos_offset.data.data;
-tbt_params.ypos_offset <= reg_o.ypos_offset.data.data;
-tbt_params.gate_delay <= reg_o.gate_delay.data.data;
-tbt_params.gate_width <= reg_o.gate_width.data.data;
+reg_o_tbt.kx <= reg_o.kx.data.data;
+reg_o_tbt.ky <= reg_o.ky.data.data;
+reg_o_tbt.cha_gain <= reg_o.cha_gain.data.data;
+reg_o_tbt.chb_gain <= reg_o.chb_gain.data.data;
+reg_o_tbt.chc_gain <= reg_o.chc_gain.data.data;
+reg_o_tbt.chd_gain <= reg_o.chd_gain.data.data;
+reg_o_tbt.xpos_offset <= reg_o.xpos_offset.data.data;
+reg_o_tbt.ypos_offset <= reg_o.ypos_offset.data.data;
+reg_o_tbt.gate_delay <= reg_o.gate_delay.data.data;
+reg_o_tbt.gate_width <= reg_o.gate_width.data.data;
 
-reg_o_adcfifo.enb <= reg_o.adcfifo_streamenb.data.data(0);
+reg_o_adcfifo.enb <= reg_o.adcfifo_streamenb.data.swmod;
 reg_o_adcfifo.rst <= reg_o.adcfifo_reset.data.data(0);
 reg_o_adcfifo.rdstr <= reg_o.adcfifo_data.data.swacc;
 reg_i.adcfifo_rdcnt.data.data <= reg_i_adcfifo.rdcnt;
 reg_i.adcfifo_data.data.data <= reg_i_adcfifo.dout;
 
-reg_i.sa_cnt.val.data <= sa_cnt;
+reg_o_tbtfifo.enb <= reg_o.tbtfifo_streamenb.data.swmod;
+reg_o_tbtfifo.rst <= reg_o.tbtfifo_reset.data.data(0);
+reg_o_tbtfifo.rdstr <= reg_o.tbtfifo_data.data.swacc;
+reg_i.tbtfifo_rdcnt.data.data <= reg_i_tbtfifo.rdcnt;
+reg_i.tbtfifo_data.data.data <= reg_i_tbtfifo.dout;
+
+
+reg_i.sa_cnt.data.data <= sa_data.cnt;
+reg_i.sa_cha.data.data <= std_logic_vector(sa_data.cha_mag);
+reg_i.sa_chb.data.data <= std_logic_vector(sa_data.chb_mag);
+reg_i.sa_chc.data.data <= std_logic_vector(sa_data.chc_mag);
+reg_i.sa_chd.data.data <= std_logic_vector(sa_data.chd_mag);
+reg_i.sa_sum.data.data <= std_logic_vector(sa_data.sum);
+reg_i.sa_xpos.data.data <= std_logic_vector(sa_data.xpos);
+reg_i.sa_ypos.data.data <= std_logic_vector(sa_data.ypos);
+
 
 
 

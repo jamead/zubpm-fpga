@@ -186,7 +186,7 @@ void Host2NetworkConvStatus(char *inbuf, int len) {
 }
 
 
-
+/*
 void ReadReg(volatile unsigned int *fpgabase, int regaddr, char *msg) {
 
     int rawreg;
@@ -225,12 +225,12 @@ void ReadBrdTemp(u8 addr, char *msg) {
     memcpy(msg,&temp,sizeof(int));
     //printf("Size of int: %d\n",sizeof(int));
 }
+*/
 
 
 
 
-
-void ReadGenRegs(u32 *fpgabase, char *msg) {
+void ReadGenRegs(char *msg) {
 
     u32 *msg_u32ptr;
     struct StatusMsg status;
@@ -244,25 +244,25 @@ void ReadGenRegs(u32 *fpgabase, char *msg) {
     msg[3] = (short int) MSGID30;
     *++msg_u32ptr = htonl(MSGID30LEN); //body length
 
-    status.cha_gain = ReadPLioReg(CHA_GAIN_REG);
-    status.chb_gain = ReadPLioReg(CHB_GAIN_REG);
-    status.chc_gain = ReadPLioReg(CHC_GAIN_REG);
-    status.chd_gain = ReadPLioReg(CHD_GAIN_REG);
-    status.pll_locked = ReadPLioReg(PLL_LOCKED_REG);
-    status.kx = ReadPLioReg(KX_REG);
-    status.ky = ReadPLioReg(KY_REG);
-    status.bba_xoff = ReadPLioReg(BBA_XOFF_REG);
-    status.bba_yoff = ReadPLioReg(BBA_YOFF_REG);
-    status.rf_atten = ReadPLioReg(RF_DSA_REG) / 4;
-    status.coarse_trig_dly = ReadPLioReg(COARSE_TRIG_DLY_REG);
-    status.fine_trig_dly = ReadPLioReg(FINE_TRIG_DLY_REG);
+    status.cha_gain = Xil_In32(XPAR_M_AXI_BASEADDR + CHA_GAIN_REG);
+    status.chb_gain = Xil_In32(XPAR_M_AXI_BASEADDR + CHB_GAIN_REG);
+    status.chc_gain = Xil_In32(XPAR_M_AXI_BASEADDR + CHC_GAIN_REG);
+    status.chd_gain = Xil_In32(XPAR_M_AXI_BASEADDR + CHD_GAIN_REG);
+    //status.pll_locked = Xil_In32(XPAR_M_AXI_BASEADDR + PLL_LOCKED_REG);
+    status.kx = Xil_In32(XPAR_M_AXI_BASEADDR + KX_REG);
+    status.ky = Xil_In32(XPAR_M_AXI_BASEADDR + KY_REG);
+    //status.bba_xoff = Xil_In32(XPAR_M_AXI_BASEADDR + BBA_XOFF_REG);
+    //status.bba_yoff = Xil_In32(XPAR_M_AXI_BASEADDR + BBA_YOFF_REG);
+    //status.rf_atten = Xil_In32(XPAR_M_AXI_BASEADDR + RF_DSA_REG) / 4;
+    //status.coarse_trig_dly = Xil_In32(XPAR_M_AXI_BASEADDR + COARSE_TRIG_DLY_REG);
+    //status.fine_trig_dly = Xil_In32(XPAR_M_AXI_BASEADDR + FINE_TRIG_DLY_REG);
 
-    status.trig_dmacnt = ReadPLioReg(DMA_TRIGCNT_REG);
-    status.trig_eventno = ReadPLioReg(EVR_DMA_TRIGNUM_REG);
-    status.evr_ts_s_triglat = ReadPLioReg(EVR_TS_S_LAT_REG);
-    status.evr_ts_ns_triglat = ReadPLioReg(EVR_TS_NS_LAT_REG);
-    status.trigtobeam_thresh = ReadPLioReg(TRIGTOBEAM_THRESH_REG);
-    status.trigtobeam_dly = ReadPLioReg(TRIGTOBEAM_DLY_REG);
+    //status.trig_dmacnt = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_TRIGCNT_REG);
+    //status.trig_eventno = Xil_In32(XPAR_M_AXI_BASEADDR + EVR_DMA_TRIGNUM_REG);
+    //status.evr_ts_s_triglat = Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_S_LAT_REG);
+    //status.evr_ts_ns_triglat = Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_NS_LAT_REG);
+    //status.trigtobeam_thresh = Xil_In32(XPAR_M_AXI_BASEADDR + TRIGTOBEAM_THRESH_REG);
+    //status.trigtobeam_dly = Xil_In32(XPAR_M_AXI_BASEADDR + TRIGTOBEAM_DLY_REG);
 
 
     //copy the structure to the PSC msg buffer
@@ -273,7 +273,7 @@ void ReadGenRegs(u32 *fpgabase, char *msg) {
 
 
 
-void ReadPosRegs(u32 *fpgabase, char *msg) {
+void ReadPosRegs(char *msg) {
 
     u32 *msg_u32ptr;
     //char  *msg_ptr;
@@ -288,16 +288,16 @@ void ReadPosRegs(u32 *fpgabase, char *msg) {
     *++msg_u32ptr = htonl(MSGID31LEN); //body length
 
     //write the PSC message structure
-    SAdata.count     = ReadPLioReg(SA_TRIGNUM_REG);
-    SAdata.evr_ts_s  = ReadPLioReg(EVR_TS_S_REG);
-    SAdata.evr_ts_ns = ReadPLioReg(EVR_TS_S_REG);
-    SAdata.cha_mag   = ReadPLioReg(SA_CHA_REG);
-    SAdata.chb_mag   = ReadPLioReg(SA_CHB_REG);
-    SAdata.chc_mag   = ReadPLioReg(SA_CHC_REG);
-    SAdata.chd_mag   = ReadPLioReg(SA_CHD_REG);
-    SAdata.sum       = ReadPLioReg(SA_SUM_REG);
-    SAdata.xpos_nm   = ReadPLioReg(SA_XPOS_REG);
-    SAdata.ypos_nm   = ReadPLioReg(SA_YPOS_REG);
+    SAdata.count     = Xil_In32(XPAR_M_AXI_BASEADDR + SA_TRIGNUM_REG);
+    SAdata.evr_ts_s  = 1234; //Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_S_REG);
+    SAdata.evr_ts_ns = 5678; //Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_S_REG);
+    SAdata.cha_mag   = Xil_In32(XPAR_M_AXI_BASEADDR + SA_CHA_REG);
+    SAdata.chb_mag   = Xil_In32(XPAR_M_AXI_BASEADDR + SA_CHB_REG);
+    SAdata.chc_mag   = Xil_In32(XPAR_M_AXI_BASEADDR + SA_CHC_REG);
+    SAdata.chd_mag   = Xil_In32(XPAR_M_AXI_BASEADDR + SA_CHD_REG);
+    SAdata.sum       = Xil_In32(XPAR_M_AXI_BASEADDR + SA_SUM_REG);
+    SAdata.xpos_nm   = Xil_In32(XPAR_M_AXI_BASEADDR + SA_XPOS_REG);
+    SAdata.ypos_nm   = Xil_In32(XPAR_M_AXI_BASEADDR + SA_YPOS_REG);
 
     //copy the structure to the PSC msg buffer
     memcpy(&msg[MSGHDRLEN],&SAdata,sizeof(SAdata));
@@ -306,7 +306,7 @@ void ReadPosRegs(u32 *fpgabase, char *msg) {
 }
 
 
-void ReadSysInfo(u32 *fpgabase, char *msg) {
+void ReadSysInfo(char *msg) {
 
     u32 *msg_u32ptr;
     u8 i;
@@ -323,7 +323,7 @@ void ReadSysInfo(u32 *fpgabase, char *msg) {
     //write the PSC message
 
     //read FPGA version from PL register
-    syshealth.fpgaver = ReadPLioReg(FPGA_VER_REG);
+    syshealth.fpgaver = Xil_In32(XPAR_M_AXI_BASEADDR + FPGA_VER_REG);
 
     //read temperature from i2c bus
     i2c_set_port_expander(I2C_PORTEXP1_ADDR,1);
@@ -386,9 +386,7 @@ void psc_status_thread()
 	struct sockaddr_in serv_addr, cli_addr;
     int n,loop=0;
     int sa_trigwait, sa_cnt=0, sa_cnt_prev=0;
-	unsigned int *fpgabase;
 
-	fpgabase = (unsigned int *) IOBUS_BASEADDR;
 
 
     xil_printf("Starting PSC Status Server...\r\n");
@@ -435,20 +433,20 @@ reconnect:
 
 	while (1) {
 
-		//xil_printf("In main loop...\r\n");
+		//xil_printf("In Status main loop...\r\n");
 
 		//loop here until next 10Hz event
 		do {
 		   sa_trigwait++;
 		   sa_cnt = Xil_In32(XPAR_M_AXI_BASEADDR + SA_TRIGNUM_REG);
-		   xil_printf("SA CNT: %d    %d\r\n",sa_cnt, sa_cnt_prev);
+		   //xil_printf("SA CNT: %d    %d\r\n",sa_cnt, sa_cnt_prev);
 		   vTaskDelay(pdMS_TO_TICKS(10));
 		}
 	    while (sa_cnt_prev == sa_cnt);
 		sa_cnt_prev = sa_cnt;
 
 
-        ReadGenRegs(fpgabase,msgid30_buf);
+        ReadGenRegs(msgid30_buf);
         //write 10Hz msg30 packet
 	    Host2NetworkConvStatus(msgid30_buf,sizeof(msgid30_buf)+MSGHDRLEN);
 	    n = write(newsockfd,msgid30_buf,MSGID30LEN+MSGHDRLEN);
@@ -459,7 +457,8 @@ reconnect:
         }
 
 
-        ReadPosRegs(fpgabase,msgid31_buf);
+
+        ReadPosRegs(msgid31_buf);
         //write 10Hz msg31 packet
         Host2NetworkConvStatus(msgid31_buf,sizeof(msgid31_buf)+MSGHDRLEN);
 	    n = write(newsockfd,msgid31_buf,MSGID31LEN+MSGHDRLEN);
@@ -469,10 +468,11 @@ reconnect:
           goto reconnect;
         }
 
+
         // Update Slow status information at 1Hz
     	if ((loop % 10) == 0) {
            //printf("Reading Sys Info\n");
-           ReadSysInfo(fpgabase,msgid32_buf);
+           ReadSysInfo(msgid32_buf);
     	   Host2NetworkConvStatus(msgid32_buf,sizeof(msgid32_buf)+MSGHDRLEN);
     	    //for(i=0;i<160;i=i+4)
               //    printf("%d: %d  %d  %d  %d\n",i-8,msgid32_buf[i], msgid32_buf[i+1],

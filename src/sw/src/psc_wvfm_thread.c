@@ -243,18 +243,19 @@ void ReadDMAFAWvfm(char *msg) {
 
 
 
-void ReadLiveTbTWvfm(volatile unsigned int *fpgabase, char *msg) {
+void ReadLiveTbTWvfm(char *msg) {
 
     int i;
     u32 *msg_u32ptr;
+    u32 regval;
 
-
-    fpgabase[TBTFIFO_STREAMENB_REG] = 1;
-    fpgabase[TBTFIFO_STREAMENB_REG] = 0;
+    //Enable TbT FIFO write
+    Xil_Out32(XPAR_M_AXI_BASEADDR + TBTFIFO_STREAMENB_REG, 1);
     usleep(30000);
 
     //printf("Reading TbT FIFO...\n");
-    //printf("\tWords in TbT FIFO = %d\n",fpgabase[TBTFIFO_CNT_REG]);
+    regval = Xil_In32(XPAR_M_AXI_BASEADDR + TBTFIFO_CNT_REG);
+    //printf("\tWords in TbT FIFO = %d\n",regval);
 
     //write the PSC Header
      msg_u32ptr = (u32 *)msg;
@@ -268,13 +269,13 @@ void ReadLiveTbTWvfm(volatile unsigned int *fpgabase, char *msg) {
 
     // Get TbT Waveform
     for (i=0;i<8000*2;i++)
-	   *msg_u32ptr++ = fpgabase[TBTFIFO_DATA_REG];
+	   *msg_u32ptr++ = Xil_In32(XPAR_M_AXI_BASEADDR + TBTFIFO_DATA_REG);
 
     //printf("TbT FIFO Read Complete...\n");
     //printf("Resetting FIFO...\n");
-    fpgabase[TBTFIFO_RST_REG] = 0x1;
+    Xil_Out32(XPAR_M_AXI_BASEADDR + TBTFIFO_RST_REG, 1);
     usleep(1);
-    fpgabase[TBTFIFO_RST_REG] = 0x0;
+    Xil_Out32(XPAR_M_AXI_BASEADDR + TBTFIFO_RST_REG, 0);
     usleep(10);
 
 }
@@ -292,7 +293,7 @@ void ReadLiveADCWvfm(char *msg) {
     Xil_Out32(XPAR_M_AXI_BASEADDR + ADCFIFO_STREAMENB_REG, 0);
     usleep(10000);
     //xil_printf("Reading ADC FIFO...\r\n");
-    regval = Xil_In32(XPAR_M_AXI_BASEADDR + ADCFIFO_CNT_REG);
+    //regval = Xil_In32(XPAR_M_AXI_BASEADDR + ADCFIFO_CNT_REG);
     //xil_printf("\tWords in ADC FIFO = %d\r\n",regval);
 
     //write the PSC Header
@@ -469,9 +470,9 @@ reconnect:
         		goto reconnect;
         	}
 
-            /*
+
         	//xil_printf("%8d:  Reading TbT Waveform...\r\n",loopcnt);
-        	ReadLiveTbTWvfm(fpgalivebase,msgid52_buf);
+        	ReadLiveTbTWvfm(msgid52_buf);
         	//write out Live TbT data (msg52)
         	Host2NetworkConvWvfm(msgid52_buf,sizeof(msgid52_buf)+MSGHDRLEN);
         	n = write(newsockfd,msgid52_buf,MSGID52LEN+MSGHDRLEN);
@@ -480,7 +481,7 @@ reconnect:
         		close(newsockfd);
         		goto reconnect;
         	}
-            */
+
         }
 
 

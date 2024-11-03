@@ -1,7 +1,8 @@
 
-
 #include <stdio.h>
 #include <string.h>
+#include <sleep.h>
+#include "xil_cache.h"
 
 #include "lwip/sockets.h"
 #include "netif/xadapter.h"
@@ -16,54 +17,57 @@
 #include "../inc/psc_msg.h"
 
 
+
+
+
 #define PORT  7
 
 
 
-void set_fpleds(volatile unsigned int *fpgabase, int msgVal)  {
-	fpgabase[FP_LEDS_REG] = msgVal;
+void set_fpleds(u32 msgVal)  {
+	Xil_Out32(XPAR_M_AXI_BASEADDR + FP_LEDS_REG, msgVal);
 }
 
 
-void soft_trig(volatile unsigned int *fpgabase, int msgVal) {
-    fpgabase[DMA_SOFTTRIG_REG] = msgVal;
+void soft_trig(u32 msgVal) {
+	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_SOFTTRIG_REG, msgVal);
 }
 
-void set_atten(volatile unsigned int *fpgabase, int msgVal) {
+void set_atten(u32 msgVal) {
     xil_printf("Setting RF attenuator to %d dB\r\n",msgVal);
-    fpgabase[RF_DSA_REG] = msgVal*4;
+    Xil_Out32(XPAR_M_AXI_BASEADDR + RF_DSA_REG, msgVal*4);
 }
 
-void set_geo_dly(volatile unsigned int *fpgabase, int msgVal) {
+void set_geo_dly(u32 msgVal) {
     // the Geo delay is the same as tbt_gate delay, set them both for now
-    fpgabase[FINE_TRIG_DLY_REG] = msgVal;
-    fpgabase[TBT_GATEDLY_REG] = msgVal;
+	Xil_Out32(XPAR_M_AXI_BASEADDR + FINE_TRIG_DLY_REG, msgVal);
+	Xil_Out32(XPAR_M_AXI_BASEADDR + TBT_GATEDLY_REG, msgVal);
 }
 
 
-void set_coarse_dly(volatile unsigned int *fpgabase, int msgVal) {
-    fpgabase[COARSE_TRIG_DLY_REG] = msgVal;
+void set_coarse_dly(u32 msgVal) {
+	Xil_Out32(XPAR_M_AXI_BASEADDR + COARSE_TRIG_DLY_REG, msgVal);
 }
 
 
 
-void set_trigtobeam_thresh(volatile unsigned int *fpgabase, int msgVal) {
-    fpgabase[TRIGTOBEAM_THRESH_REG] = msgVal;
+void set_trigtobeam_thresh(int msgVal) {
+	Xil_Out32(XPAR_M_AXI_BASEADDR + TRIGTOBEAM_THRESH_REG, msgVal);
 }
 
 
-void set_eventno(volatile unsigned int *fpgabase, int msgVal) {
-    fpgabase[EVR_DMA_TRIGNUM_REG] = msgVal;
+void set_eventno(u32 msgVal) {
+	Xil_Out32(XPAR_M_AXI_BASEADDR + EVR_DMA_TRIGNUM_REG, msgVal);
 }
 
-void set_trigsrc(volatile unsigned int *fpgabase, int msgVal) {
+void set_trigsrc(u32 msgVal) {
     if (msgVal == 0) {
         xil_printf("Setting Trigger Source to EVR\r\n");
-        fpgabase[TRIG_EVRINT_SEL_REG] = msgVal;
+        Xil_Out32(XPAR_M_AXI_BASEADDR + TRIG_EVRINT_SEL_REG, msgVal);
     }
     else if (msgVal == 1) {
 	    xil_printf("Setting Trigger Source to INT (soft)\r\n");
-        fpgabase[TRIG_EVRINT_SEL_REG] = msgVal;
+        Xil_Out32(XPAR_M_AXI_BASEADDR + TRIG_EVRINT_SEL_REG, msgVal);
     }
     else
         xil_printf("Invalid Trigger Source\r\n");
@@ -72,52 +76,54 @@ void set_trigsrc(volatile unsigned int *fpgabase, int msgVal) {
 
 
 
-void set_kxky(volatile unsigned int *fpgabase, int axis, int msgVal) {
+void set_kxky(u32 axis, u32 msgVal) {
 
     if (axis == HOR)	{
        xil_printf("Setting Kx to %d nm\r\n",msgVal);
-       fpgabase[KX_REG] = msgVal;
+       Xil_Out32(XPAR_M_AXI_BASEADDR + KX_REG, msgVal);
     }
     else {
        xil_printf("Setting Ky to %d nm\r\n",msgVal);
-       fpgabase[KY_REG] = msgVal;
+       Xil_Out32(XPAR_M_AXI_BASEADDR + KY_REG, msgVal);
+
     }
 }
 
 
-void set_bbaoffset(volatile unsigned int *fpgabase, int axis, int msgVal) {
+void set_bbaoffset(u32 axis, u32 msgVal) {
 
     if (axis == HOR)	{
        xil_printf("Setting BBA X to %d nm\r\n",msgVal);
-       fpgabase[BBA_XOFF_REG] = msgVal;
+       Xil_Out32(XPAR_M_AXI_BASEADDR + BBA_XOFF_REG, msgVal);
+
     }
     else {
        xil_printf("Setting BBA Y to %d nm\r\n",msgVal);
-       fpgabase[BBA_YOFF_REG] = msgVal;
+       Xil_Out32(XPAR_M_AXI_BASEADDR + BBA_YOFF_REG, msgVal);
     }
 }
 
 
 
 
-void set_gain(volatile unsigned int *fpgabase, int channel, int msgVal) {
+void set_gain(u32 channel, u32 msgVal) {
 
 
 switch(channel) {
     case CHA:
-	   fpgabase[CHA_GAIN_REG] = msgVal;
+       Xil_Out32(XPAR_M_AXI_BASEADDR + CHA_GAIN_REG, msgVal);
        xil_printf("Setting ChA gain to %d \r\n",msgVal);
 	   break;
 	case CHB:
-	   fpgabase[CHB_GAIN_REG] = msgVal;
+	   Xil_Out32(XPAR_M_AXI_BASEADDR + CHB_GAIN_REG, msgVal);
        xil_printf("Setting ChB gain to %d\r\n",msgVal);
 	   break;
     case CHC:
-	   fpgabase[CHC_GAIN_REG] = msgVal;
+       Xil_Out32(XPAR_M_AXI_BASEADDR + CHC_GAIN_REG, msgVal);
        xil_printf("Setting ChC gain to %d\r\n",msgVal);
 	   break;
 	case CHD:
-	   fpgabase[CHD_GAIN_REG] = msgVal;
+	   Xil_Out32(XPAR_M_AXI_BASEADDR + CHD_GAIN_REG, msgVal);
        xil_printf("Setting ChD gain to %d\r\n",msgVal);
 	   break;
     default:
@@ -138,10 +144,8 @@ void psc_control_thread()
 	int RECV_BUF_SIZE = 1024;
 	char buffer[RECV_BUF_SIZE];
 	int n, *bufptr, numpackets=0;
-    int MsgAddr, MsgData;
+    u32 MsgAddr, MsgData, rdval;
 
-	unsigned int *fpgabase;
-	fpgabase = (unsigned int *) IOBUS_BASEADDR;
 
 
     xil_printf("Starting PSC Control Server...\r\n");
@@ -202,85 +206,105 @@ reconnect:
         switch(MsgAddr) {
 			case SOFT_TRIG_MSG1:
 				xil_printf("Soft Trigger Message:   Value=%d\r\n",MsgData);
-                soft_trig(fpgabase,MsgData);
+                //soft_trig(MsgData);
                 break;
 
 			case DMA_TRIG_SRC_MSG1:
 				xil_printf("Set Trigger Source Message:   Value=%d\r\n",MsgData);
-                set_trigsrc(fpgabase,MsgData);
+                //set_trigsrc(MsgData);
                 break;
 
 			case RF_ATTEN_MSG1:
 				xil_printf("RF Attenuator Message:   Value=%d\r\n",MsgData);
-                set_atten(fpgabase,MsgData);
+                set_atten(MsgData);
                 break;
 
 			case KX_MSG1:
 				xil_printf("Kx Message:   Value=%d\r\n",MsgData);
-                set_kxky(fpgabase,HOR,MsgData);
+                set_kxky(HOR,MsgData);
                 break;
 
 			case KY_MSG1:
 				xil_printf("Ky Message:   Value=%d\r\n",MsgData);
-                set_kxky(fpgabase,VERT,MsgData);
+                set_kxky(VERT,MsgData);
                 break;
 
             case BBA_XOFF_MSG1:
             	xil_printf("BBA X Offset:   Value=%d\r\n",MsgData);
-            	set_bbaoffset(fpgabase,HOR,MsgData);
+            	set_bbaoffset(HOR,MsgData);
                 break;
 
             case BBA_YOFF_MSG1:
             	xil_printf("BBA Y Offset:   Value=%d\r\n",MsgData);
-            	set_bbaoffset(fpgabase,VERT,MsgData);
+            	set_bbaoffset(VERT,MsgData);
                 break;
 
             case CHA_GAIN_MSG1:
             	xil_printf("ChA Gain Message:   Value=%d\r\n",MsgData);
-                set_gain(fpgabase,CHA,MsgData);
+                set_gain(CHA,MsgData);
                 break;
 
             case CHB_GAIN_MSG1:
             	xil_printf("ChB Gain Message:   Value=%d\r\n",MsgData);
-                set_gain(fpgabase,CHB,MsgData);
+                set_gain(CHB,MsgData);
                 break;
 
             case CHC_GAIN_MSG1:
             	xil_printf("ChC Gain Message:   Value=%d\r\n",MsgData);
-                set_gain(fpgabase,CHC,MsgData);
+                set_gain(CHC,MsgData);
                 break;
 
             case CHD_GAIN_MSG1:
             	xil_printf("ChD Gain Message:   Value=%d\r\n",MsgData);
-                set_gain(fpgabase,CHD,MsgData);
+                set_gain(CHD,MsgData);
                 break;
 
             case FINE_TRIG_DLY_MSG1:
             	xil_printf("Fine Trig Delay Message:   Value=%d\r\n",MsgData);
-                set_geo_dly(fpgabase,MsgData);
+                //set_geo_dly(MsgData);
                 break;
 
             case COARSE_TRIG_DLY_MSG1:
             	xil_printf("Coarse Trig Delay Message:   Value=%d\r\n",MsgData);
-            	set_coarse_dly(fpgabase,MsgData);
+            	//set_coarse_dly(MsgData);
             	break;
 
             case TRIGTOBEAM_THRESH_MSG1:
             	xil_printf("Trigger to Beam Threshold Message:   Value=%d\r\n",MsgData);
-            	set_trigtobeam_thresh(fpgabase,MsgData);
+            	//set_trigtobeam_thresh(MsgData);
             	break;
 
 
             case EVENT_NO_MSG1:
             	xil_printf("TbT Gate Width Message:   Value=%d\r\n",MsgData);
-                set_eventno(fpgabase,MsgData);
+                //set_eventno(MsgData);
                 break;
 
 
             case FP_LED_MSG1:
             	xil_printf("Setting FP LED:   Value=%d\r\n",MsgData);
-            	set_fpleds(fpgabase,MsgData);
+            	//set_fpleds(MsgData);
             	break;
+
+            case ADC_IDLY_MSG1:
+            	xil_printf("Setting ADC IDLY:  Value=%d\r\n",MsgData);
+            	Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_IDLYWVAL_REG, MsgData);
+            	//strobe the idly value into all 16 idly registers
+            	Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_IDLYSTR_REG, 0xFFFF);
+            	Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_IDLYSTR_REG, 0);
+            	usleep(10);
+            	rdval = Xil_In32(XPAR_M_AXI_BASEADDR + ADC_IDLYCHARVAL_REG);
+            	xil_printf("ChA IDLY rval=%d\r\n",rdval);
+            	rdval = Xil_In32(XPAR_M_AXI_BASEADDR + ADC_IDLYCHBRVAL_REG);
+            	xil_printf("ChB IDLY rval=%d\r\n",rdval);
+            	rdval = Xil_In32(XPAR_M_AXI_BASEADDR + ADC_IDLYCHCRVAL_REG);
+            	xil_printf("ChC IDLY rval=%d\r\n",rdval);
+            	rdval = Xil_In32(XPAR_M_AXI_BASEADDR + ADC_IDLYCHDRVAL_REG);
+            	xil_printf("ChD IDLY rval=%d\r\n",rdval);
+
+
+           	    break;
+
 
             default:
             	xil_printf("Msg not supported yet...\r\n");
