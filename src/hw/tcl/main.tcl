@@ -28,6 +28,10 @@ proc setSources {} {
   lappend Sources {"../hdl/dsp_cntrl.vhd" "VHDL 2008"}    
   lappend Sources {"../hdl/trig_logic.vhd" "VHDL 2008"} 
   lappend Sources {"../hdl/stretch.vhd" "VHDL 2008"} 
+  lappend Sources {"../hdl/adc2dma.vhd" "VHDL 2008"} 
+  lappend Sources {"../hdl/tbt2dma.vhd" "VHDL 2008"}    
+  lappend Sources {"../hdl/fa2dma.vhd" "VHDL 2008"}   
+  
   lappend Sources {"../hdl/dsp/tbt_dsp.vhd" "VHDL 2008"}   
   lappend Sources {"../hdl/dsp/beam_sine_rom.vhd" "VHDL 2008"} 
   lappend Sources {"../hdl/dsp/beam_cos_rom.vhd" "VHDL 2008"}    
@@ -71,6 +75,7 @@ proc doOnCreate {} {
   source ${TclPath}/adc_fco_phaseshift.tcl
   source ${TclPath}/adcbuf_fifo.tcl
   source ${TclPath}/tbtbuf_fifo.tcl 
+  source ${TclPath}/adcdata_fifo.tcl 
   source ${TclPath}/div_gen.tcl
 
 

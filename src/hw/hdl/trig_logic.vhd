@@ -14,23 +14,27 @@
 -- Modification history:
 -- 09/24/2010: created.
 -------------------------------------------------------------------------------
+
 library ieee;
 use ieee.std_logic_1164.all;
-use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
+use ieee.numeric_std.ALL;
+
+
+library work;
+use work.bpm_package.ALL;  
+
 
 entity trig_logic is
   port (
     adc_clk         : in  std_logic;  
     reset           : in  std_logic;
-    soft_trig       : in  std_logic;
+    reg_o           : in t_reg_o_dma;
+    reg_i           : out  t_reg_i_dma;
     evr_trig        : in  std_logic;
-    trig_dly_reg    : in  std_logic_vector(31 downto 0);
-    trig_evrintsel  : in  std_logic;
     dma_adc_active  : in  std_logic;
     dma_tbt_active  : in  std_logic;  
     dma_fa_active   : in  std_logic;  
-    trig_cnt        : out std_logic_vector(31 downto 0);
     evr_ts          : in  std_logic_vector(63 downto 0);
     evr_ts_lat      : out std_logic_vector(63 downto 0);
     dma_trig        : out std_logic
@@ -49,25 +53,30 @@ architecture behv of trig_logic is
   signal dma_trig_lat      : std_logic;
   signal dma_running       : std_logic;
   signal dma_done          : std_logic;
+  signal trig_cnt          : std_logic_vector(31 downto 0);
 
   --debug signals (connect to ila)
---   attribute mark_debug     : string;
---   attribute mark_debug of dma_adc_active: signal is "true";
---   attribute mark_debug of dma_tbt_active: signal is "true";
---   attribute mark_debug of dma_fa_active: signal is "true";
---   attribute mark_debug of dma_active: signal is "true";
---   attribute mark_debug of dma_trig: signal is "true";  
---   attribute mark_debug of dma_trig_lat: signal is "true";
---   attribute mark_debug of dma_running: signal is "true";  
---   attribute mark_debug of dma_done: signal is "true";
---   attribute mark_debug of trig_cnt: signal is "true";
---   attribute mark_debug of evr_trig_s: signal is "true";
---   attribute mark_debug of soft_trig: signal is "true";
---   attribute mark_debug of soft_trig_sr: signal is "true";
---   attribute mark_debug of soft_trig_s: signal is "true";
---   attribute mark_debug of trig_evrintsel: signal is "true";
+   attribute mark_debug     : string;
+   attribute mark_debug of reg_i: signal is "true";
+   attribute mark_debug of reg_o: signal is "true";
+   attribute mark_debug of dma_adc_active: signal is "true";
+   attribute mark_debug of dma_tbt_active: signal is "true";
+   attribute mark_debug of dma_fa_active: signal is "true";
+   attribute mark_debug of dma_active: signal is "true";
+   attribute mark_debug of dma_trig: signal is "true";  
+   attribute mark_debug of dma_trig_lat: signal is "true";
+   attribute mark_debug of dma_running: signal is "true";  
+   attribute mark_debug of dma_done: signal is "true";
+   attribute mark_debug of trig_cnt: signal is "true";
+   attribute mark_debug of evr_trig_s: signal is "true";
+   attribute mark_debug of soft_trig_sr: signal is "true";
+   attribute mark_debug of soft_trig_s: signal is "true";
+
 
 begin  
+
+reg_i.trig_cnt <= trig_cnt;
+reg_i.status <= dma_adc_active & dma_tbt_active & dma_fa_active & dma_done & dma_running;
 
 
 dma_active <= dma_adc_active or dma_tbt_active or dma_fa_active;
@@ -79,7 +88,7 @@ begin
     if (reset = '1') then
       dma_trig <= '0';
     else
-      if (trig_evrintsel = '0') then
+      if (reg_o.trigsrc = '0') then
          dma_trig <= evr_trig_s;
       else 
          dma_trig <= soft_trig_s;
@@ -157,7 +166,7 @@ begin
 	if (reset = '1') then
 	  soft_trig_sr <= "000";
     else
-      soft_trig_sr(0) <= soft_trig;
+      soft_trig_sr(0) <= reg_o.soft_trig;
       soft_trig_sr(1) <= soft_trig_sr(0);
       soft_trig_sr(2) <= soft_trig_sr(1);
     end if;

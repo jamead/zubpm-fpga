@@ -32,7 +32,9 @@ entity ps_io is
 	 reg_o_adcfifo   : out t_reg_o_adc_fifo_rdout;
 	 reg_i_adcfifo   : in  t_reg_i_adc_fifo_rdout; 
 	 reg_o_tbtfifo   : out t_reg_o_tbt_fifo_rdout;
-	 reg_i_tbtfifo   : in  t_reg_i_tbt_fifo_rdout; 	 
+	 reg_i_tbtfifo   : in  t_reg_i_tbt_fifo_rdout; 	
+	 reg_o_dma       : out t_reg_o_dma; 
+	 reg_i_dma       : in  t_reg_i_dma;
 	 reg_o_adc       : out t_reg_o_adc_cntrl;
 	 reg_i_adc       : in  t_reg_i_adc_status; 
  
@@ -103,6 +105,21 @@ reg_o_tbtfifo.rst <= reg_o.tbtfifo_reset.data.data(0);
 reg_o_tbtfifo.rdstr <= reg_o.tbtfifo_data.data.swacc;
 reg_i.tbtfifo_rdcnt.data.data <= reg_i_tbtfifo.rdcnt;
 reg_i.tbtfifo_data.data.data <= reg_i_tbtfifo.dout;
+
+reg_o_dma.soft_trig <= reg_o.dma_soft_trig.data.data(0);
+reg_o_dma.trigsrc <= reg_o.dma_trigsrc.data.data(0);
+reg_o_dma.fifo_rst <= reg_o.dma_fifo_rst.data.data(0); 
+reg_o_dma.adc_enb <= reg_o.dma_adc_enb.data.data(0); 
+reg_o_dma.adc_len <= reg_o.dma_adc_len.data.data;
+reg_o_dma.tbt_enb <= reg_o.dma_tbt_enb.data.data(0); 
+reg_o_dma.tbt_len <= reg_o.dma_tbt_len.data.data;
+reg_o_dma.fa_enb <= reg_o.dma_fa_enb.data.data(0); 
+reg_o_dma.fa_len <= reg_o.dma_fa_len.data.data;
+
+reg_i.dma_trigcnt.data.data <= reg_i_dma.trig_cnt;
+reg_i.dma_status.data.data <= reg_i_dma.status; 
+
+
 
 
 reg_i.sa_cnt.data.data <= sa_data.cnt;

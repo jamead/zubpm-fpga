@@ -221,18 +221,11 @@ s32 init_sysmon() {
 
 int main()
 {
-	unsigned int *fpgabase;
     u32 i;
     u32 val;
 
 	xil_printf("zuBPM ...\r\n");
 
-	fpgabase = (unsigned int *) IOBUS_BASEADDR;
-
-    xil_printf("FPGA version: %d\r\n",fpgabase[100]);
-
-    xil_printf("Setting to Internal Mode (no EVR)\r\n");
-    fpgabase[7] = 0;
 
     //write DSA
     for (i=0;i<5;i++) {

@@ -1,14 +1,10 @@
-//zbpm has 3 different IO memory spaces mapped to the PL fabric
-#define IOBUS_BASEADDR   0xA0000000
-#define FABUS_BASEADDR   0xA0010000
-#define LIVEBUS_BASEADDR 0xA0020000
 
 //base address of AXI-DMA Core for ADC Data
-#define AXIDMA_ADCBASEADDR  0xA0030000
+#define AXIDMA_ADCBASEADDR  0xA0010000
 //base address of AXI-DMA Core for ADC Data
-#define AXIDMA_TBTBASEADDR  0xA0040000
+#define AXIDMA_TBTBASEADDR  0xA0020000
 //base address of AXI-DMA Core for ADC Data
-#define AXIDMA_FABASEADDR  0xA0050000
+#define AXIDMA_FABASEADDR  0xA0030000
 
 
 //base addresses of DMA destination
@@ -54,7 +50,6 @@
 #define TBT_GATEDLY_REG 0xB0
 #define TBT_GATEWID_REG 0xB4
 
-
 #define SA_TRIGNUM_REG 0xC0
 #define SA_CHA_REG 0xC4
 #define SA_CHB_REG 0xC8
@@ -63,6 +58,21 @@
 #define SA_XPOS_REG 0xD4
 #define SA_YPOS_REG 0xD8
 #define SA_SUM_REG 0xDC
+
+#define DMA_SOFTTRIG_REG 0x100
+#define DMA_FIFORST_REG 0x104
+#define DMA_ADCENABLE_REG 0x108
+#define DMA_ADCBURSTLEN_REG 0x10C
+#define DMA_TBTENABLE_REG 0x110
+#define DMA_TBTBURSTLEN_REG 0x114
+#define DMA_FAENABLE_REG 0x118
+#define DMA_FABURSTLEN_REG 0x11C
+#define DMA_TESTDATENEN_REG 0x120
+#define DMA_TRIGSRC_REG 0x124
+#define DMA_TRIGCNT_REG 0x128
+#define DMA_STATUS_REG 0x132
+
+#define FP_LEDS_REG 0x140
 
 #define ADCFIFO_STREAMENB_REG 0x200
 #define ADCFIFO_RST_REG 0x204
@@ -77,18 +87,10 @@
 
 
 
-
-
-#define FP_LEDS_REG 0x100
-
-
-
-
-
 #define PLL_LOCKED_REG 0
-#define INT_TRIG_ENB_REG 7  
+//#define INT_TRIG_ENB_REG 7
 #define ADC_FIFOWREN_REG 8
-#define TRIG_EVRINT_SEL_REG 9
+
 
 #define GTH_RST_REG 15
 
@@ -99,22 +101,11 @@
 #define FINE_TRIG_DLY_REG 78
 #define EVR_DMA_TRIGNUM_REG 79
 
-#define DMA_SOFTTRIG_REG 80
-#define DMA_TESTDATAENB_REG 81
-#define DMA_FIFORST_REG 82
-#define DMA_ENABLE_REG 83
-#define DMA_ADCBURSTLEN_REG 84
-#define DMA_TBTBURSTLEN_REG 85
-#define DMA_FABURSTLEN_REG 86
-#define DMA_STATUS_REG 87
-
-#define FPGA_VER_REG 100
-#define VIVADO_VER_REG 101
 #define EVR_TS_NS_REG 102
 #define EVR_TS_S_REG 103
 #define EVR_TS_NS_LAT_REG 104
 #define EVR_TS_S_LAT_REG 105
-#define DMA_TRIGCNT_REG 107
+
 
 
 

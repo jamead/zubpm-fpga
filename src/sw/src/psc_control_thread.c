@@ -63,11 +63,11 @@ void set_eventno(u32 msgVal) {
 void set_trigsrc(u32 msgVal) {
     if (msgVal == 0) {
         xil_printf("Setting Trigger Source to EVR\r\n");
-        Xil_Out32(XPAR_M_AXI_BASEADDR + TRIG_EVRINT_SEL_REG, msgVal);
+        Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TRIGSRC_REG, msgVal);
     }
     else if (msgVal == 1) {
 	    xil_printf("Setting Trigger Source to INT (soft)\r\n");
-        Xil_Out32(XPAR_M_AXI_BASEADDR + TRIG_EVRINT_SEL_REG, msgVal);
+        Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TRIGSRC_REG, msgVal);
     }
     else
         xil_printf("Invalid Trigger Source\r\n");
@@ -206,12 +206,12 @@ reconnect:
         switch(MsgAddr) {
 			case SOFT_TRIG_MSG1:
 				xil_printf("Soft Trigger Message:   Value=%d\r\n",MsgData);
-                //soft_trig(MsgData);
+                soft_trig(MsgData);
                 break;
 
 			case DMA_TRIG_SRC_MSG1:
 				xil_printf("Set Trigger Source Message:   Value=%d\r\n",MsgData);
-                //set_trigsrc(MsgData);
+                set_trigsrc(MsgData);
                 break;
 
 			case RF_ATTEN_MSG1:

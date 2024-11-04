@@ -52,7 +52,7 @@ void Host2NetworkConvWvfm(char *inbuf, int len) {
 }
 
 
-void dma_arm(u32 *fpgabase, u32 *dmaadcbase, u32 *dmatbtbase, u32 *dmafabase, u32 dma_adclen, u32 dma_tbtlen, u32 dma_falen) {
+void dma_arm(u32 *dmaadcbase, u32 *dmatbtbase, u32 *dmafabase, u32 dma_adclen, u32 dma_tbtlen, u32 dma_falen) {
 
 	u32 i;
 	u32 *adc_ptr, *tbt_ptr, *fa_ptr;
@@ -69,8 +69,8 @@ void dma_arm(u32 *fpgabase, u32 *dmaadcbase, u32 *dmatbtbase, u32 *dmafabase, u3
 
 
 	//reset the PL DMA FIFO
-	fpgabase[DMA_FIFORST_REG] = 1;
-	fpgabase[DMA_FIFORST_REG] = 0;
+	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_FIFORST_REG, 1);
+	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_FIFORST_REG, 0);
 
 	//reset the AXI DMA Core
 	dmaadcbase[S2MM_DMACR] = 4;
@@ -78,9 +78,9 @@ void dma_arm(u32 *fpgabase, u32 *dmaadcbase, u32 *dmatbtbase, u32 *dmafabase, u3
 	dmafabase[S2MM_DMACR]  = 4;
 
 	//write the number of ADC samples to DMA
-	fpgabase[DMA_ADCBURSTLEN_REG] = dma_adclen+16;
-	fpgabase[DMA_TBTBURSTLEN_REG] = dma_tbtlen;
-	fpgabase[DMA_FABURSTLEN_REG]  = dma_falen;
+	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_ADCBURSTLEN_REG, dma_adclen+16);
+	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TBTBURSTLEN_REG, dma_tbtlen);
+	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_FABURSTLEN_REG, dma_falen);
 
 	//Start the S2MM channel with all interrupts masked
 	dmaadcbase[S2MM_DMACR] = 0xF001;
@@ -102,8 +102,9 @@ void dma_arm(u32 *fpgabase, u32 *dmaadcbase, u32 *dmatbtbase, u32 *dmafabase, u3
 
 	//Enable the ADC and TbT DMA
 	xil_printf("Enabling the DMA\r\n");
-	//bit0=ADC enable,  bit1=TbT enable, bit2=FA enable
-	fpgabase[DMA_ENABLE_REG] = 7;
+	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_ADCENABLE_REG, 1);
+	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TBTENABLE_REG, 1);
+	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_FAENABLE_REG, 1);
 
 }
 
@@ -247,14 +248,13 @@ void ReadLiveTbTWvfm(char *msg) {
 
     int i;
     u32 *msg_u32ptr;
-    u32 regval;
 
     //Enable TbT FIFO write
     Xil_Out32(XPAR_M_AXI_BASEADDR + TBTFIFO_STREAMENB_REG, 1);
     usleep(30000);
 
     //printf("Reading TbT FIFO...\n");
-    regval = Xil_In32(XPAR_M_AXI_BASEADDR + TBTFIFO_CNT_REG);
+    //regval = Xil_In32(XPAR_M_AXI_BASEADDR + TBTFIFO_CNT_REG);
     //printf("\tWords in TbT FIFO = %d\n",regval);
 
     //write the PSC Header
@@ -341,12 +341,10 @@ void psc_wvfm_thread()
     u32 loopcnt=0;
     s32 n;
     u32 dma_adclen, dma_tbtlen, dma_falen;
-	u32 *fpgaiobase, *fpgalivebase, *dmaadcbase, *dmatbtbase, *dmafabase;
+	u32 *dmaadcbase, *dmatbtbase, *dmafabase;
     u32 trignum=0, prevtrignum=0;
 
     // Initialize pointers to various memory locations in the PL fabric
-	fpgaiobase   = (u32 *) IOBUS_BASEADDR;      //PL Memory for General Registers
-	fpgalivebase = (u32 *) LIVEBUS_BASEADDR;    //PL Memory for Live Data
 	dmaadcbase   = (u32 *) AXIDMA_ADCBASEADDR;  //AXI DMA Core for ADC Data
 	dmatbtbase   = (u32 *) AXIDMA_TBTBASEADDR;  //AXI DMA Core for TbT Data
     dmafabase    = (u32 *) AXIDMA_FABASEADDR;   //AXI DMA Core for FA Data
@@ -394,10 +392,10 @@ reconnect:
     //fpgaiobase[DMA_TESTDATAENB_REG] = 1;
 
 
-    //dma_adclen = 1e6;
-    //dma_tbtlen = 100e3;
-    //dma_falen  = 20e3;  // 2 seconds
-    //dma_arm(fpgaiobase, dmaadcbase, dmatbtbase, dmafabase, dma_adclen, dma_tbtlen, dma_falen);
+    dma_adclen = 1e6;
+    dma_tbtlen = 100e3;
+    dma_falen  = 20e3;  // 2 seconds
+    dma_arm(dmaadcbase, dmatbtbase, dmafabase, dma_adclen, dma_tbtlen, dma_falen);
 
 
 	while (1) {
@@ -405,8 +403,8 @@ reconnect:
 		//xil_printf("Wvfm: In main waveform loop...\r\n");
 		loopcnt++;
 		vTaskDelay(pdMS_TO_TICKS(100));
-        /*
-		trignum = fpgaiobase[DMA_TRIGCNT_REG];
+
+		trignum = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_TRIGCNT_REG);
 		if (trignum != prevtrignum)  {
 			//received a DMA trigger
             printf("\nTrig Num: %d  \n",trignum);
@@ -414,7 +412,7 @@ reconnect:
  	        Xil_DCacheInvalidateRange(ADC_DMA_DATA,dma_adclen*8);
  	        Xil_DCacheInvalidateRange(TBT_DMA_DATA,dma_tbtlen*16*4);
 
-
+            /*
             //Read and send the TbT DMA data
  	        ReadDMATBTWvfm(msgid54_buf);
             //write the DMA data
@@ -426,6 +424,7 @@ reconnect:
             	close(newsockfd);
             	goto reconnect;
             }
+            */
 
  	        //Read and send the ADC DMA data
  	        ReadDMAADCWvfm(msgid53_buf);
@@ -438,6 +437,7 @@ reconnect:
             	goto reconnect;
             }
 
+            /*
 	        //Read and send the FA DMA data
  	        ReadDMAFAWvfm(msgid55_buf);
             Host2NetworkConvWvfm(msgid55_buf,sizeof(msgid55_buf)+MSGHDRLEN);
@@ -448,15 +448,16 @@ reconnect:
             	close(newsockfd);
             	goto reconnect;
             }
+            */
 
 
 
 
             //re-arm AXI DMA for next trigger
-            dma_arm(fpgaiobase, dmaadcbase, dmatbtbase, dmafabase, dma_adclen, dma_tbtlen, dma_falen);
+            dma_arm(dmaadcbase, dmatbtbase, dmafabase, dma_adclen, dma_tbtlen, dma_falen);
 
 		}
-        */
+
 
         if (loopcnt % 10 == 0) {
             //xil_printf("Wvfm(%d) Sending Live Data...\r\n",loopcnt);

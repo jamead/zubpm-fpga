@@ -323,7 +323,7 @@ void ReadSysInfo(char *msg) {
     //write the PSC message
 
     //read FPGA version from PL register
-    syshealth.fpgaver = Xil_In32(XPAR_M_AXI_BASEADDR + FPGA_VER_REG);
+    //syshealth.fpgaver = Xil_In32(XPAR_M_AXI_BASEADDR + FPGA_VER_REG);
 
     //read temperature from i2c bus
     i2c_set_port_expander(I2C_PORTEXP1_ADDR,1);

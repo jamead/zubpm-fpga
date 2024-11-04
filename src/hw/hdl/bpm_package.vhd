@@ -196,20 +196,30 @@ type t_reg_o_tbt is record
 end record t_reg_o_tbt;
 
 
-type dma_params_type is record
-    dma_adc_length   : std_logic_vector(31 downto 0);
-    dma_tbt_length   : std_logic_vector(31 downto 0);
-    dma_fifo_rst     : std_logic;
-    dma_adc_enb      : std_logic;
-    dma_tbt_enb      : std_logic;
-    dma_testdata_enb : std_logic;
-end record dma_params_type;
+type t_reg_o_dma is record
+    soft_trig    : std_logic;
+    trigsrc      : std_logic;
+    testdata_enb : std_logic;
+    adc_len      : std_logic_vector(31 downto 0);
+    tbt_len      : std_logic_vector(31 downto 0);
+    fa_len       : std_logic_vector(31 downto 0);
+    fifo_rst     : std_logic;
+    adc_enb      : std_logic;
+    tbt_enb      : std_logic;
+    fa_enb       : std_logic;
+end record t_reg_o_dma;
+
+type t_reg_i_dma is record
+    trig_cnt     : std_logic_vector(31 downto 0); 
+    status       : std_logic_vector(4 downto 0);
+end record t_reg_i_dma;
 
 
 
 component system is
   port (
     pl_clk0 : out STD_LOGIC;
+    pl_clk1 : out std_logic;
     pl_resetn : out STD_LOGIC;
     m_axi_awaddr : out STD_LOGIC_VECTOR ( 31 downto 0 );
     m_axi_awprot : out STD_LOGIC_VECTOR ( 2 downto 0 );
@@ -229,7 +239,23 @@ component system is
     m_axi_rdata : in STD_LOGIC_VECTOR ( 31 downto 0 );
     m_axi_rresp : in STD_LOGIC_VECTOR ( 1 downto 0 );
     m_axi_rvalid : in STD_LOGIC;
-    m_axi_rready : out STD_LOGIC
+    m_axi_rready : out STD_LOGIC;
+    
+    S_AXIS_S2MM_ADC_tdata : in std_logic_vector(63 downto 0); 
+    S_AXIS_S2MM_ADC_tkeep : in std_logic_vector(7 downto 0); 
+    S_AXIS_S2MM_ADC_tlast : in std_logic;  
+    S_AXIS_S2MM_ADC_tready : out std_logic; 
+    S_AXIS_S2MM_ADC_tvalid : in std_logic;   
+    S_AXIS_S2MM_TBT_tdata : in std_logic_vector(63 downto 0); 
+    S_AXIS_S2MM_TBT_tkeep : in std_logic_vector(7 downto 0); 
+    S_AXIS_S2MM_TBT_tlast : in std_logic;  
+    S_AXIS_S2MM_TBT_tready : out std_logic; 
+    S_AXIS_S2MM_TBT_tvalid : in std_logic;
+    S_AXIS_S2MM_FA_tdata : in std_logic_vector(63 downto 0); 
+    S_AXIS_S2MM_FA_tkeep : in std_logic_vector(7 downto 0); 
+    S_AXIS_S2MM_FA_tlast : in std_logic;  
+    S_AXIS_S2MM_FA_tready : out std_logic; 
+    S_AXIS_S2MM_FA_tvalid : in std_logic                   
   );
   end component system;
 

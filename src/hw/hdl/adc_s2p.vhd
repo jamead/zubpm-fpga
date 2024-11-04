@@ -62,7 +62,7 @@ architecture behv of adc_s2p is
 
 
 
-   attribute mark_debug     : string;
+   --attribute mark_debug     : string;
    --attribute mark_debug of adc_q: signal is "true"; 
    --attribute mark_debug of adc_val: signal is "true";
    --attribute mark_debug of adc_reg: signal is "true";

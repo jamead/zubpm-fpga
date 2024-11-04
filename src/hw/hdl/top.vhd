@@ -101,6 +101,7 @@ architecture behv of top is
 
   
   signal pl_clk0      : std_logic;
+  signal pl_clk1      : std_logic;
   signal adc_clk      : std_logic;
   signal pl_resetn    : std_logic;
   signal pl_reset     : std_logic;
@@ -132,10 +133,34 @@ architecture behv of top is
   signal reg_o_adc       : t_reg_o_adc_cntrl;
   signal reg_i_adc       : t_reg_i_adc_status; 
   signal reg_o_tbt       : t_reg_o_tbt;
+  signal reg_o_dma       : t_reg_o_dma;
+  signal reg_i_dma       : t_reg_i_dma;
   
   signal tbt_data        : t_tbt_data;    
   signal sa_data         : t_sa_data;
   signal fa_data         : t_fa_data;
+  
+  signal dma_adc_active       : std_logic;
+  signal dma_adc_tdata        : std_logic_vector(63 downto 0);
+  signal dma_adc_tkeep        : std_logic_vector(7 downto 0);
+  signal dma_adc_tlast        : std_logic;
+  signal dma_adc_tready       : std_logic;
+  signal dma_adc_tvalid       : std_logic;
+    
+  signal dma_tbt_active       : std_logic;
+  signal dma_tbt_tdata        : std_logic_vector(63 downto 0);
+  signal dma_tbt_tkeep        : std_logic_vector(7 downto 0);
+  signal dma_tbt_tlast        : std_logic;
+  signal dma_tbt_tready       : std_logic;
+  signal dma_tbt_tvalid       : std_logic;  
+    
+  signal dma_fa_active        : std_logic;
+  signal dma_fa_tdata         : std_logic_vector(63 downto 0);
+  signal dma_fa_tkeep         : std_logic_vector(7 downto 0);
+  signal dma_fa_tlast         : std_logic;
+  signal dma_fa_tready        : std_logic;
+  signal dma_fa_tvalid        : std_logic;      
+  
   
   signal tbt_extclk      : std_logic;  
   
@@ -148,14 +173,6 @@ architecture behv of top is
   signal sa_trig          : std_logic;
   signal sa_trig_stretch  : std_logic;
   signal dma_trig         : std_logic;
-  
-  signal sa_cnt           : std_logic_vector(31 downto 0);
-  
-  signal ad9510_we		  : std_logic;
-  signal ad9510_data      : std_logic_vector(31 downto 0);  
-  
-  --signal dsa_we		     : std_logic;
-  --signal dsa_data        : std_logic_vector(7 downto 0);    
 
 
 
@@ -196,15 +213,15 @@ dbg(19) <= fp_in(3);
 
 
 fp_out(0) <= pl_clk0;
-fp_out(1) <= adc_clk_in;
-fp_out(2) <= adc_clk; --'0'; --tbt_trig;
-fp_out(3) <= tbt_trig; --'0'; --sa_trig;
+fp_out(1) <= pl_clk1; --adc_clk_in;
+fp_out(2) <= adc_clk; 
+fp_out(3) <= tbt_trig; 
 
-fp_led(7) <= '0'; --dma_fa_active;
-fp_led(6) <= '0'; --dma_adc_active; 
-fp_led(5) <= '0'; --dma_tbt_active; --trig_stretch; --'0';
-fp_led(4) <= ad9510_status; --dma_trig_stretch;
-fp_led(3 downto 1) <= ps_leds(2 downto 0); --"0000";
+fp_led(7) <= dma_fa_active;
+fp_led(6) <= dma_adc_active; 
+fp_led(5) <= dma_tbt_active; 
+fp_led(4) <= ad9510_status; 
+fp_led(3 downto 1) <= ps_leds(2 downto 0); 
 fp_led(0) <= sa_trig_stretch;
 
 
@@ -314,17 +331,15 @@ trig: entity work.trig_logic
   port map (
     adc_clk => adc_clk,  
     reset => pl_reset, 
-    soft_trig => '0', --soft_trig,
-    evr_trig => '0', --evr_dma_trig,
-    trig_evrintsel => '1', --trig_evrintsel, 
-    trig_dly_reg => x"00000000", 
-    dma_adc_active => '0', --dma_adc_active,
-    dma_tbt_active => '0', --dma_tbt_active, 
-    dma_fa_active => '0', --dma_fa_active,
-    trig_cnt => open, --dma_trig_cnt, 
+    reg_o => reg_o_dma,
+    reg_i => reg_i_dma,
+    evr_trig => '0', --evr_dma_trig, 
+    dma_adc_active => dma_adc_active,
+    dma_tbt_active => dma_tbt_active, 
+    dma_fa_active => dma_fa_active,
     evr_ts => (others => '0'), --evr_ts,
     evr_ts_lat => open, --evr_ts_lat, 
-    dma_trig => open --dma_trig
+    dma_trig => dma_trig
   );    
 
 
@@ -374,6 +389,59 @@ tbtstream: entity work.tbt2fifo
 );    
 
 
+adctoddr: entity work.adc2dma
+  port map(
+    sys_clk => pl_clk1, 
+    adc_clk => adc_clk, 
+    reset => pl_reset,                        
+    trig => dma_trig, --soft_trig, 
+    reg_o => reg_o_dma, 	 
+	adc_data => adc_data, 
+	dma_active => dma_adc_active,
+    m_axis_tdata => dma_adc_tdata, 
+    m_axis_tkeep => dma_adc_tkeep,
+    m_axis_tlast => dma_adc_tlast, 
+    m_axis_tready => dma_adc_tready, 
+    m_axis_tvalid => dma_adc_tvalid   
+  );    
+
+
+tbttoddr: entity work.tbt2dma
+  port map(
+    sys_clk => pl_clk1, 
+    adc_clk => adc_clk, 
+    reset => pl_reset,                         
+    trig => dma_trig, --soft_trig, 
+    reg_o => reg_o_dma,  	 
+	tbt_data => tbt_data, 
+	tbt_trig => tbt_trig,
+	dma_active => dma_tbt_active,
+    m_axis_tdata => dma_tbt_tdata, 
+    m_axis_tkeep => dma_tbt_tkeep,
+    m_axis_tlast => dma_tbt_tlast, 
+    m_axis_tready => dma_tbt_tready, 
+    m_axis_tvalid => dma_tbt_tvalid   
+  );    
+
+fatoddr: entity work.fa2dma
+  port map(
+    sys_clk => pl_clk1, 
+    adc_clk => adc_clk, 
+    reset => pl_reset,                         
+    trig => dma_trig, --soft_trig, 
+    reg_o => reg_o_dma,  	 
+	fa_data => fa_data, 
+	fa_trig => fa_trig,
+	dma_active => dma_fa_active,
+    m_axis_tdata => dma_fa_tdata, 
+    m_axis_tkeep => dma_fa_tkeep,
+    m_axis_tlast => dma_fa_tlast, 
+    m_axis_tready => dma_fa_tready, 
+    m_axis_tvalid => dma_fa_tvalid   
+  );    
+
+
+
 
 
 
@@ -393,6 +461,8 @@ ps_pl: entity work.ps_io
 	reg_i_adcfifo => reg_i_adcfifo,
 	reg_o_tbtfifo => reg_o_tbtfifo, 
 	reg_i_tbtfifo => reg_i_tbtfifo,
+	reg_o_dma => reg_o_dma,
+	reg_i_dma => reg_i_dma,
 	reg_o_dsa => reg_o_dsa,
 	reg_o_pll => reg_o_pll 
           
@@ -405,6 +475,7 @@ ps_pl: entity work.ps_io
 system_i: component system
   port map (
     pl_clk0 => pl_clk0,
+    pl_clk1 => pl_clk1,
     pl_resetn => pl_resetn,
      
     m_axi_araddr => m_axi4_m2s.araddr, 
@@ -425,7 +496,23 @@ system_i: component system
     m_axi_wdata => m_axi4_m2s.wdata,
     m_axi_wready => m_axi4_s2m.wready,
     m_axi_wstrb => m_axi4_m2s.wstrb,
-    m_axi_wvalid => m_axi4_m2s.wvalid
+    m_axi_wvalid => m_axi4_m2s.wvalid,
+    
+    s_axis_s2mm_adc_tdata => dma_adc_tdata,
+    s_axis_s2mm_adc_tkeep => dma_adc_tkeep,
+    s_axis_s2mm_adc_tlast => dma_adc_tlast, 
+    s_axis_s2mm_adc_tready => dma_adc_tready,
+    s_axis_s2mm_adc_tvalid => dma_adc_tvalid,
+    s_axis_s2mm_tbt_tdata => dma_tbt_tdata,
+    s_axis_s2mm_tbt_tkeep => dma_tbt_tkeep,
+    s_axis_s2mm_tbt_tlast => dma_tbt_tlast, 
+    s_axis_s2mm_tbt_tready => dma_tbt_tready,
+    s_axis_s2mm_tbt_tvalid => dma_tbt_tvalid,
+    s_axis_s2mm_fa_tdata => dma_fa_tdata,
+    s_axis_s2mm_fa_tkeep => dma_fa_tkeep,
+    s_axis_s2mm_fa_tlast => dma_fa_tlast, 
+    s_axis_s2mm_fa_tready => dma_fa_tready,
+    s_axis_s2mm_fa_tvalid => dma_fa_tvalid     
     );
 
 

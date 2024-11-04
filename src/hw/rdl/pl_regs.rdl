@@ -329,6 +329,109 @@ reg {
 
 
 
+/*  DMA Registers */
+reg {
+    desc="DMA Soft Trigger";
+    default sw = rw;
+    default hw = r;
+    field {} data[1];
+  } dma_soft_trig @0x100;
+
+
+reg {
+    desc="DMA FIFO reset";
+    default sw = rw;
+    default hw = r;
+    field {} data[1];
+  } dma_fifo_rst @0x104;
+
+
+reg {
+    desc="DMA ADC Enable";
+    default sw = rw;
+    default hw = r;
+    field {} data[1];
+  } dma_adc_enb @0x108;
+
+reg {
+    desc="DMA ADC Length";
+    default sw = rw;
+    default hw = r;
+    field {} data[32];
+  } dma_adc_len @0x10C;
+
+reg {
+    desc="DMA TBT Enable";
+    default sw = rw;
+    default hw = r;
+    field {} data[1];
+  } dma_tbt_enb @0x110;
+
+reg {
+    desc="DMA TBT Length";
+    default sw = rw;
+    default hw = r;
+    field {} data[32];
+  } dma_tbt_len @0x114;
+
+
+reg {
+    desc="DMA FA Enable";
+    default sw = rw;
+    default hw = r;
+    field {} data[1];
+  } dma_fa_enb @0x118;
+
+reg {
+    desc="DMA FA Length";
+    default sw = rw;
+    default hw = r;
+    field {} data[32];
+  } dma_fa_len @0x11C;
+
+
+reg {
+    desc="DMA Test Data Enb";
+    default sw = rw;
+    default hw = r;
+    field {} data[1];
+  } dma_testdata_enb @0x120;
+  
+ reg {
+    desc="DMA Trigger Source:  0=evr, 1=soft";
+    default sw = rw;
+    default hw = r;
+    field {} data[1] = 1;
+  } dma_trigsrc @0x124;
+ 
+reg {
+    desc="DMA Trig Count";
+    default sw = r;
+    default hw = w;
+    field {} data[32];
+  } dma_trigcnt @0x128;
+   
+reg {
+    desc="DMA Status: bit4=adc_active, bit3=tbt_active, bit2=fa_active, bit1=dma_done, bit0=dma_running";
+    default sw = r;
+    default hw = w;
+    field {} data[5];
+  } dma_status @0x132;
+
+
+
+
+
+
+ reg {
+    desc="FP LED outputs";
+    default sw = rw;
+    default hw = r;
+    field {} val[8];
+  } FP_LEDS @0x140;
+
+
+
 
  
  
@@ -396,14 +499,6 @@ reg {
   } tbtfifo_rdcnt @0x21C;
    
 
-
-
- reg {
-    desc="FP LED outputs";
-    default sw = rw;
-    default hw = r;
-    field {} val[8];
-  } FP_LEDS @0x100;
 
 
 
