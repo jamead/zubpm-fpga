@@ -11,6 +11,21 @@
 extern XIicPs IicPsInstance;			/* Instance of the IIC Device */
 
 
+static const u32 lmk61e2_values [] = {
+		0x0010, 0x010B, 0x0233, 0x08B0, 0x0901, 0x1000, 0x1180, 0x1502,
+		0x1600, 0x170F, 0x1900, 0x1A2E, 0x1B00, 0x1C00, 0x1DA9, 0x1E00,
+		0x1F00, 0x20C8, 0x2103, 0x2224, 0x2327, 0x2422, 0x2502, 0x2600,
+		0x2707, 0x2F00, 0x3000, 0x3110, 0x3200, 0x3300, 0x3400, 0x3500,
+		0x3800, 0x4802,
+};
+
+
+
+
+
+
+
+
 void init_i2c() {
     //s32 Status;
     XIicPs_Config *ConfigPtr;
@@ -63,6 +78,33 @@ void i2c_set_port_expander(u32 addr, u32 port)  {
 }
 
 
+void WriteLMK61E2()
+{
+   u8 buf[4] = {0};
+   u32 regval, i;
+
+
+   u32 num_values = sizeof(lmk61e2_values) / sizeof(lmk61e2_values[0]);  // Get the number of elements in the array
+
+   i2c_set_port_expander(I2C_PORTEXP1_ADDR,0x20);
+   for (i=0; i<num_values; i++) {
+	  regval = lmk61e2_values[i];
+      buf[0] = (char) ((regval & 0x00FF00) >> 8);
+      buf[1] = (char) (regval & 0xFF);
+      i2c_write(buf,2,0x5A);
+      printf("LMK61e2 Write = 0x%x\t    B0 = %x    B1 = %x\n",regval, buf[0], buf[1]);
+   };
+
+
+
+
+}
+
+
+
+
+
+
 float read_i2c_temp(u8 addr) {
 
     u8 buf[3];
@@ -76,6 +118,11 @@ float read_i2c_temp(u8 addr) {
     return tempflt;
 
 }
+
+
+
+
+
 
 /*
 void i2c_sfp_get_stats(struct SysHealthStatsMsg *p, u8 sfp_slot) {

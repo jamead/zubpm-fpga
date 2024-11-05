@@ -1,12 +1,14 @@
-#!//home/mead/epics/pscdrv/bin/linux-x86_64/pscdemo 
-epicsEnvSet("TOP","/home/mead/epics/pscdrv")
+#!//home/diag/epics/pscdrv/bin/linux-x86_64/pscdemo 
+epicsEnvSet("TOP","/home/diag/epics/pscdrv")
 epicsEnvSet("BPMDIR","$(TOP)")
-epicsEnvSet("ZUBPM_DBDIR","/home/mead/epics/zubpmioc")
+epicsEnvSet("ZUBPM_DBDIR","/home/diag/fwk/zubpm/ioc")
 
 
 #epicsEnvSet("CNO","40")   ## Cell Number
 #epicsEnvSet("HOSTNAME","diagioc-c$(CNO)")
-epicsEnvSet("IOCNAME", "LN-BI")
+#epicsEnvSet("IOCNAME", "LN-BI")
+epicsEnvSet("IOCNAME", "joe-BI")
+
 
 
 

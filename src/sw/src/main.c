@@ -109,7 +109,7 @@ void main_thread(void *p)
 
 	//const TickType_t x1second = pdMS_TO_TICKS(DELAY_1_SECOND);
 	/* the mac address of the board. this should be unique per board */
-	u8_t mac_ethernet_address[] = { 0x00, 0x0a, 0x35, 0x00, 0x01, 0x02 };
+	u8_t mac_ethernet_address[] = { 0x00, 0x0a, 0x35, 0x10, 0x11, 0x12 };
 
 
 	/* initialize lwIP before calling sys_thread_new */
@@ -236,10 +236,18 @@ int main()
        xil_printf("DSA = %d\r\n",val);
     }
     
+
 	prog_ad9510();
 	ltc2195_init();
 	init_i2c();
 	init_sysmon();
+	
+    WriteLMK61E2();
+
+	//EVR reset
+	Xil_Out32(XPAR_M_AXI_BASEADDR + EVR_RST_REG, 1);
+	Xil_Out32(XPAR_M_AXI_BASEADDR + EVR_RST_REG, 0);
+
 
 	for (i=0;i<10;i++) {
 	   Xil_Out32(XPAR_M_AXI_BASEADDR + 0x100, i);

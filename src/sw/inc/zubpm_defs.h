@@ -38,6 +38,7 @@ s32 i2c_read(u8 *, u8, u8);
 s32 i2c_write(u8 *, u8, u8);
 void i2c_set_port_expander(u32, u32);
 float read_i2c_temp(u8);
+void WriteLMK61E2();
 
 float L11_to_float(s32);
 
