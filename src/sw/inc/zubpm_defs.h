@@ -8,6 +8,10 @@
 #define CHC 2
 #define CHD 3
 
+#define ADC 0
+#define TBT 1
+#define FA 2
+
 #define STRAIGHT 0
 #define RING 1
 

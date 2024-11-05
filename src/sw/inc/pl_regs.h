@@ -14,10 +14,10 @@
 
 
 //AXI DMA CORE REGISTERS
-#define S2MM_DMACR 12
-#define S2MM_DMASR 13
-#define S2MM_DA 18
-#define S2MM_LEN 22
+#define S2MM_DMACR 0x30 //12
+#define S2MM_DMASR 0x34 //13
+#define S2MM_DA 0x48 //18
+#define S2MM_LEN 0x58 //22
 
 
 //PL AXI4 Bus Registers

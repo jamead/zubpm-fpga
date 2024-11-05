@@ -251,13 +251,13 @@ void ReadGenRegs(char *msg) {
     //status.pll_locked = Xil_In32(XPAR_M_AXI_BASEADDR + PLL_LOCKED_REG);
     status.kx = Xil_In32(XPAR_M_AXI_BASEADDR + KX_REG);
     status.ky = Xil_In32(XPAR_M_AXI_BASEADDR + KY_REG);
-    //status.bba_xoff = Xil_In32(XPAR_M_AXI_BASEADDR + BBA_XOFF_REG);
-    //status.bba_yoff = Xil_In32(XPAR_M_AXI_BASEADDR + BBA_YOFF_REG);
-    //status.rf_atten = Xil_In32(XPAR_M_AXI_BASEADDR + RF_DSA_REG) / 4;
+    status.bba_xoff = Xil_In32(XPAR_M_AXI_BASEADDR + BBA_XOFF_REG);
+    status.bba_yoff = Xil_In32(XPAR_M_AXI_BASEADDR + BBA_YOFF_REG);
+    status.rf_atten = Xil_In32(XPAR_M_AXI_BASEADDR + RF_DSA_REG) / 4;
     //status.coarse_trig_dly = Xil_In32(XPAR_M_AXI_BASEADDR + COARSE_TRIG_DLY_REG);
     //status.fine_trig_dly = Xil_In32(XPAR_M_AXI_BASEADDR + FINE_TRIG_DLY_REG);
 
-    //status.trig_dmacnt = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_TRIGCNT_REG);
+    status.trig_dmacnt = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_TRIGCNT_REG);
     //status.trig_eventno = Xil_In32(XPAR_M_AXI_BASEADDR + EVR_DMA_TRIGNUM_REG);
     //status.evr_ts_s_triglat = Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_S_LAT_REG);
     //status.evr_ts_ns_triglat = Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_NS_LAT_REG);

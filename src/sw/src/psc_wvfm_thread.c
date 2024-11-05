@@ -15,6 +15,7 @@
 #include <string.h>
 #include <sleep.h>
 #include "xil_cache.h"
+#include "xparameters.h"
 
 #include "lwip/sockets.h"
 #include "netif/xadapter.h"
@@ -52,12 +53,52 @@ void Host2NetworkConvWvfm(char *inbuf, int len) {
 }
 
 
-void dma_arm(u32 *dmaadcbase, u32 *dmatbtbase, u32 *dmafabase, u32 dma_adclen, u32 dma_tbtlen, u32 dma_falen) {
+void dma_arm() {
 
 	u32 i;
 	u32 *adc_ptr, *tbt_ptr, *fa_ptr;
+	u32 adclen, tbtlen, falen;
 
 	xil_printf("Arming DMA...\r\n");
+
+	//Read the DMA length registers
+	adclen = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_ADCBURSTLEN_REG);
+	tbtlen = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_TBTBURSTLEN_REG);
+	falen = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_FABURSTLEN_REG);
+	if (adclen < 10000) {
+		adclen = 10000;
+		Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_ADCBURSTLEN_REG, adclen);
+	}
+	if (adclen > 1000000) {
+		adclen = 1000000;
+		Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_ADCBURSTLEN_REG, adclen);
+	}
+	if (tbtlen < 10000) {
+		tbtlen = 10000;
+		Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TBTBURSTLEN_REG, tbtlen);
+	}
+	if (tbtlen > 1000000) {
+		tbtlen = 1000000;
+		Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TBTBURSTLEN_REG, tbtlen);
+	}
+	if (falen < 1000) {
+		falen = 1000;
+		Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_FABURSTLEN_REG, falen);
+	}
+	if (falen > 20000) {
+		falen = 20000;
+		Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_FABURSTLEN_REG, falen);
+	}
+
+
+
+    //adclen = 1e5;
+    //tbtlen = 80e3;
+    //falen  = 20e3;  // 2 seconds
+
+	xil_printf("DMA ADC Length = %d\r\n",adclen);
+	xil_printf("DMA TbT Length = %d\r\n",tbtlen);
+	xil_printf("DMA FA Length = %d\r\n",falen);
 
 	//clear the DMA memory
 	adc_ptr = (u32 *) ADC_DMA_DATA;
@@ -73,32 +114,44 @@ void dma_arm(u32 *dmaadcbase, u32 *dmatbtbase, u32 *dmafabase, u32 dma_adclen, u
 	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_FIFORST_REG, 0);
 
 	//reset the AXI DMA Core
-	dmaadcbase[S2MM_DMACR] = 4;
-	dmatbtbase[S2MM_DMACR] = 4;
-	dmafabase[S2MM_DMACR]  = 4;
+	Xil_Out32(XPAR_AXI_DMA_ADC_BASEADDR + S2MM_DMACR, 4);
+	Xil_Out32(XPAR_AXI_DMA_TBT_BASEADDR + S2MM_DMACR, 4);
+	Xil_Out32(XPAR_AXI_DMA_FA_BASEADDR + S2MM_DMACR, 4);
+	//dmaadcbase[S2MM_DMACR] = 4;
+	//dmatbtbase[S2MM_DMACR] = 4;
+	//dmafabase[S2MM_DMACR]  = 4;
 
 	//write the number of ADC samples to DMA
-	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_ADCBURSTLEN_REG, dma_adclen+16);
-	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TBTBURSTLEN_REG, dma_tbtlen);
-	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_FABURSTLEN_REG, dma_falen);
+	//Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_ADCBURSTLEN_REG, adclen+16);
+	//Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TBTBURSTLEN_REG, tbtlen);
+	//Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_FABURSTLEN_REG, falen);
 
 	//Start the S2MM channel with all interrupts masked
-	dmaadcbase[S2MM_DMACR] = 0xF001;
-	dmatbtbase[S2MM_DMACR] = 0xF001;
-	dmafabase[S2MM_DMACR]  = 0xF001;
+	Xil_Out32(XPAR_AXI_DMA_ADC_BASEADDR + S2MM_DMACR, 0xF001);
+	Xil_Out32(XPAR_AXI_DMA_TBT_BASEADDR + S2MM_DMACR, 0xF001);
+	Xil_Out32(XPAR_AXI_DMA_FA_BASEADDR + S2MM_DMACR, 0xF001);
+	//dmaadcbase[S2MM_DMACR] = 0xF001;
+	//dmatbtbase[S2MM_DMACR] = 0xF001;
+	//dmafabase[S2MM_DMACR]  = 0xF001;
 
 	//Write the Destination Address for the ADC data
-	dmaadcbase[S2MM_DA] = ADC_DMA_DATA;
-    dmatbtbase[S2MM_DA] = TBT_DMA_DATA;
-    dmafabase[S2MM_DA]  = FA_DMA_DATA;
+	Xil_Out32(XPAR_AXI_DMA_ADC_BASEADDR + S2MM_DA, ADC_DMA_DATA);
+	Xil_Out32(XPAR_AXI_DMA_TBT_BASEADDR + S2MM_DA, TBT_DMA_DATA);
+	Xil_Out32(XPAR_AXI_DMA_FA_BASEADDR + S2MM_DA, FA_DMA_DATA);
+	//dmaadcbase[S2MM_DA] = ADC_DMA_DATA;
+    //dmatbtbase[S2MM_DA] = TBT_DMA_DATA;
+    //dmafabase[S2MM_DA]  = FA_DMA_DATA;
 
 	//Write the S2MM transfer length (must be written last (PG021 p72)
     //length is in bytes, for adc: 4 adc channels * 2bytes/sample
-	dmaadcbase[S2MM_LEN] = (dma_adclen+16) * 4 * 2;
+	Xil_Out32(XPAR_AXI_DMA_ADC_BASEADDR + S2MM_LEN, (adclen+16) * 4 * 2);
+	//dmaadcbase[S2MM_LEN] = (dma_adclen+16) * 4 * 2;
 	//length is in bytes, for TbT: 16 - 4 byte values
-    dmatbtbase[S2MM_LEN] = (dma_tbtlen) * 16 * 4;
+	Xil_Out32(XPAR_AXI_DMA_TBT_BASEADDR + S2MM_LEN, (tbtlen) * 16 * 4);
+    //dmatbtbase[S2MM_LEN] = (dma_tbtlen) * 16 * 4;
 	//length is in bytes, for FA: 10 - 4 byte values
-    dmafabase[S2MM_LEN] = (dma_tbtlen) * 10 * 4;
+	Xil_Out32(XPAR_AXI_DMA_FA_BASEADDR + S2MM_LEN, (falen) * 10 * 4);
+    //dmafabase[S2MM_LEN] = (dma_tbtlen) * 10 * 4;
 
 	//Enable the ADC and TbT DMA
 	xil_printf("Enabling the DMA\r\n");
@@ -340,14 +393,8 @@ void psc_wvfm_thread()
 	struct sockaddr_in serv_addr, cli_addr;
     u32 loopcnt=0;
     s32 n;
-    u32 dma_adclen, dma_tbtlen, dma_falen;
-	u32 *dmaadcbase, *dmatbtbase, *dmafabase;
     u32 trignum=0, prevtrignum=0;
 
-    // Initialize pointers to various memory locations in the PL fabric
-	dmaadcbase   = (u32 *) AXIDMA_ADCBASEADDR;  //AXI DMA Core for ADC Data
-	dmatbtbase   = (u32 *) AXIDMA_TBTBASEADDR;  //AXI DMA Core for TbT Data
-    dmafabase    = (u32 *) AXIDMA_FABASEADDR;   //AXI DMA Core for FA Data
 
     xil_printf("Starting PSC Waveform Server...\r\n");
 
@@ -388,14 +435,11 @@ reconnect:
 	xil_printf("PSC Waveform: Connected Accepted...\r\n");
     xil_printf("PSC Waveform: Entering while loop...\r\n");
 
-    //Set DMA ADC data to test pattern (counter)
-    //fpgaiobase[DMA_TESTDATAENB_REG] = 1;
 
-
-    dma_adclen = 1e6;
-    dma_tbtlen = 100e3;
-    dma_falen  = 20e3;  // 2 seconds
-    dma_arm(dmaadcbase, dmatbtbase, dmafabase, dma_adclen, dma_tbtlen, dma_falen);
+    //dma_adclen = 1e5;
+    //dma_tbtlen = 100e3;
+    //dma_falen  = 20e3;  // 2 seconds
+    dma_arm();
 
 
 	while (1) {
@@ -405,14 +449,15 @@ reconnect:
 		vTaskDelay(pdMS_TO_TICKS(100));
 
 		trignum = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_TRIGCNT_REG);
+        //xil_printf("\nTrig Num: %d  \r\n",trignum);
 		if (trignum != prevtrignum)  {
 			//received a DMA trigger
-            printf("\nTrig Num: %d  \n",trignum);
+            xil_printf("\nTrig Num: %d  \r\n",trignum);
             prevtrignum = trignum;
- 	        Xil_DCacheInvalidateRange(ADC_DMA_DATA,dma_adclen*8);
- 	        Xil_DCacheInvalidateRange(TBT_DMA_DATA,dma_tbtlen*16*4);
+ 	        Xil_DCacheInvalidateRange(ADC_DMA_DATA,1e6);
+ 	        Xil_DCacheInvalidateRange(TBT_DMA_DATA,1e6);
+ 	        //Xil_DCacheInvalidateRange(FA_DMA_DATA,1e6);
 
-            /*
             //Read and send the TbT DMA data
  	        ReadDMATBTWvfm(msgid54_buf);
             //write the DMA data
@@ -424,7 +469,7 @@ reconnect:
             	close(newsockfd);
             	goto reconnect;
             }
-            */
+
 
  	        //Read and send the ADC DMA data
  	        ReadDMAADCWvfm(msgid53_buf);
@@ -437,7 +482,7 @@ reconnect:
             	goto reconnect;
             }
 
-            /*
+
 	        //Read and send the FA DMA data
  	        ReadDMAFAWvfm(msgid55_buf);
             Host2NetworkConvWvfm(msgid55_buf,sizeof(msgid55_buf)+MSGHDRLEN);
@@ -448,13 +493,9 @@ reconnect:
             	close(newsockfd);
             	goto reconnect;
             }
-            */
-
-
-
 
             //re-arm AXI DMA for next trigger
-            dma_arm(dmaadcbase, dmatbtbase, dmafabase, dma_adclen, dma_tbtlen, dma_falen);
+            dma_arm();
 
 		}
 

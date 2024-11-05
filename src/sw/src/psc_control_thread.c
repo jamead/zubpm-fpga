@@ -103,11 +103,32 @@ void set_bbaoffset(u32 axis, u32 msgVal) {
     }
 }
 
+void set_dmalen(u32 channel, u32 msgVal) {
+
+switch(channel) {
+    case ADC:
+       Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_ADCBURSTLEN_REG, msgVal);
+       xil_printf("Setting ADC DMA length to %d\r\n",msgVal);
+	   break;
+	case TBT:
+	   Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TBTBURSTLEN_REG, msgVal);
+       xil_printf("Setting TBT DMA length to %d\r\n",msgVal);
+	   break;
+    case FA:
+       Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_FABURSTLEN_REG, msgVal);
+       xil_printf("Setting FA DMA length to %d\r\n",msgVal);
+	   break;
+    default:
+       xil_printf("Invalid channel number\r\n");
+	   break;
+    }
+}
+
+
 
 
 
 void set_gain(u32 channel, u32 msgVal) {
-
 
 switch(channel) {
     case CHA:
@@ -285,6 +306,22 @@ reconnect:
             	xil_printf("Setting FP LED:   Value=%d\r\n",MsgData);
             	//set_fpleds(MsgData);
             	break;
+
+            case DMA_ADCLEN_MSG1:
+            	xil_printf("Setting DMA ADC Length:   Value=%d\r\n",MsgData);
+            	set_dmalen(ADC,MsgData);
+            	break;
+
+            case DMA_TBTLEN_MSG1:
+             	xil_printf("Setting DMA TBT Length:   Value=%d\r\n",MsgData);
+             	set_dmalen(TBT,MsgData);
+             	break;
+
+            case DMA_FALEN_MSG1:
+             	xil_printf("Setting DMA FA Length:   Value=%d\r\n",MsgData);
+             	set_dmalen(FA,MsgData);
+             	break;
+
 
             case ADC_IDLY_MSG1:
             	xil_printf("Setting ADC IDLY:  Value=%d\r\n",MsgData);
