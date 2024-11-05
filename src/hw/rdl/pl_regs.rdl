@@ -138,10 +138,18 @@ reg {
     field {} data[2];
   } adc_mmcmdlystr @0x38;
 
+reg {
+    desc="AD9510 PLL Locked";
+    default sw = r;
+    default hw = w;
+    field {} data[1];
+  } pll_locked @0x3C;
+ 
+
 
 
 reg {
-    desc="AD9510 PLL";
+    desc="AD9510 SPI PLL";
     default sw = rw;
     default hw = rw;
     default swmod=true;
@@ -156,7 +164,6 @@ reg {
     default swmod=true;
     field {} data[8];
   } dsa_spi @0x44;
-
 
 
 reg {
@@ -270,6 +277,25 @@ reg {
   } gate_width @0xB4;
    
  
+ reg {
+    desc="Trigger Source:  0=evr, 1=int";
+    default sw = rw;
+    default hw = r;
+    field {} data[1];
+  } clk_trigsrc @0xB8;
+ 
+ 
+reg {
+    desc="EVR Reset";
+    default sw = rw;
+    default hw = r;
+    field {} data[1] = 0;
+  } evr_reset @0xBC;
+  
+ 
+ 
+ 
+ /* 10Hz Position Registers */
  
  reg {
     desc="SA Counter";
@@ -357,7 +383,7 @@ reg {
     desc="DMA ADC Length";
     default sw = rw;
     default hw = r;
-    field {} data[32];
+    field {} data[32] = 100000;
   } dma_adc_len @0x10C;
 
 reg {
@@ -371,7 +397,7 @@ reg {
     desc="DMA TBT Length";
     default sw = rw;
     default hw = r;
-    field {} data[32];
+    field {} data[32] = 100000;
   } dma_tbt_len @0x114;
 
 
@@ -386,7 +412,7 @@ reg {
     desc="DMA FA Length";
     default sw = rw;
     default hw = r;
-    field {} data[32];
+    field {} data[32] = 5000;
   } dma_fa_len @0x11C;
 
 
@@ -419,10 +445,6 @@ reg {
   } dma_status @0x132;
 
 
-
-
-
-
  reg {
     desc="FP LED outputs";
     default sw = rw;
@@ -433,6 +455,51 @@ reg {
 
 
 
+/* EVR Registers */
+ reg {
+    desc="Timestamp (ns)";
+    default sw = r;
+    default hw = w;
+    field {} val[32];
+  } ts_ns @0x150;
+
+reg {
+    desc="Timestamp (s)";
+    default sw = r;
+    default hw = w;
+    field {} val[32];
+  } ts_s @0x154;
+  
+reg {
+    desc="DMA Trigger Timestamp (ns)";
+    default sw = r;
+    default hw = w;
+    field {} val[32];
+  } dma_ts_ns @0x158;
+
+reg {
+    desc="DMA Trigger Timestamp (s)";
+    default sw = r;
+    default hw = w;
+    field {} val[32];
+  } dma_ts_s @0x15C;  
+
+reg {
+    desc="DMA Trigger Event Number";
+    default sw = rw;
+    default hw = r;
+    field {} val[8];
+  } dma_trig_eventno @0x160;  
+
+reg {
+    desc="DMA Trigger Delay";
+    default sw = rw;
+    default hw = r;
+    field {} val[32];
+  } dma_trig_dely @0x164;  
+
+ 
+ 
  
  
 /* ADC FIFO Readout Registers */

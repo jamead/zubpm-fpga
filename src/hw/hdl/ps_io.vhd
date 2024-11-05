@@ -28,6 +28,7 @@ entity ps_io is
      
 	 reg_o_dsa       : out t_reg_o_dsa;
 	 reg_o_pll       : out t_reg_o_pll;
+	 reg_i_pll       : in  t_reg_i_pll;
 	 reg_o_tbt       : out t_reg_o_tbt;	
 	 reg_o_adcfifo   : out t_reg_o_adc_fifo_rdout;
 	 reg_i_adcfifo   : in  t_reg_i_adc_fifo_rdout; 
@@ -37,6 +38,7 @@ entity ps_io is
 	 reg_i_dma       : in  t_reg_i_dma;
 	 reg_o_adc       : out t_reg_o_adc_cntrl;
 	 reg_i_adc       : in  t_reg_i_adc_status; 
+	 reg_o_evr       : out t_reg_o_evr;
  
      fp_leds         : out std_logic_vector(7 downto 0)
   );
@@ -74,6 +76,7 @@ reg_i.adc_idlychdrdval.data.data <= reg_i_adc.idlychd_rval;
 
 reg_o_pll.str <= reg_o.pll_spi.data.swmod;                
 reg_o_pll.data <= reg_o.pll_spi.data.data;
+reg_i.pll_locked.data.data(0) <= reg_i_pll.locked;
 
 reg_o_dsa.str <= reg_o.dsa_spi.data.swmod;
 reg_o_dsa.data <= reg_o.dsa_spi.data.data;
@@ -119,7 +122,13 @@ reg_o_dma.fa_len <= reg_o.dma_fa_len.data.data;
 reg_i.dma_trigcnt.data.data <= reg_i_dma.trig_cnt;
 reg_i.dma_status.data.data <= reg_i_dma.status; 
 
+reg_i.ts_ns.val.data <= x"12345678";
+reg_i.ts_s.val.data <= x"deadbeef";
+reg_i.dma_ts_ns.val.data <= x"0123face";
+reg_i.dma_ts_s.val.data <= x"ba5eba11";
 
+reg_o_evr.reset <= reg_o.evr_reset.data.data(0);
+reg_o_evr.dma_trigno <= reg_o.dma_trig_eventno.val.data;
 
 
 reg_i.sa_cnt.data.data <= sa_data.cnt;

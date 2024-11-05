@@ -30,6 +30,7 @@
 #define ADC_IDLYCHDRVAL_REG 0x34
 #define ADC_FCOMMCM_REG 0x38
 
+#define PLL_LOCKED_REG 0x3C
 #define AD9510_REG 0x40
 #define RF_DSA_REG 0x44
 #define ADC_SPI_REG 0x48
@@ -49,6 +50,9 @@
 #define BBA_YOFF_REG 0xAC
 #define TBT_GATEDLY_REG 0xB0
 #define TBT_GATEWID_REG 0xB4
+
+#define CLK_TRIG_SRC 0xB8
+#define EVR_RST_REG 0xBC
 
 #define SA_TRIGNUM_REG 0xC0
 #define SA_CHA_REG 0xC4
@@ -74,6 +78,13 @@
 
 #define FP_LEDS_REG 0x140
 
+#define EVR_TS_NS_REG 0x150
+#define EVR_TS_S_REG 0x154
+#define EVR_TS_NS_LAT_REG 0x158
+#define EVR_TS_S_LAT_REG 0x15C
+#define EVR_DMA_TRIGNUM_REG 0x160
+#define COARSE_TRIG_DLY_REG 0x164
+
 #define ADCFIFO_STREAMENB_REG 0x200
 #define ADCFIFO_RST_REG 0x204
 #define ADCFIFO_DATA_REG 0x208
@@ -87,24 +98,13 @@
 
 
 
-#define PLL_LOCKED_REG 0
-//#define INT_TRIG_ENB_REG 7
+
+//Yet to be added
 #define ADC_FIFOWREN_REG 8
-
-
-#define GTH_RST_REG 15
-
 #define TRIGTOBEAM_DLY_REG 72
 #define TRIGTOBEAM_THRESH_REG 73
-
-#define COARSE_TRIG_DLY_REG 77
 #define FINE_TRIG_DLY_REG 78
-#define EVR_DMA_TRIGNUM_REG 79
 
-#define EVR_TS_NS_REG 102
-#define EVR_TS_S_REG 103
-#define EVR_TS_NS_LAT_REG 104
-#define EVR_TS_S_LAT_REG 105
 
 
 

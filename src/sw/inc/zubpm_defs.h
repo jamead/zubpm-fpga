@@ -28,6 +28,7 @@
 void prog_ad9510();
 void ltc2195_init();
 
+void dma_arm();
 void psc_control_thread();
 void psc_status_thread();
 void psc_wvfm_thread();

@@ -105,7 +105,7 @@ void set_bbaoffset(u32 axis, u32 msgVal) {
 
 void set_dmalen(u32 channel, u32 msgVal) {
 
-switch(channel) {
+  switch(channel) {
     case ADC:
        Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_ADCBURSTLEN_REG, msgVal);
        xil_printf("Setting ADC DMA length to %d\r\n",msgVal);
@@ -122,6 +122,9 @@ switch(channel) {
        xil_printf("Invalid channel number\r\n");
 	   break;
     }
+  //need to re-arm the DMA engine with the new length
+  dma_arm();
+
 }
 
 

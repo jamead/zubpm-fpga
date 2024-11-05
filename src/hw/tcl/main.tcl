@@ -40,12 +40,16 @@ proc setSources {} {
   lappend Sources {"../hdl/dsp/pos_calc.vhd" "VHDL 2008"}  
   lappend Sources {"../hdl/dsp/seqpolar.v" "Verilog"}      
       
-  
   lappend Sources {"../hdl/dsp/fa_dsp.vhd" "VHDL 2008"} 
-  lappend Sources {"../hdl/dsp/sa_dsp.vhd" "VHDL 2008"}   
+  lappend Sources {"../hdl/dsp/sa_dsp.vhd" "VHDL 2008"}  
+  
+  lappend Sources {"../hdl/evr/evr_top.vhd" "VHDL 2008"}  
+  lappend Sources {"../hdl/evr/EventReceiverChannel.v" "Verilog"}  
+  lappend Sources {"../hdl/evr/timeofDayReceiver.v" "Verilog"} 
 
   lappend Sources {"../cstr/pins.xdc"  "XDC"}
   lappend Sources {"../cstr/afepins.xdc"  "XDC"}
+  lappend Sources {"../cstr/gth.xdc"  "XDC"}   
   lappend Sources {"../cstr/timing.xdc"  "XDC"} 
   lappend Sources {"../cstr/debug.xdc"  "XDC"} 
   
@@ -77,7 +81,7 @@ proc doOnCreate {} {
   source ${TclPath}/tbtbuf_fifo.tcl 
   source ${TclPath}/adcdata_fifo.tcl 
   source ${TclPath}/div_gen.tcl
-
+  source ${TclPath}/evr_gth.tcl
 
   addSources "Sources" 
 

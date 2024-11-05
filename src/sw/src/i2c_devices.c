@@ -265,7 +265,7 @@ float i2c_ltc2991_vcc_vin() {
 }
 
 float i2c_ltc2991_vcc_vin_current() {
-    return 2 * (conv_volts_diff / conv_r_sense) * i2c_ltc2991_voltage(0x48, 7);
+    return (conv_volts_diff / conv_r_sense) * i2c_ltc2991_voltage(0x48, 7);
 }
 
 float i2c_ltc2991_vcc_mgt_2v5() {

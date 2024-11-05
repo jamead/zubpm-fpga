@@ -127,6 +127,9 @@ typedef struct StatusMsg {
     u32 coarse_trig_dly;    //PSC Offset 60
     u32 trigtobeam_thresh;  //PSC Offset 64
 	u32 trigtobeam_dly;     //PSC Offset 68
+	u32 dma_adclen;         //PSC Offset 72
+	u32 dma_tbtlen;         //PSC Offset 76
+	u32 dma_falen;          //PSC Offset 80
 } StatusMsg;
 
 

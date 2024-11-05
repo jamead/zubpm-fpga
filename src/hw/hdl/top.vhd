@@ -74,12 +74,12 @@ generic(
 	afe_pwrflt              : in std_logic;
 
     --evr transceiver
-    --gth_evr_refclk_p        : in std_logic;
-    --gth_evr_refclk_n        : in std_logic;
-    --gth_evr_tx_p            : out std_logic;
-    --gth_evr_tx_n            : out std_logic;
-    --gth_evr_rx_p            : in std_logic;
-    --gth_evr_rx_n            : in std_logic;   
+    gth_evr_refclk_p        : in std_logic;
+    gth_evr_refclk_n        : in std_logic;
+    gth_evr_tx_p            : out std_logic;
+    gth_evr_tx_n            : out std_logic;
+    gth_evr_rx_p            : in std_logic;
+    gth_evr_rx_n            : in std_logic;   
     
     -- afe switch signals
 	afe_sw_rffe_p           : out std_logic;
@@ -100,19 +100,19 @@ end top;
 architecture behv of top is
 
   
-  signal pl_clk0      : std_logic;
-  signal pl_clk1      : std_logic;
-  signal adc_clk      : std_logic;
-  signal pl_resetn    : std_logic;
-  signal pl_reset     : std_logic;
-  signal ps_leds      : std_logic_vector(7 downto 0);
+  signal pl_clk0         : std_logic;
+  signal pl_clk1         : std_logic;
+  signal adc_clk         : std_logic;
+  signal pl_resetn       : std_logic;
+  signal pl_reset        : std_logic;
+  signal ps_leds         : std_logic_vector(7 downto 0);
   
-  signal m_axi4_m2s   : t_pl_regs_m2s;
-  signal m_axi4_s2m   : t_pl_regs_s2m;
+  signal m_axi4_m2s      : t_pl_regs_m2s;
+  signal m_axi4_s2m      : t_pl_regs_s2m;
   
-  signal adc_clk_in   : std_logic;
-  signal adc_data     : t_adc_raw; 
-  signal adc_dbg      : std_logic_vector(3 downto 0);
+  signal adc_clk_in      : std_logic;
+  signal adc_data        : t_adc_raw; 
+  signal adc_dbg         : std_logic_vector(3 downto 0);
   
   signal adc_spi_we      : std_logic;
   signal adc_spi_wdata   : std_logic_vector(31 downto 0);
@@ -130,49 +130,58 @@ architecture behv of top is
   
   signal reg_o_dsa       : t_reg_o_dsa;  
   signal reg_o_pll       : t_reg_o_pll;
+  signal reg_i_pll       : t_reg_i_pll;
   signal reg_o_adc       : t_reg_o_adc_cntrl;
   signal reg_i_adc       : t_reg_i_adc_status; 
   signal reg_o_tbt       : t_reg_o_tbt;
   signal reg_o_dma       : t_reg_o_dma;
   signal reg_i_dma       : t_reg_i_dma;
+  signal reg_o_evr       : t_reg_o_evr;
   
   signal tbt_data        : t_tbt_data;    
   signal sa_data         : t_sa_data;
   signal fa_data         : t_fa_data;
   
-  signal dma_adc_active       : std_logic;
-  signal dma_adc_tdata        : std_logic_vector(63 downto 0);
-  signal dma_adc_tkeep        : std_logic_vector(7 downto 0);
-  signal dma_adc_tlast        : std_logic;
-  signal dma_adc_tready       : std_logic;
-  signal dma_adc_tvalid       : std_logic;
+  signal dma_adc_active  : std_logic;
+  signal dma_adc_tdata   : std_logic_vector(63 downto 0);
+  signal dma_adc_tkeep   : std_logic_vector(7 downto 0);
+  signal dma_adc_tlast   : std_logic;
+  signal dma_adc_tready  : std_logic;
+  signal dma_adc_tvalid  : std_logic;
     
-  signal dma_tbt_active       : std_logic;
-  signal dma_tbt_tdata        : std_logic_vector(63 downto 0);
-  signal dma_tbt_tkeep        : std_logic_vector(7 downto 0);
-  signal dma_tbt_tlast        : std_logic;
-  signal dma_tbt_tready       : std_logic;
-  signal dma_tbt_tvalid       : std_logic;  
+  signal dma_tbt_active  : std_logic;
+  signal dma_tbt_tdata   : std_logic_vector(63 downto 0);
+  signal dma_tbt_tkeep   : std_logic_vector(7 downto 0);
+  signal dma_tbt_tlast   : std_logic;
+  signal dma_tbt_tready  : std_logic;
+  signal dma_tbt_tvalid  : std_logic;  
     
-  signal dma_fa_active        : std_logic;
-  signal dma_fa_tdata         : std_logic_vector(63 downto 0);
-  signal dma_fa_tkeep         : std_logic_vector(7 downto 0);
-  signal dma_fa_tlast         : std_logic;
-  signal dma_fa_tready        : std_logic;
-  signal dma_fa_tvalid        : std_logic;      
+  signal dma_fa_active   : std_logic;
+  signal dma_fa_tdata    : std_logic_vector(63 downto 0);
+  signal dma_fa_tkeep    : std_logic_vector(7 downto 0);
+  signal dma_fa_tlast    : std_logic;
+  signal dma_fa_tready   : std_logic;
+  signal dma_fa_tvalid   : std_logic;    
   
-  
+  signal evr_tbt_trig    : std_logic;
+  signal evr_fa_trig     : std_logic;
+  signal evr_sa_trig     : std_logic;
+  signal evr_gps_trig    : std_logic;
+  signal evr_dma_trig    : std_logic;  
+  signal evr_ts          : std_logic_vector(63 downto 0); 
+  signal evr_rcvd_clk    : std_logic;
+   
   signal tbt_extclk      : std_logic;  
   
-  signal inttrig_enb      : std_logic_vector(3 downto 0);
-  signal trig_evrintsel   : std_logic;
-  signal tbt_gate         : std_logic;
-  signal tbt_trig         : std_logic;
-  signal pt_trig          : std_logic;
-  signal fa_trig          : std_logic;
-  signal sa_trig          : std_logic;
-  signal sa_trig_stretch  : std_logic;
-  signal dma_trig         : std_logic;
+  signal inttrig_enb     : std_logic_vector(3 downto 0);
+  signal trig_evrintsel  : std_logic;
+  signal tbt_gate        : std_logic;
+  signal tbt_trig        : std_logic;
+  signal pt_trig         : std_logic;
+  signal fa_trig         : std_logic;
+  signal sa_trig         : std_logic;
+  signal sa_trig_stretch : std_logic;
+  signal dma_trig        : std_logic;
 
 
 
@@ -187,7 +196,7 @@ architecture behv of top is
 begin
 
 afe_pwrenb <= '1';
-
+reg_i_pll.locked <= ad9510_status;
 
 
 dbg(0) <= pl_clk0;
@@ -202,9 +211,9 @@ dbg(8) <= '0'; --gth_rxusr_clk;
 dbg(9) <= '0';
 dbg(10) <= '0';
 dbg(11) <= '0';
-dbg(12) <= '0'; --tbt_trig; 
-dbg(13) <= '0'; --fa_trig;
-dbg(14) <= '0'; --sa_trig;
+dbg(12) <= tbt_trig; 
+dbg(13) <= fa_trig;
+dbg(14) <= sa_trig;
 dbg(15) <= '0'; --tbt_extclk; --'0';
 dbg(16) <= fp_in(0);
 dbg(17) <= fp_in(1);
@@ -213,13 +222,13 @@ dbg(19) <= fp_in(3);
 
 
 fp_out(0) <= pl_clk0;
-fp_out(1) <= pl_clk1; --adc_clk_in;
+fp_out(1) <= evr_rcvd_clk; --pl_clk1; --adc_clk_in;
 fp_out(2) <= adc_clk; 
 fp_out(3) <= tbt_trig; 
 
-fp_led(7) <= dma_fa_active;
-fp_led(6) <= dma_adc_active; 
-fp_led(5) <= dma_tbt_active; 
+fp_led(7) <= dma_adc_active;
+fp_led(6) <= dma_tbt_active; 
+fp_led(5) <= dma_fa_active; 
 fp_led(4) <= ad9510_status; 
 fp_led(3 downto 1) <= ps_leds(2 downto 0); 
 fp_led(0) <= sa_trig_stretch;
@@ -333,11 +342,11 @@ trig: entity work.trig_logic
     reset => pl_reset, 
     reg_o => reg_o_dma,
     reg_i => reg_i_dma,
-    evr_trig => '0', --evr_dma_trig, 
+    evr_trig => evr_dma_trig, 
     dma_adc_active => dma_adc_active,
     dma_tbt_active => dma_tbt_active, 
     dma_fa_active => dma_fa_active,
-    evr_ts => (others => '0'), --evr_ts,
+    evr_ts => evr_ts,
     evr_ts_lat => open, --evr_ts_lat, 
     dma_trig => dma_trig
   );    
@@ -441,6 +450,34 @@ fatoddr: entity work.fa2dma
   );    
 
 
+--embedded event receiver
+evr: entity work.evr_top 
+  generic map (
+    SIM_MODE => SIM_MODE
+  )
+  port map(
+    sys_clk => pl_clk0,
+    sys_rst => pl_reset, 
+    reg_o => reg_o_evr,
+    --gth_reset => gth_reset,
+
+    gth_refclk_p => gth_evr_refclk_p,  -- 312.5 MHz reference clock
+    gth_refclk_n => gth_evr_refclk_n,
+    gth_tx_p => gth_evr_tx_p,
+    gth_tx_n => gth_evr_tx_n,
+    gth_rx_p => gth_evr_rx_p,
+    gth_rx_n => gth_evr_rx_n,
+      
+    --trignum => evr_dma_trignum, 
+    trigdly => (x"00000001"), 
+    tbt_trig => evr_tbt_trig, 
+    fa_trig => evr_fa_trig, 
+    sa_trig => evr_sa_trig, 
+    usr_trig => evr_dma_trig, 
+    gps_trig => evr_gps_trig, 
+    timestamp => evr_ts,  
+    evr_rcvd_clk => evr_rcvd_clk
+);	
 
 
 
@@ -464,7 +501,8 @@ ps_pl: entity work.ps_io
 	reg_o_dma => reg_o_dma,
 	reg_i_dma => reg_i_dma,
 	reg_o_dsa => reg_o_dsa,
-	reg_o_pll => reg_o_pll 
+	reg_o_pll => reg_o_pll,
+	reg_i_pll => reg_i_pll 
           
    
   );

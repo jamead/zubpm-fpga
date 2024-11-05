@@ -57,14 +57,15 @@ type t_reg_o_tbt_fifo_rdout is record
 end record t_reg_o_tbt_fifo_rdout;
 
 
-
-
-
-
 type t_reg_o_dsa is record
    str      : std_logic;
    data     : std_logic_vector(7 downto 0);
 end record t_reg_o_dsa;
+
+type t_reg_o_evr is record
+   reset      : std_logic;
+   dma_trigno : std_logic_vector(7 downto 0);
+end record t_reg_o_evr;
 
 
 
@@ -73,6 +74,9 @@ type t_reg_o_pll is record
    data     : std_logic_vector(31 downto 0);
 end record t_reg_o_pll;
 
+type t_reg_i_pll is record
+   locked      : std_logic;
+end record t_reg_i_pll;
 
 
 type sdi_cntrl_type is record
