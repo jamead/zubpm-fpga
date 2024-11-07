@@ -59,6 +59,7 @@ architecture behv of trig_logic is
    attribute mark_debug     : string;
    attribute mark_debug of reg_i: signal is "true";
    attribute mark_debug of reg_o: signal is "true";
+   attribute mark_debug of evr_trig: signal is "true";
    attribute mark_debug of dma_adc_active: signal is "true";
    attribute mark_debug of dma_tbt_active: signal is "true";
    attribute mark_debug of dma_fa_active: signal is "true";
@@ -77,6 +78,7 @@ begin
 
 reg_i.trig_cnt <= trig_cnt;
 reg_i.status <= dma_adc_active & dma_tbt_active & dma_fa_active & dma_done & dma_running;
+
 
 
 dma_active <= dma_adc_active or dma_tbt_active or dma_fa_active;
@@ -151,6 +153,8 @@ begin
     else
       if (dma_trig = '1') then
         evr_ts_lat <= evr_ts;
+        reg_i.ts_s <= evr_ts(63 downto 32);
+        reg_i.ts_ns <= evr_ts(31 downto 0);
       end if;
     end if;
   end if;

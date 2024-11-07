@@ -28,7 +28,7 @@ dbLoadDatabase("$(BPMDIR)/dbd/pscdemo.dbd",0,0)
 pscdemo_registerRecordDeviceDriver(pdbbase) 
 
 # BPM IP address
-epicsEnvSet("BPM1_IP", "10.0.142.44");  #4009
+epicsEnvSet("BPM1_IP", "10.0.142.43");  #4009
 
 
 ## Load record instances

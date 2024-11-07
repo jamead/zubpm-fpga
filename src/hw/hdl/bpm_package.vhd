@@ -67,6 +67,10 @@ type t_reg_o_evr is record
    dma_trigno : std_logic_vector(7 downto 0);
 end record t_reg_o_evr;
 
+type t_reg_i_evr is record
+   ts_ns      : std_logic_vector(31 downto 0);
+   ts_s       : std_logic_vector(31 downto 0);
+end record t_reg_i_evr;
 
 
 type t_reg_o_pll is record
@@ -216,6 +220,8 @@ end record t_reg_o_dma;
 type t_reg_i_dma is record
     trig_cnt     : std_logic_vector(31 downto 0); 
     status       : std_logic_vector(4 downto 0);
+    ts_s         : std_logic_vector(31 downto 0);
+    ts_ns        : std_logic_vector(31 downto 0);
 end record t_reg_i_dma;
 
 

@@ -452,13 +452,19 @@ reconnect:
         //xil_printf("\nTrig Num: %d  \r\n",trignum);
 		if (trignum != prevtrignum)  {
 			//received a DMA trigger
-            xil_printf("\nTrig Num: %d  \r\n",trignum);
+			xil_printf("Disabling DMA\r\n");
+			Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_ADCENABLE_REG, 0);
+			Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TBTENABLE_REG, 0);
+			Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_FAENABLE_REG, 0);
+   			xil_printf("\nTrig Num: %d  \r\n",trignum);
             prevtrignum = trignum;
  	        Xil_DCacheInvalidateRange(ADC_DMA_DATA,1e6);
  	        Xil_DCacheInvalidateRange(TBT_DMA_DATA,1e6);
- 	        //Xil_DCacheInvalidateRange(FA_DMA_DATA,1e6);
+ 	        Xil_DCacheInvalidateRange(FA_DMA_DATA,1e6);
+
 
             //Read and send the TbT DMA data
+
  	        ReadDMATBTWvfm(msgid54_buf);
             //write the DMA data
             Host2NetworkConvWvfm(msgid54_buf,sizeof(msgid54_buf)+MSGHDRLEN);
@@ -484,7 +490,7 @@ reconnect:
 
 
 	        //Read and send the FA DMA data
- 	        ReadDMAFAWvfm(msgid55_buf);
+            ReadDMAFAWvfm(msgid55_buf);
             Host2NetworkConvWvfm(msgid55_buf,sizeof(msgid55_buf)+MSGHDRLEN);
             n = write(newsockfd,msgid55_buf,MSGID55LEN+MSGHDRLEN);
             xil_printf("FAWvfm bytes Written: %d\r\n",n);
@@ -493,6 +499,7 @@ reconnect:
             	close(newsockfd);
             	goto reconnect;
             }
+
 
             //re-arm AXI DMA for next trigger
             dma_arm();

@@ -300,8 +300,8 @@ reconnect:
 
 
             case EVENT_NO_MSG1:
-            	xil_printf("TbT Gate Width Message:   Value=%d\r\n",MsgData);
-                //set_eventno(MsgData);
+            	xil_printf("DMA Event Number Message:   Value=%d\r\n",MsgData);
+                set_eventno(MsgData);
                 break;
 
 

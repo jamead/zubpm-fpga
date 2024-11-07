@@ -58,8 +58,8 @@ extern char msgid55_buf[MSGID55LEN];
 
 typedef struct SAdataMsg {
 	u32 count;        // PSC Offset 0
-	u32 evr_ts_s;     // PSC Offset 4
-	u32 evr_ts_ns;    // PSC Offset 8
+	u32 evr_ts_ns;    // PSC Offset 4
+	u32 evr_ts_s;     // PSC Offset 8
 	u32 cha_mag;      // PSC Offset 12
 	u32 chb_mag;      // PSC Offset 16
 	u32 chc_mag;      // PSC Offset 20

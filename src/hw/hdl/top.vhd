@@ -95,7 +95,7 @@ generic(
 
   );
 end top;
-
+ 
 
 architecture behv of top is
 
@@ -137,6 +137,7 @@ architecture behv of top is
   signal reg_o_dma       : t_reg_o_dma;
   signal reg_i_dma       : t_reg_i_dma;
   signal reg_o_evr       : t_reg_o_evr;
+  signal reg_i_evr       : t_reg_i_evr;
   
   signal tbt_data        : t_tbt_data;    
   signal sa_data         : t_sa_data;
@@ -225,7 +226,7 @@ dbg(19) <= fp_in(3);
 fp_out(0) <= pl_clk0;
 fp_out(1) <= evr_rcvd_clk; --pl_clk1; --adc_clk_in;
 fp_out(2) <= adc_clk; 
-fp_out(3) <= evr_ref_clk; --tbt_trig; 
+fp_out(3) <= tbt_trig; 
 
 fp_led(7) <= dma_adc_active;
 fp_led(6) <= dma_tbt_active; 
@@ -335,7 +336,8 @@ atten_pt: entity work.spi_pe43712
     csb => dsa_latch                   
   );    
 
-
+reg_i_evr.ts_s <= evr_ts(63 downto 32);
+reg_i_evr.ts_ns <= evr_ts(31 downto 0);
 
 trig: entity work.trig_logic
   port map (
@@ -504,9 +506,10 @@ ps_pl: entity work.ps_io
 	reg_i_dma => reg_i_dma,
 	reg_o_dsa => reg_o_dsa,
 	reg_o_pll => reg_o_pll,
-	reg_i_pll => reg_i_pll 
+	reg_i_pll => reg_i_pll,
+	reg_o_evr => reg_o_evr, 
+	reg_i_evr => reg_i_evr
           
-   
   );
 
 

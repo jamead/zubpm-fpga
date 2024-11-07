@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--Saved on 2024-11-05 12:34:40 by mead-->
+<!--Saved on 2024-11-07 10:44:44 by diag-->
 <display version="2.0.0">
   <name>$(PRI):$(Sec)-BPM$(N)LN_LTB_bpm_Ctrl</name>
   <width>1350</width>
@@ -344,456 +344,6 @@ $(pv_value)</tooltip>
               </color>
             </border_color>
           </widget>
-          <widget type="xyplot" version="3.0.0">
-            <name>XY Graph</name>
-            <x>258</x>
-            <y>195</y>
-            <width>506</width>
-            <height>169</height>
-            <title>Ch B</title>
-            <title_font>
-              <font name="Default Bold" family="Liberation Sans" style="BOLD" size="14.0">
-              </font>
-            </title_font>
-            <show_legend>false</show_legend>
-            <actions>
-            </actions>
-            <x_axis>
-              <title>Sample</title>
-              <autoscale>true</autoscale>
-              <log_scale>false</log_scale>
-              <minimum>0.0</minimum>
-              <maximum>100.0</maximum>
-              <show_grid>true</show_grid>
-              <title_font>
-                <font name="Default Bold" family="Liberation Sans" style="BOLD" size="14.0">
-                </font>
-              </title_font>
-              <scale_font>
-                <font name="Default" family="Liberation Sans" style="REGULAR" size="14.0">
-                </font>
-              </scale_font>
-              <visible>true</visible>
-            </x_axis>
-            <y_axes>
-              <y_axis>
-                <title>Mag</title>
-                <autoscale>true</autoscale>
-                <log_scale>false</log_scale>
-                <minimum>0.0</minimum>
-                <maximum>100.0</maximum>
-                <show_grid>true</show_grid>
-                <title_font>
-                  <font name="Default Bold" family="Liberation Sans" style="BOLD" size="14.0">
-                  </font>
-                </title_font>
-                <scale_font>
-                  <font name="Default" family="Liberation Sans" style="REGULAR" size="14.0">
-                  </font>
-                </scale_font>
-                <on_right>false</on_right>
-                <visible>true</visible>
-                <color>
-                  <color name="Text" red="0" green="0" blue="0">
-                  </color>
-                </color>
-              </y_axis>
-            </y_axes>
-            <traces>
-              <trace>
-                <name></name>
-                <x_pv></x_pv>
-                <y_pv>$(PRI)-BI{BPM:$(N)}Ampl:BSA-I</y_pv>
-                <err_pv></err_pv>
-                <axis>0</axis>
-                <trace_type>1</trace_type>
-                <color>
-                  <color red="21" green="21" blue="196">
-                  </color>
-                </color>
-                <line_width>1</line_width>
-                <line_style>0</line_style>
-                <point_type>0</point_type>
-                <point_size>4</point_size>
-                <visible>true</visible>
-              </trace>
-            </traces>
-          </widget>
-          <widget type="xyplot" version="3.0.0">
-            <name>XY Graph</name>
-            <x>258</x>
-            <y>27</y>
-            <width>506</width>
-            <height>169</height>
-            <title>Ch A</title>
-            <title_font>
-              <font name="Default Bold" family="Liberation Sans" style="BOLD" size="14.0">
-              </font>
-            </title_font>
-            <show_legend>false</show_legend>
-            <actions>
-            </actions>
-            <x_axis>
-              <title>Sample</title>
-              <autoscale>true</autoscale>
-              <log_scale>false</log_scale>
-              <minimum>0.0</minimum>
-              <maximum>100.0</maximum>
-              <show_grid>true</show_grid>
-              <title_font>
-                <font name="Default Bold" family="Liberation Sans" style="BOLD" size="14.0">
-                </font>
-              </title_font>
-              <scale_font>
-                <font name="Default" family="Liberation Sans" style="REGULAR" size="14.0">
-                </font>
-              </scale_font>
-              <visible>true</visible>
-            </x_axis>
-            <y_axes>
-              <y_axis>
-                <title>Mag</title>
-                <autoscale>true</autoscale>
-                <log_scale>false</log_scale>
-                <minimum>0.0</minimum>
-                <maximum>100.0</maximum>
-                <show_grid>true</show_grid>
-                <title_font>
-                  <font name="Default Bold" family="Liberation Sans" style="BOLD" size="14.0">
-                  </font>
-                </title_font>
-                <scale_font>
-                  <font name="Default" family="Liberation Sans" style="REGULAR" size="14.0">
-                  </font>
-                </scale_font>
-                <on_right>false</on_right>
-                <visible>true</visible>
-                <color>
-                  <color name="Text" red="0" green="0" blue="0">
-                  </color>
-                </color>
-              </y_axis>
-            </y_axes>
-            <traces>
-              <trace>
-                <name></name>
-                <x_pv></x_pv>
-                <y_pv>$(PRI)-BI{BPM:$(N)}Ampl:ASA-I</y_pv>
-                <err_pv></err_pv>
-                <axis>0</axis>
-                <trace_type>1</trace_type>
-                <color>
-                  <color red="21" green="21" blue="196">
-                  </color>
-                </color>
-                <line_width>1</line_width>
-                <line_style>0</line_style>
-                <point_type>0</point_type>
-                <point_size>4</point_size>
-                <visible>true</visible>
-              </trace>
-            </traces>
-          </widget>
-          <widget type="xyplot" version="3.0.0">
-            <name>XY Graph</name>
-            <x>258</x>
-            <y>363</y>
-            <width>506</width>
-            <height>169</height>
-            <title>Ch C</title>
-            <title_font>
-              <font name="Default Bold" family="Liberation Sans" style="BOLD" size="14.0">
-              </font>
-            </title_font>
-            <show_legend>false</show_legend>
-            <actions>
-            </actions>
-            <x_axis>
-              <title>Sample</title>
-              <autoscale>true</autoscale>
-              <log_scale>false</log_scale>
-              <minimum>0.0</minimum>
-              <maximum>100.0</maximum>
-              <show_grid>true</show_grid>
-              <title_font>
-                <font name="Default Bold" family="Liberation Sans" style="BOLD" size="14.0">
-                </font>
-              </title_font>
-              <scale_font>
-                <font name="Default" family="Liberation Sans" style="REGULAR" size="14.0">
-                </font>
-              </scale_font>
-              <visible>true</visible>
-            </x_axis>
-            <y_axes>
-              <y_axis>
-                <title>Mag</title>
-                <autoscale>true</autoscale>
-                <log_scale>false</log_scale>
-                <minimum>0.0</minimum>
-                <maximum>100.0</maximum>
-                <show_grid>true</show_grid>
-                <title_font>
-                  <font name="Default Bold" family="Liberation Sans" style="BOLD" size="14.0">
-                  </font>
-                </title_font>
-                <scale_font>
-                  <font name="Default" family="Liberation Sans" style="REGULAR" size="14.0">
-                  </font>
-                </scale_font>
-                <on_right>false</on_right>
-                <visible>true</visible>
-                <color>
-                  <color name="Text" red="0" green="0" blue="0">
-                  </color>
-                </color>
-              </y_axis>
-            </y_axes>
-            <traces>
-              <trace>
-                <name></name>
-                <x_pv></x_pv>
-                <y_pv>$(PRI)-BI{BPM:$(N)}Ampl:CSA-I</y_pv>
-                <err_pv></err_pv>
-                <axis>0</axis>
-                <trace_type>1</trace_type>
-                <color>
-                  <color red="21" green="21" blue="196">
-                  </color>
-                </color>
-                <line_width>1</line_width>
-                <line_style>0</line_style>
-                <point_type>0</point_type>
-                <point_size>4</point_size>
-                <visible>true</visible>
-              </trace>
-            </traces>
-          </widget>
-          <widget type="xyplot" version="3.0.0">
-            <name>XY Graph</name>
-            <x>258</x>
-            <y>531</y>
-            <width>506</width>
-            <height>169</height>
-            <title>Ch D</title>
-            <title_font>
-              <font name="Default Bold" family="Liberation Sans" style="BOLD" size="14.0">
-              </font>
-            </title_font>
-            <show_legend>false</show_legend>
-            <actions>
-            </actions>
-            <x_axis>
-              <title>Sample</title>
-              <autoscale>true</autoscale>
-              <log_scale>false</log_scale>
-              <minimum>0.0</minimum>
-              <maximum>100.0</maximum>
-              <show_grid>true</show_grid>
-              <title_font>
-                <font name="Default Bold" family="Liberation Sans" style="BOLD" size="14.0">
-                </font>
-              </title_font>
-              <scale_font>
-                <font name="Default" family="Liberation Sans" style="REGULAR" size="14.0">
-                </font>
-              </scale_font>
-              <visible>true</visible>
-            </x_axis>
-            <y_axes>
-              <y_axis>
-                <title>Mag</title>
-                <autoscale>true</autoscale>
-                <log_scale>false</log_scale>
-                <minimum>0.0</minimum>
-                <maximum>100.0</maximum>
-                <show_grid>true</show_grid>
-                <title_font>
-                  <font name="Default Bold" family="Liberation Sans" style="BOLD" size="14.0">
-                  </font>
-                </title_font>
-                <scale_font>
-                  <font name="Default" family="Liberation Sans" style="REGULAR" size="14.0">
-                  </font>
-                </scale_font>
-                <on_right>false</on_right>
-                <visible>true</visible>
-                <color>
-                  <color name="Text" red="0" green="0" blue="0">
-                  </color>
-                </color>
-              </y_axis>
-            </y_axes>
-            <traces>
-              <trace>
-                <name></name>
-                <x_pv></x_pv>
-                <y_pv>$(PRI)-BI{BPM:$(N)}Ampl:DSA-I</y_pv>
-                <err_pv></err_pv>
-                <axis>0</axis>
-                <trace_type>1</trace_type>
-                <color>
-                  <color red="21" green="21" blue="196">
-                  </color>
-                </color>
-                <line_width>1</line_width>
-                <line_style>0</line_style>
-                <point_type>0</point_type>
-                <point_size>4</point_size>
-                <visible>true</visible>
-              </trace>
-            </traces>
-          </widget>
-          <widget type="xyplot" version="3.0.0">
-            <name>XY Graph</name>
-            <x>768</x>
-            <y>27</y>
-            <width>421</width>
-            <height>334</height>
-            <title>X pos</title>
-            <title_font>
-              <font name="Default Bold" family="Liberation Sans" style="BOLD" size="14.0">
-              </font>
-            </title_font>
-            <show_legend>false</show_legend>
-            <actions>
-            </actions>
-            <x_axis>
-              <title>Sample</title>
-              <autoscale>true</autoscale>
-              <log_scale>false</log_scale>
-              <minimum>0.0</minimum>
-              <maximum>100.0</maximum>
-              <show_grid>true</show_grid>
-              <title_font>
-                <font name="Default Bold" family="Liberation Sans" style="BOLD" size="14.0">
-                </font>
-              </title_font>
-              <scale_font>
-                <font name="Default" family="Liberation Sans" style="REGULAR" size="14.0">
-                </font>
-              </scale_font>
-              <visible>true</visible>
-            </x_axis>
-            <y_axes>
-              <y_axis>
-                <title>um</title>
-                <autoscale>true</autoscale>
-                <log_scale>false</log_scale>
-                <minimum>0.0</minimum>
-                <maximum>100.0</maximum>
-                <show_grid>true</show_grid>
-                <title_font>
-                  <font name="Default Bold" family="Liberation Sans" style="BOLD" size="14.0">
-                  </font>
-                </title_font>
-                <scale_font>
-                  <font name="Default" family="Liberation Sans" style="REGULAR" size="14.0">
-                  </font>
-                </scale_font>
-                <on_right>false</on_right>
-                <visible>true</visible>
-                <color>
-                  <color name="Text" red="0" green="0" blue="0">
-                  </color>
-                </color>
-              </y_axis>
-            </y_axes>
-            <traces>
-              <trace>
-                <name></name>
-                <x_pv></x_pv>
-                <y_pv>$(PRI)-BI{BPM:$(N)}Pos:X-I</y_pv>
-                <err_pv></err_pv>
-                <axis>0</axis>
-                <trace_type>1</trace_type>
-                <color>
-                  <color red="21" green="21" blue="196">
-                  </color>
-                </color>
-                <line_width>1</line_width>
-                <line_style>0</line_style>
-                <point_type>0</point_type>
-                <point_size>4</point_size>
-                <visible>true</visible>
-              </trace>
-            </traces>
-          </widget>
-          <widget type="xyplot" version="3.0.0">
-            <name>XY Graph</name>
-            <x>768</x>
-            <y>363</y>
-            <width>421</width>
-            <height>334</height>
-            <title>Y Pos </title>
-            <title_font>
-              <font name="Default Bold" family="Liberation Sans" style="BOLD" size="14.0">
-              </font>
-            </title_font>
-            <show_legend>false</show_legend>
-            <actions>
-            </actions>
-            <x_axis>
-              <title>Sample</title>
-              <autoscale>true</autoscale>
-              <log_scale>false</log_scale>
-              <minimum>0.0</minimum>
-              <maximum>100.0</maximum>
-              <show_grid>true</show_grid>
-              <title_font>
-                <font name="Default Bold" family="Liberation Sans" style="BOLD" size="14.0">
-                </font>
-              </title_font>
-              <scale_font>
-                <font name="Default" family="Liberation Sans" style="REGULAR" size="14.0">
-                </font>
-              </scale_font>
-              <visible>true</visible>
-            </x_axis>
-            <y_axes>
-              <y_axis>
-                <title>um</title>
-                <autoscale>true</autoscale>
-                <log_scale>false</log_scale>
-                <minimum>0.0</minimum>
-                <maximum>100.0</maximum>
-                <show_grid>true</show_grid>
-                <title_font>
-                  <font name="Default Bold" family="Liberation Sans" style="BOLD" size="14.0">
-                  </font>
-                </title_font>
-                <scale_font>
-                  <font name="Default" family="Liberation Sans" style="REGULAR" size="14.0">
-                  </font>
-                </scale_font>
-                <on_right>false</on_right>
-                <visible>true</visible>
-                <color>
-                  <color name="Text" red="0" green="0" blue="0">
-                  </color>
-                </color>
-              </y_axis>
-            </y_axes>
-            <traces>
-              <trace>
-                <name></name>
-                <x_pv></x_pv>
-                <y_pv>$(PRI)-BI{BPM:$(N)}Pos:Y-I</y_pv>
-                <err_pv></err_pv>
-                <axis>0</axis>
-                <trace_type>1</trace_type>
-                <color>
-                  <color red="21" green="21" blue="196">
-                  </color>
-                </color>
-                <line_width>1</line_width>
-                <line_style>0</line_style>
-                <point_type>0</point_type>
-                <point_size>4</point_size>
-                <visible>true</visible>
-              </trace>
-            </traces>
-          </widget>
           <widget type="textupdate" version="2.0.0">
             <name>Text Update</name>
             <pv_name>$(PRI)-BI{BPM:$(N)}Cnt:Trig-I</pv_name>
@@ -880,8 +430,13 @@ $(pv_value)</tooltip>
           </widget>
           <widget type="stripchart" version="2.1.0">
             <name>Strip Chart_1</name>
-            <x>261</x>
-            <y>319</y>
+            <x>255</x>
+            <y>37</y>
+            <width>510</width>
+            <height>150</height>
+            <show_grid>true</show_grid>
+            <title>chA</title>
+            <show_toolbar>false</show_toolbar>
             <y_axes>
               <y_axis>
                 <title>Y</title>
@@ -901,6 +456,211 @@ $(pv_value)</tooltip>
               <trace>
                 <name>$(traces[0].y_pv)</name>
                 <y_pv>$(PRI)-BI{BPM:$(N)}Ampl:ASA-I</y_pv>
+                <axis>0</axis>
+                <trace_type>1</trace_type>
+                <color>
+                  <color red="0" green="0" blue="255">
+                  </color>
+                </color>
+                <line_width>2</line_width>
+                <point_type>0</point_type>
+                <point_size>10</point_size>
+                <visible>true</visible>
+              </trace>
+            </traces>
+          </widget>
+          <widget type="stripchart" version="2.1.0">
+            <name>Strip Chart_2</name>
+            <x>255</x>
+            <y>193</y>
+            <width>510</width>
+            <height>150</height>
+            <show_grid>true</show_grid>
+            <title>chB</title>
+            <show_toolbar>false</show_toolbar>
+            <y_axes>
+              <y_axis>
+                <title>Y</title>
+                <autoscale>true</autoscale>
+                <log_scale>false</log_scale>
+                <minimum>0.0</minimum>
+                <maximum>100.0</maximum>
+                <show_grid>true</show_grid>
+                <visible>true</visible>
+                <color>
+                  <color name="Text" red="0" green="0" blue="0">
+                  </color>
+                </color>
+              </y_axis>
+            </y_axes>
+            <traces>
+              <trace>
+                <name>$(traces[0].y_pv)</name>
+                <y_pv>$(PRI)-BI{BPM:$(N)}Ampl:BSA-I</y_pv>
+                <axis>0</axis>
+                <trace_type>1</trace_type>
+                <color>
+                  <color red="0" green="0" blue="255">
+                  </color>
+                </color>
+                <line_width>2</line_width>
+                <point_type>0</point_type>
+                <point_size>10</point_size>
+                <visible>true</visible>
+              </trace>
+            </traces>
+          </widget>
+          <widget type="stripchart" version="2.1.0">
+            <name>Strip Chart_3</name>
+            <x>261</x>
+            <y>355</y>
+            <width>510</width>
+            <height>150</height>
+            <show_grid>true</show_grid>
+            <title>chC</title>
+            <show_toolbar>false</show_toolbar>
+            <y_axes>
+              <y_axis>
+                <title>Y</title>
+                <autoscale>true</autoscale>
+                <log_scale>false</log_scale>
+                <minimum>0.0</minimum>
+                <maximum>100.0</maximum>
+                <show_grid>true</show_grid>
+                <visible>true</visible>
+                <color>
+                  <color name="Text" red="0" green="0" blue="0">
+                  </color>
+                </color>
+              </y_axis>
+            </y_axes>
+            <traces>
+              <trace>
+                <name>$(traces[0].y_pv)</name>
+                <y_pv>$(PRI)-BI{BPM:$(N)}Ampl:CSA-I</y_pv>
+                <axis>0</axis>
+                <trace_type>1</trace_type>
+                <color>
+                  <color red="0" green="0" blue="255">
+                  </color>
+                </color>
+                <line_width>2</line_width>
+                <point_type>0</point_type>
+                <point_size>10</point_size>
+                <visible>true</visible>
+              </trace>
+            </traces>
+          </widget>
+          <widget type="stripchart" version="2.1.0">
+            <name>Strip Chart_4</name>
+            <x>261</x>
+            <y>523</y>
+            <width>510</width>
+            <height>150</height>
+            <show_grid>true</show_grid>
+            <title>chD</title>
+            <show_toolbar>false</show_toolbar>
+            <y_axes>
+              <y_axis>
+                <title>Y</title>
+                <autoscale>true</autoscale>
+                <log_scale>false</log_scale>
+                <minimum>0.0</minimum>
+                <maximum>100.0</maximum>
+                <show_grid>true</show_grid>
+                <visible>true</visible>
+                <color>
+                  <color name="Text" red="0" green="0" blue="0">
+                  </color>
+                </color>
+              </y_axis>
+            </y_axes>
+            <traces>
+              <trace>
+                <name>$(traces[0].y_pv)</name>
+                <y_pv>$(PRI)-BI{BPM:$(N)}Ampl:DSA-I</y_pv>
+                <axis>0</axis>
+                <trace_type>1</trace_type>
+                <color>
+                  <color red="0" green="0" blue="255">
+                  </color>
+                </color>
+                <line_width>2</line_width>
+                <point_type>0</point_type>
+                <point_size>10</point_size>
+                <visible>true</visible>
+              </trace>
+            </traces>
+          </widget>
+          <widget type="stripchart" version="2.1.0">
+            <name>Strip Chart_5</name>
+            <x>778</x>
+            <y>46</y>
+            <width>462</width>
+            <height>296</height>
+            <show_grid>true</show_grid>
+            <title>X Pos</title>
+            <show_toolbar>false</show_toolbar>
+            <y_axes>
+              <y_axis>
+                <title>Y</title>
+                <autoscale>true</autoscale>
+                <log_scale>false</log_scale>
+                <minimum>0.0</minimum>
+                <maximum>100.0</maximum>
+                <show_grid>true</show_grid>
+                <visible>true</visible>
+                <color>
+                  <color name="Text" red="0" green="0" blue="0">
+                  </color>
+                </color>
+              </y_axis>
+            </y_axes>
+            <traces>
+              <trace>
+                <name>$(traces[0].y_pv)</name>
+                <y_pv>$(PRI)-BI{BPM:$(N)}Pos:X-I</y_pv>
+                <axis>0</axis>
+                <trace_type>1</trace_type>
+                <color>
+                  <color red="0" green="0" blue="255">
+                  </color>
+                </color>
+                <line_width>2</line_width>
+                <point_type>0</point_type>
+                <point_size>10</point_size>
+                <visible>true</visible>
+              </trace>
+            </traces>
+          </widget>
+          <widget type="stripchart" version="2.1.0">
+            <name>Strip Chart_6</name>
+            <x>778</x>
+            <y>348</y>
+            <width>462</width>
+            <height>296</height>
+            <show_grid>true</show_grid>
+            <title>Y Pos</title>
+            <show_toolbar>false</show_toolbar>
+            <y_axes>
+              <y_axis>
+                <title>Y</title>
+                <autoscale>true</autoscale>
+                <log_scale>false</log_scale>
+                <minimum>0.0</minimum>
+                <maximum>100.0</maximum>
+                <show_grid>true</show_grid>
+                <visible>true</visible>
+                <color>
+                  <color name="Text" red="0" green="0" blue="0">
+                  </color>
+                </color>
+              </y_axis>
+            </y_axes>
+            <traces>
+              <trace>
+                <name>$(traces[0].y_pv)</name>
+                <y_pv>$(PRI)-BI{BPM:$(N)}Pos:Y-I</y_pv>
                 <axis>0</axis>
                 <trace_type>1</trace_type>
                 <color>
@@ -5925,8 +5685,8 @@ $(pv_value)</tooltip>
         </children>
       </tab>
     </tabs>
-    <x>37</x>
-    <y>29</y>
+    <x>36</x>
+    <y>30</y>
     <width>1290</width>
     <height>734</height>
     <background_color>

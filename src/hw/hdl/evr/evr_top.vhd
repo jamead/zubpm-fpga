@@ -214,12 +214,13 @@ end component;
    signal prev_datastream   : std_logic_vector(3 downto 0);
    signal cnt               : integer range 3 downto 0;
    signal trigactive        : std_logic;
+   signal dma_trigno        : std_logic_vector(7 downto 0);
   
   
   
 
    attribute mark_debug     : string;
-   attribute mark_debug of reg_o: signal is "true";
+   --attribute mark_debug of reg_o: signal is "true";
    attribute mark_debug of gth_txdata_in: signal is "true";  
    attribute mark_debug of gth_txcharisk_in: signal is "true";
    attribute mark_debug of gth_rx_userdata: signal is "true";
@@ -235,8 +236,8 @@ end component;
    attribute mark_debug of prev_datastream: signal is "true";
    attribute mark_debug of tbt_trig: signal is "true";
    attribute mark_debug of tbt_trig_i: signal is "true";
-
-
+   attribute mark_debug of dma_trigno: signal is "true";
+   attribute mark_debug of usr_trig: signal is "true";
 
 
 
@@ -246,7 +247,7 @@ begin
 evr_rcvd_clk <= gth_rxusr_clk;
 evr_ref_clk <= '0';
 
-
+dma_trigno <= reg_o.dma_trigno;
 
 refclk0_buf : IBUFDS_GTE4
   generic map (
@@ -307,7 +308,7 @@ BUFG_GT_rx : BUFG_GT
       O => gth_rxusr_clk,             -- 1-bit output: Buffer
       CE => '1',           -- 1-bit input: Buffer enable
       CEMASK => '0',   -- 1-bit input: CE Mask
-      CLR => '0', --reg_o.reset, --gth_reset(0),         -- 1-bit input: Asynchronous clear
+      CLR => reg_o.reset, --gth_reset(0),         -- 1-bit input: Asynchronous clear
       CLRMASK => '0', -- 1-bit input: CLR Mask
       DIV => "000",         -- 3-bit input: Dynamic divide Value
       I => gth_rxout_clk              -- 1-bit input: Buffer
@@ -318,7 +319,7 @@ BUFG_GT_tx : BUFG_GT
       O => gth_txusr_clk,             -- 1-bit output: Buffer
       CE => '1',           -- 1-bit input: Buffer enable
       CEMASK => '0',   -- 1-bit input: CE Mask
-      CLR => '0', --reg_o.reset, --gth_reset(0),         -- 1-bit input: Asynchronous clear
+      CLR => reg_o.reset, --gth_reset(0),         -- 1-bit input: Asynchronous clear
       CLRMASK => '0', -- 1-bit input: CLR Mask
       DIV => "000",         -- 3-bit input: Dynamic divide Value
       I => gth_txout_clk              -- 1-bit input: Buffer
@@ -478,7 +479,7 @@ event_usr : EventReceiverChannel
        clock => gth_rxusr_clk,
        reset => sys_rst,
        eventstream => eventstream,
-       myevent => reg_o.dma_trigno, --trignum,
+       myevent => dma_trigno, --reg_o.dma_trigno, --trignum,
        mydelay => trigdly, 
        mywidth => (x"00000175"),   -- //creates a pulse about 3us long
        mypolarity => ('0'),

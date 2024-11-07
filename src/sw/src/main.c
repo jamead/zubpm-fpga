@@ -26,7 +26,7 @@
 
 #define PLATFORM_ZYNQMP
 
-#define DEFAULT_IP_ADDRESS "10.0.142.44"
+#define DEFAULT_IP_ADDRESS "10.0.142.43"
 #define DEFAULT_IP_MASK "255.255.255.0"
 #define DEFAULT_GW_ADDRESS "10.0.142.1"
 
@@ -223,17 +223,17 @@ int main()
 {
     u32 i;
     u32 val;
+    u32 ts_s, ts_ns;
 
 	xil_printf("zuBPM ...\r\n");
 
 
-    //write DSA
+    //read Timestamp
     for (i=0;i<5;i++) {
-       val = Xil_In32(XPAR_M_AXI_BASEADDR + RF_DSA_REG);
-       xil_printf("DSA = %d\r\n",val);  
-       Xil_Out32(XPAR_M_AXI_BASEADDR + RF_DSA_REG, i);
-       val = Xil_In32(XPAR_M_AXI_BASEADDR + RF_DSA_REG);
-       xil_printf("DSA = %d\r\n",val);
+       ts_s = Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_S_REG);
+       ts_ns = Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_NS_REG);
+       xil_printf("ts= %d    %d\r\n",ts_s,ts_ns);
+       sleep(1);
     }
     
 

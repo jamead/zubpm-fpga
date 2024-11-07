@@ -39,6 +39,7 @@ entity ps_io is
 	 reg_o_adc       : out t_reg_o_adc_cntrl;
 	 reg_i_adc       : in  t_reg_i_adc_status; 
 	 reg_o_evr       : out t_reg_o_evr;
+	 reg_i_evr       : in  t_reg_i_evr;
  
      fp_leds         : out std_logic_vector(7 downto 0)
   );
@@ -122,10 +123,10 @@ reg_o_dma.fa_len <= reg_o.dma_fa_len.data.data;
 reg_i.dma_trigcnt.data.data <= reg_i_dma.trig_cnt;
 reg_i.dma_status.data.data <= reg_i_dma.status; 
 
-reg_i.ts_ns.val.data <= x"12345678";
-reg_i.ts_s.val.data <= x"deadbeef";
-reg_i.dma_ts_ns.val.data <= x"0123face";
-reg_i.dma_ts_s.val.data <= x"ba5eba11";
+reg_i.ts_ns.val.data <= reg_i_evr.ts_ns; --x"12345678";
+reg_i.ts_s.val.data <= reg_i_evr.ts_s; --x"deadbeef";
+reg_i.dma_ts_ns.val.data <= reg_i_dma.ts_ns; --x"0123face";
+reg_i.dma_ts_s.val.data <= reg_i_dma.ts_s; --x"ba5eba11";
 
 reg_o_evr.reset <= reg_o.evr_reset.data.data(0);
 reg_o_evr.dma_trigno <= reg_o.dma_trig_eventno.val.data;
