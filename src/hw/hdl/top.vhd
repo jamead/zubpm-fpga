@@ -210,13 +210,13 @@ dbg(5) <= adc_dbg(3); --adc_fco_mmcm
 dbg(6) <= '0'; --gth_refclk_buf; --'0';
 dbg(7) <= '0'; --gth_txusr_clk;
 dbg(8) <= '0'; --gth_rxusr_clk;
-dbg(9) <= '0';
-dbg(10) <= '0';
-dbg(11) <= '0';
+dbg(9) <= evr_tbt_trig;
+dbg(10) <= evr_fa_trig;
+dbg(11) <= evr_sa_trig;
 dbg(12) <= tbt_trig; 
 dbg(13) <= fa_trig;
 dbg(14) <= sa_trig;
-dbg(15) <= '0'; --tbt_extclk; --'0';
+dbg(15) <= tbt_extclk;
 dbg(16) <= fp_in(0);
 dbg(17) <= fp_in(1);
 dbg(18) <= fp_in(2);
@@ -339,7 +339,7 @@ atten_pt: entity work.spi_pe43712
 reg_i_evr.ts_s <= evr_ts(63 downto 32);
 reg_i_evr.ts_ns <= evr_ts(31 downto 0);
 
-trig: entity work.trig_logic
+dmatrig: entity work.trig_logic
   port map (
     adc_clk => adc_clk,  
     reset => pl_reset, 
@@ -364,10 +364,10 @@ dsp_trigs : entity work.dsp_cntrl
 	reset => pl_reset,
 	machine_sel => ("101"), 
 	tbt_params => reg_o_tbt,
-    inttrig_enb => 4d"0", --inttrig_enb, 
-    evrsync_cnt => '0', --evr_trig2, 
-    evr_fa_trig => '0', --evr_fa_trig,
-    evr_sa_trig => '0', --evr_sa_trig,       			
+    inttrig_enb => reg_o_evr.event_src_sel,  
+    evrsync_cnt => '0', 
+    evr_fa_trig => evr_fa_trig,
+    evr_sa_trig => evr_sa_trig,       			
 	tbt_gate => tbt_gate,
     tbt_trig => tbt_trig,
     pt_trig => pt_trig,

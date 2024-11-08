@@ -325,6 +325,10 @@ reconnect:
              	set_dmalen(FA,MsgData);
              	break;
 
+            case EVENT_SRC_SEL_MSG1:
+              	xil_printf("Setting Event Source:   Value=%d\r\n",MsgData);
+              	Xil_Out32(XPAR_M_AXI_BASEADDR + EVENT_SRC_SEL_REG, MsgData);
+              	break;
 
             case ADC_IDLY_MSG1:
             	xil_printf("Setting ADC IDLY:  Value=%d\r\n",MsgData);

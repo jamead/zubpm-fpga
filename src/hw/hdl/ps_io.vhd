@@ -130,6 +130,7 @@ reg_i.dma_ts_s.val.data <= reg_i_dma.ts_s; --x"ba5eba11";
 
 reg_o_evr.reset <= reg_o.evr_reset.data.data(0);
 reg_o_evr.dma_trigno <= reg_o.dma_trig_eventno.val.data;
+reg_o_evr.event_src_sel <= reg_o.event_src_sel.val.data(0);
 
 
 reg_i.sa_cnt.data.data <= sa_data.cnt;

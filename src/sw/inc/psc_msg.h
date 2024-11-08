@@ -2,7 +2,7 @@
 //The PSC Header is always 8 bytes
 #define MSGHDRLEN 8
 
-//This message is for slow status
+//This message is for System Health
 #define MSGID30 30
 #define MSGID30LEN 1024 //748   //in bytes
 
@@ -56,6 +56,7 @@ extern char msgid54_buf[MSGID54LEN];
 extern char msgid55_buf[MSGID55LEN];
 
 
+// PSC Message ID 31
 typedef struct SAdataMsg {
 	u32 count;        // PSC Offset 0
 	u32 evr_ts_ns;    // PSC Offset 4
@@ -70,8 +71,9 @@ typedef struct SAdataMsg {
 } SAdataMsg;
 
 
+// PSC Message ID 30
 typedef struct SysHealthMsg {
-	u32   fpgaver;       // PSC Offset 0   Firmware Version
+	u32   git_shasum;    // PSC Offset 0   Firmware Version (git checksum)
 	float dfe_temp[4];   // PSC Offset 4   ADT7410 Temperature Sensors
 	float afe_temp[2];   // PSC Offset 20
     float fpga_dietemp;  // PSC Offset 28
@@ -108,6 +110,7 @@ typedef struct SysHealthMsg {
 } SysHealthMsg;
 
 
+//PSC Message ID 31
 typedef struct StatusMsg {
 	u32 pll_locked;         //PSC Offset 0
 	u32 cha_gain;           //PSC Offset 4
@@ -130,6 +133,9 @@ typedef struct StatusMsg {
 	u32 dma_adclen;         //PSC Offset 72
 	u32 dma_tbtlen;         //PSC Offset 76
 	u32 dma_falen;          //PSC Offset 80
+	u32 dma_adc_active;     //PSC Offset 84
+	u32 dma_tbt_active;     //PSC Offset 88
+	u32 dma_fa_active;      //PSC Offset 92
 } StatusMsg;
 
 
@@ -139,6 +145,7 @@ typedef struct StatusMsg {
 #define FP_LED_MSG1 4
 #define PILOT_TONE_ENB_MSG1 8
 #define ADC_IDLY_MSG1 12
+#define EVENT_SRC_SEL_MSG1 16
 #define DMA_TRIG_SRC_MSG1 52
 #define DMA_ADCLEN_MSG1 56
 #define DMA_TBTLEN_MSG1 60
@@ -164,34 +171,3 @@ typedef struct StatusMsg {
 
 
 
-
-/*
-//Position Data Readback
-//Inj - On Trigger
-//Ring - 10Hz
-#define AMPL_ASA_MSG31 20
-#define AMPL_BSA_MSG31 24
-#define AMPL_CSA_MSG31 28
-#define AMPL_DSA_MSG31 32
-#define POS_X_MSG31 36
-#define POS_Y_MSG31 40
-#define AMPL_SUM_MSG31 44
-#define TRIG_EVENTNO_MSG31 84
-
-
-
-// System Health Status Readback offsets
-// 1Hz 
-#define FPGA_VER_MSG32 0 
-#define TEMP_DFESENSE0_MSG32 4 
-#define TEMP_DFESENSE1_MSG32 8 
-#define TEMP_DFESENSE2_MSG32 12 
-#define TEMP_DFESENSE3_MSG32 16 
-#define TEMP_AFESENSE0_MSG32 20 
-#define TEMP_AFESENSE1_MSG32 24
-#define FPGA_DIETEMP_MSG32 28
-#define SYS_UPTIME_MSG32 32
-#define LTC2991_VCC_VIN_MSG32 40
-#define SFP_TEMP_MSG32 100  // to 216
-#define PWR_MON_MSG32 220
-*/

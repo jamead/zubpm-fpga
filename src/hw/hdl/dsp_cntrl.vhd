@@ -36,7 +36,7 @@ entity dsp_cntrl is
     reset	        : in std_logic; 
     machine_sel     : in std_logic_vector(2 downto 0);
     tbt_params      : in t_reg_o_tbt;
-    inttrig_enb     : in  std_logic_vector(3 downto 0);
+    inttrig_enb     : in  std_logic;
     evrsync_cnt     : in  std_logic;
     evr_sa_trig     : in  std_logic;
     evr_fa_trig     : in  std_logic;
@@ -131,8 +131,8 @@ sa_count <= sa_count_i;
 
 
 --select between evr or internal trigger.
-fa_trig_o  <= fa_trig_i when (inttrig_enb(1) = '0') else evr_fa_trig_sync;
-sa_trig_o  <= sa_trig_i when (inttrig_enb(2) = '0') else evr_sa_trig_sync;
+fa_trig_o  <= fa_trig_i when (inttrig_enb = '0') else evr_fa_trig_sync;
+sa_trig_o  <= sa_trig_i when (inttrig_enb = '0') else evr_sa_trig_sync;
 
 
 
@@ -301,7 +301,7 @@ process (adc_clk, reset)
 -- internal mode or booster or external.
 -- Choices are external tbt_trig, booster_tbt or internal tbt
 
-tbt_trig_sel <= tbt_trig_int when (inttrig_enb(0) = '0') else
+tbt_trig_sel <= tbt_trig_int when (inttrig_enb = '0') else
               booster_trig when (machine_sel = "011")  else
               tbt_trig_ext;
 

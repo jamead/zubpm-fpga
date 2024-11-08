@@ -26,7 +26,7 @@
 
 #define PLATFORM_ZYNQMP
 
-#define DEFAULT_IP_ADDRESS "10.0.142.43"
+#define DEFAULT_IP_ADDRESS "10.0.142.44"
 #define DEFAULT_IP_MASK "255.255.255.0"
 #define DEFAULT_GW_ADDRESS "10.0.142.1"
 
@@ -109,7 +109,7 @@ void main_thread(void *p)
 
 	//const TickType_t x1second = pdMS_TO_TICKS(DELAY_1_SECOND);
 	/* the mac address of the board. this should be unique per board */
-	u8_t mac_ethernet_address[] = { 0x00, 0x0a, 0x35, 0x10, 0x11, 0x12 };
+	u8_t mac_ethernet_address[] = { 0x00, 0x0a, 0x35, 0x11, 0x11, 0x12 };
 
 
 	/* initialize lwIP before calling sys_thread_new */
@@ -224,17 +224,30 @@ int main()
     u32 i;
     u32 val;
     u32 ts_s, ts_ns;
+	time_t epoch_time;
+	struct tm *human_time;
+	char timebuf[80];
 
 	xil_printf("zuBPM ...\r\n");
 
 
+    xil_printf("Module ID Number: %x\r\n", Xil_In32(XPAR_M_AXI_BASEADDR + MOD_ID_NUM));
+    xil_printf("Module Version Number: %x\r\n", Xil_In32(XPAR_M_AXI_BASEADDR + MOD_ID_VER));
+    xil_printf("Project ID Number: %x\r\n", Xil_In32(XPAR_M_AXI_BASEADDR + PROJ_ID_NUM));
+    xil_printf("Project Version Number: %x\r\n", Xil_In32(XPAR_M_AXI_BASEADDR + PROJ_ID_VER));
+    //compare to git commit with command: git rev-parse --short HEAD
+    xil_printf("Git Checksum: %x\r\n", Xil_In32(XPAR_M_AXI_BASEADDR + GIT_SHASUM));
+    epoch_time = Xil_In32(XPAR_M_AXI_BASEADDR + COMPILE_TIMESTAMP);
+    human_time = localtime(&epoch_time);
+    strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", human_time);
+    xil_printf("Project Compilation Timestamp: %s\r\n", timebuf);
+
     //read Timestamp
-    for (i=0;i<5;i++) {
-       ts_s = Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_S_REG);
-       ts_ns = Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_NS_REG);
-       xil_printf("ts= %d    %d\r\n",ts_s,ts_ns);
-       sleep(1);
-    }
+    ts_s = Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_S_REG);
+    ts_ns = Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_NS_REG);
+    xil_printf("ts= %d    %d\r\n",ts_s,ts_ns);
+
+
     
 
 	prog_ad9510();
@@ -253,6 +266,10 @@ int main()
 	   Xil_Out32(XPAR_M_AXI_BASEADDR + 0x100, i);
 	   sleep(0.1);
 	}
+
+    //print DMA status
+	xil_printf("Reading DMA Status...\r\n");
+    xil_printf("DMA Status : %x\r\n",Xil_In32(XPAR_M_AXI_BASEADDR + DMA_STATUS_REG));
 
 
 	main_thread_handle = sys_thread_new("main_thread", main_thread, 0,

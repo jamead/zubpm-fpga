@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--Saved on 2024-11-07 10:44:44 by diag-->
+<!--Saved on 2024-11-08 12:19:11 by diag-->
 <display version="2.0.0">
   <name>$(PRI):$(Sec)-BPM$(N)LN_LTB_bpm_Ctrl</name>
   <width>1350</width>
@@ -2627,6 +2627,156 @@ $(pv_value)</tooltip>
             <wrap_words>false</wrap_words>
             <actions>
             </actions>
+            <border_color>
+              <color red="0" green="128" blue="255">
+              </color>
+            </border_color>
+          </widget>
+          <widget type="led" version="2.0.0">
+            <name>LED_1</name>
+            <pv_name>$(PRI)-BI{BPM:$(N)}DMA:adc_active-I</pv_name>
+            <x>136</x>
+            <y>489</y>
+            <width>30</width>
+            <height>18</height>
+            <off_color>
+              <color name="Background" red="255" green="255" blue="255">
+              </color>
+            </off_color>
+            <on_color>
+              <color name="Attention" red="255" green="160" blue="0">
+              </color>
+            </on_color>
+            <foreground_color>
+              <color red="0" green="0" blue="255">
+              </color>
+            </foreground_color>
+            <line_color>
+              <color red="150" green="150" blue="150">
+              </color>
+            </line_color>
+            <square>true</square>
+            <actions>
+            </actions>
+          </widget>
+          <widget type="led" version="2.0.0">
+            <name>LED_2</name>
+            <pv_name>$(PRI)-BI{BPM:$(N)}DMA:tbt_active-I</pv_name>
+            <x>136</x>
+            <y>509</y>
+            <width>30</width>
+            <height>18</height>
+            <off_color>
+              <color name="Transparent" red="255" green="255" blue="255" alpha="0">
+              </color>
+            </off_color>
+            <on_color>
+              <color name="Attention" red="255" green="160" blue="0">
+              </color>
+            </on_color>
+            <foreground_color>
+              <color red="0" green="0" blue="255">
+              </color>
+            </foreground_color>
+            <line_color>
+              <color red="150" green="150" blue="150">
+              </color>
+            </line_color>
+            <square>true</square>
+            <actions>
+            </actions>
+          </widget>
+          <widget type="led" version="2.0.0">
+            <name>LED_4</name>
+            <pv_name>$(PRI)-BI{BPM:$(N)}DMA:fa_active-I</pv_name>
+            <x>136</x>
+            <y>529</y>
+            <width>30</width>
+            <height>18</height>
+            <off_color>
+              <color name="Transparent" red="255" green="255" blue="255" alpha="0">
+              </color>
+            </off_color>
+            <on_color>
+              <color name="Attention" red="255" green="160" blue="0">
+              </color>
+            </on_color>
+            <foreground_color>
+              <color red="0" green="0" blue="255">
+              </color>
+            </foreground_color>
+            <line_color>
+              <color red="150" green="150" blue="150">
+              </color>
+            </line_color>
+            <square>true</square>
+            <actions>
+            </actions>
+          </widget>
+          <widget type="label" version="2.0.0">
+            <name>Label_33</name>
+            <text>TbT Active</text>
+            <x>52</x>
+            <y>510</y>
+            <width>67</width>
+            <height>16</height>
+            <background_color>
+              <color red="192" green="192" blue="192">
+              </color>
+            </background_color>
+            <horizontal_alignment>1</horizontal_alignment>
+            <vertical_alignment>1</vertical_alignment>
+            <auto_size>true</auto_size>
+            <actions>
+            </actions>
+            <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+            <border_color>
+              <color red="0" green="128" blue="255">
+              </color>
+            </border_color>
+          </widget>
+          <widget type="label" version="2.0.0">
+            <name>Label_34</name>
+            <text>FA Active</text>
+            <x>53</x>
+            <y>528</y>
+            <width>60</width>
+            <height>16</height>
+            <background_color>
+              <color red="192" green="192" blue="192">
+              </color>
+            </background_color>
+            <horizontal_alignment>1</horizontal_alignment>
+            <vertical_alignment>1</vertical_alignment>
+            <auto_size>true</auto_size>
+            <actions>
+            </actions>
+            <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+            <border_color>
+              <color red="0" green="128" blue="255">
+              </color>
+            </border_color>
+          </widget>
+          <widget type="label" version="2.0.0">
+            <name>Label_32</name>
+            <text>ADC Active</text>
+            <x>51</x>
+            <y>490</y>
+            <width>72</width>
+            <height>16</height>
+            <background_color>
+              <color red="192" green="192" blue="192">
+              </color>
+            </background_color>
+            <horizontal_alignment>1</horizontal_alignment>
+            <vertical_alignment>1</vertical_alignment>
+            <auto_size>true</auto_size>
+            <actions>
+            </actions>
+            <tooltip>$(pv_name)
+$(pv_value)</tooltip>
             <border_color>
               <color red="0" green="128" blue="255">
               </color>
@@ -5545,6 +5695,14 @@ $(pv_value)</tooltip>
             <maximum>1.0E8</maximum>
             <limits_from_pv>false</limits_from_pv>
           </widget>
+          <widget type="bool_button" version="2.0.0">
+            <name>Boolean Button</name>
+            <pv_name>$(PRI)-BI{BPM:$(N)}CLK:EventSrc-SP</pv_name>
+            <x>130</x>
+            <y>486</y>
+            <off_image>INT</off_image>
+            <on_image>EVR</on_image>
+          </widget>
         </children>
       </tab>
       <tab>
@@ -5693,6 +5851,7 @@ $(pv_value)</tooltip>
       <color red="240" green="240" blue="240">
       </color>
     </background_color>
+    <active_tab>4</active_tab>
     <tab_height>10</tab_height>
     <actions>
     </actions>

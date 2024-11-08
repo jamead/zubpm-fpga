@@ -63,8 +63,9 @@ type t_reg_o_dsa is record
 end record t_reg_o_dsa;
 
 type t_reg_o_evr is record
-   reset      : std_logic;
-   dma_trigno : std_logic_vector(7 downto 0);
+   reset         : std_logic;
+   dma_trigno    : std_logic_vector(7 downto 0);
+   event_src_sel : std_logic;
 end record t_reg_o_evr;
 
 type t_reg_i_evr is record

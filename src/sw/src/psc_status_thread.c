@@ -234,6 +234,7 @@ void ReadGenRegs(char *msg) {
 
     u32 *msg_u32ptr;
     struct StatusMsg status;
+    u32 dmastatus;
     //char  *msg_ptr;
 
     //write the PSC header
@@ -268,8 +269,17 @@ void ReadGenRegs(char *msg) {
     //status.trigtobeam_thresh = Xil_In32(XPAR_M_AXI_BASEADDR + TRIGTOBEAM_THRESH_REG);
     //status.trigtobeam_dly = Xil_In32(XPAR_M_AXI_BASEADDR + TRIGTOBEAM_DLY_REG);
 
+    dmastatus = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_STATUS_REG);
+    status.dma_adc_active = (dmastatus & 0x10) >> 4;
+    status.dma_tbt_active = (dmastatus & 0x8) >> 3;
+    status.dma_fa_active = (dmastatus & 0x4) >> 2;
+    //xil_printf("DMA Status :  %x:   %d   %d   %d\r\n",dmastatus,status.dma_adc_active,status.dma_tbt_active,status.dma_fa_active);
+
     //xil_printf("Trig TS_S: %d\r\n",status.evr_ts_s_triglat);
     //xil_printf("Trig TS_NS: %d\r\n",status.evr_ts_ns_triglat);
+
+    //print DMA status
+    //xil_printf("DMA Status : %x\r\n",Xil_In32(XPAR_M_AXI_BASEADDR + DMA_STATUS_REG));
 
     //copy the structure to the PSC msg buffer
     memcpy(&msg[MSGHDRLEN],&status,sizeof(status));
@@ -311,6 +321,9 @@ void ReadPosRegs(char *msg) {
     memcpy(&msg[MSGHDRLEN],&SAdata,sizeof(SAdata));
 
 
+
+
+
 }
 
 
@@ -330,9 +343,8 @@ void ReadSysInfo(char *msg) {
 
     //write the PSC message
 
-    //read FPGA version from PL register
-    //syshealth.fpgaver = Xil_In32(XPAR_M_AXI_BASEADDR + FPGA_VER_REG);
-
+    //read FPGA version (git checksum) from PL register
+    syshealth.git_shasum = Xil_In32(XPAR_M_AXI_BASEADDR + GIT_SHASUM);
     //read temperature from i2c bus
     i2c_set_port_expander(I2C_PORTEXP1_ADDR,1);
     syshealth.dfe_temp[0] = read_i2c_temp(BRDTEMP0_ADDR);

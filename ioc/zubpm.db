@@ -85,6 +85,16 @@ record(bo, "$(P){BPM:$(NO)}ADC:IDLY-SP") {
     field(FLNK, "$(P){BPM:$(NO)}GoRegSingleWrite")
 }
 
+#Event Source Sel (0=int, 1=evr)
+record(bo, "$(P){BPM:$(NO)}CLK:EventSrc-SP") {
+    field(DESC, "Event Source Select")
+    field(DTYP, "PSC Single U32")
+    field(OUT , "@aie_tx_$(NO) 1 16")
+    field(ZNAM,"INT")
+    field(ONAM,"EVR")
+    info(autosaveFields, "VAL")
+    field(FLNK, "$(P){BPM:$(NO)}GoRegSingleWrite")
+}
 
 
 
@@ -726,6 +736,41 @@ record(longin, "$(P){BPM:$(NO)}DMA:falen-I") {
     field(EGU,  "")
 }
 
+record(bi, "$(P){BPM:$(NO)}DMA:adc_active-I") {
+    field(DESC, "DMA ADC Active")
+    field(DTYP, "PSC Reg")
+    field(INP , "@Rx$(NO) 30 84")
+    field(MASK, "0x1")
+    field(SCAN,"I/O Intr")
+    field(ZNAM,"Complete")
+    field(ONAM,"Running")
+    #field(ZSV,"NO_ALARM")
+    #field(OSV,"MAJOR")
+}
+
+record(bi, "$(P){BPM:$(NO)}DMA:tbt_active-I") {
+    field(DESC, "DMA TBT Active")
+    field(DTYP, "PSC Reg")
+    field(INP , "@Rx$(NO) 30 88")
+    field(MASK, "0x1")
+    field(SCAN,"I/O Intr")
+    field(ZNAM,"Complete")
+    field(ONAM,"Running")
+    #field(ZSV,"NO_ALARM")
+    #field(OSV,"MAJOR")
+}
+
+record(bi, "$(P){BPM:$(NO)}DMA:fa_active-I") {
+    field(DESC, "DMA FA Active")
+    field(DTYP, "PSC Reg")
+    field(INP , "@Rx$(NO) 30 92")
+    field(MASK, "0x1")
+    field(SCAN,"I/O Intr")
+    field(ZNAM,"Complete")
+    field(ONAM,"Running")
+    #field(ZSV,"NO_ALARM")
+    #field(OSV,"MAJOR")
+}
 
 
 

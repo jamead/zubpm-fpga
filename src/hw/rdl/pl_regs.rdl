@@ -442,7 +442,7 @@ reg {
     default sw = r;
     default hw = w;
     field {} data[5];
-  } dma_status @0x132;
+  } dma_status @0x12C;
 
 
  reg {
@@ -496,9 +496,14 @@ reg {
     default sw = rw;
     default hw = r;
     field {} val[32];
-  } dma_trig_dely @0x164;  
+  } dma_trig_delay @0x164;  
 
- 
+ reg {
+    desc="Internal clock mode (tbt,fa,sa trig source) (0=int counters, 1=evr)";
+    default sw = rw;
+    default hw = r;
+    field {} val[1];
+  } event_src_sel @0x168;  
  
  
  
