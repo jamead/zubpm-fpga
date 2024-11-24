@@ -147,18 +147,18 @@ end component;
   signal adc_fifo_empty : std_logic_vector(3 downto 0);
   
 
---   attribute mark_debug     : string;
---   attribute mark_debug of reg_o: signal is "true";
+   attribute mark_debug     : string;
+   attribute mark_debug of reg_o: signal is "true";
 --   attribute mark_debug of reg_i: signal is "true";
 --   attribute mark_debug of adca_data: signal is "true";
 --   attribute mark_debug of adcb_data: signal is "true";
 --   attribute mark_debug of adcc_data: signal is "true";
 --   attribute mark_debug of adcd_data: signal is "true";
 --   attribute mark_debug of adc_data: signal is "true";
---   attribute mark_debug of adc0_fco_mmcm_psdone: signal is "true";
---   attribute mark_debug of adc0_fco_mmcm_locked: signal is "true";   
---   attribute mark_debug of adc1_fco_mmcm_psdone: signal is "true";   
---   attribute mark_debug of adc1_fco_mmcm_locked: signal is "true";
+   attribute mark_debug of adc0_fco_mmcm_psdone: signal is "true";
+   attribute mark_debug of adc0_fco_mmcm_locked: signal is "true";   
+   attribute mark_debug of adc1_fco_mmcm_psdone: signal is "true";   
+   attribute mark_debug of adc1_fco_mmcm_locked: signal is "true";
           
      
 
@@ -316,7 +316,7 @@ adc_chd: entity work.adc_s2p
 );
 
 --sync both adc's to adc0_fco_mmcm for now. 
-adc_clk_out <= adc1_fco_mmcm;
+adc_clk_out <= adc0_fco_mmcm;
  
  
 --process(adc_clk_out)

@@ -341,10 +341,24 @@ reconnect:
             	xil_printf("ChC IDLY rval=%d\r\n",rdval);
             	rdval = Xil_In32(XPAR_M_AXI_BASEADDR + ADC_IDLYCHDRVAL_REG);
             	xil_printf("ChD IDLY rval=%d\r\n",rdval);
-
-
            	    break;
 
+
+            case ADC_MMCM0_MSG1:
+            	if (MsgData == 1) {
+            		xil_printf("Setting ADC0 MMCM FCO Delay\r\n");
+            	    Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_FCOMMCM_REG, 1);
+            	    Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_FCOMMCM_REG, 0);
+            	}
+                break;
+
+            case ADC_MMCM1_MSG1:
+            	if (MsgData == 1) {
+            		xil_printf("Setting ADC1 MMCM FCO Delay\r\n");
+            	    Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_FCOMMCM_REG, 2);
+            	    Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_FCOMMCM_REG, 0);
+            	}
+                break;
 
             default:
             	xil_printf("Msg not supported yet...\r\n");

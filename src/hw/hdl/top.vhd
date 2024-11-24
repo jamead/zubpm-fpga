@@ -225,7 +225,7 @@ dbg(19) <= fp_in(3);
 fp_out(0) <= pl_clk0;
 fp_out(1) <= evr_rcvd_clk; --pl_clk1; --adc_clk_in;
 fp_out(2) <= adc_clk; 
-fp_out(3) <= evr_ref_clk; --tbt_trig; 
+fp_out(3) <= tbt_trig; 
 
 fp_led(7) <= dma_adc_active;
 fp_led(6) <= dma_tbt_active; 
@@ -477,8 +477,7 @@ evr: entity work.evr_top
     usr_trig => evr_dma_trig, 
     gps_trig => evr_gps_trig, 
     timestamp => evr_ts,  
-    evr_rcvd_clk => evr_rcvd_clk,
-    evr_ref_clk => evr_ref_clk
+    evr_rcvd_clk => evr_rcvd_clk
 );	
 
 
@@ -504,7 +503,8 @@ ps_pl: entity work.ps_io
 	reg_i_dma => reg_i_dma,
 	reg_o_dsa => reg_o_dsa,
 	reg_o_pll => reg_o_pll,
-	reg_i_pll => reg_i_pll 
+	reg_i_pll => reg_i_pll,
+	reg_o_evr => reg_o_evr 
           
    
   );

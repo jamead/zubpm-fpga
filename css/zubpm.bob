@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--Saved on 2024-11-05 12:34:40 by mead-->
+<!--Saved on 2024-11-22 21:43:17 by mead-->
 <display version="2.0.0">
   <name>$(PRI):$(Sec)-BPM$(N)LN_LTB_bpm_Ctrl</name>
   <width>1350</width>
@@ -3321,6 +3321,56 @@ $(pv_value)</tooltip>
               </trace>
             </traces>
           </widget>
+          <widget type="bool_button" version="2.0.0">
+            <name>Boolean Button_6</name>
+            <pv_name>$(PRI)-BI{BPM:$(N)}ADC:MMCM0DLY-SP</pv_name>
+            <x>838</x>
+            <y>12</y>
+            <width>183</width>
+            <height>29</height>
+            <off_label>ADC0 MMCM DLYSTR</off_label>
+            <off_color>
+              <color red="0" green="100" blue="0">
+              </color>
+            </off_color>
+            <on_label>Trin On</on_label>
+            <on_color>
+              <color red="0" green="255" blue="0">
+              </color>
+            </on_color>
+            <background_color>
+              <color red="0" green="255" blue="255">
+              </color>
+            </background_color>
+            <actions>
+            </actions>
+            <mode>1</mode>
+          </widget>
+          <widget type="bool_button" version="2.0.0">
+            <name>Boolean Button_7</name>
+            <pv_name>$(PRI)-BI{BPM:$(N)}ADC:MMCM1DLY-SP</pv_name>
+            <x>1048</x>
+            <y>6</y>
+            <width>183</width>
+            <height>29</height>
+            <off_label>ADC1 MMCM DLYSTR</off_label>
+            <off_color>
+              <color red="0" green="100" blue="0">
+              </color>
+            </off_color>
+            <on_label>Trin On</on_label>
+            <on_color>
+              <color red="0" green="255" blue="0">
+              </color>
+            </on_color>
+            <background_color>
+              <color red="0" green="255" blue="255">
+              </color>
+            </background_color>
+            <actions>
+            </actions>
+            <mode>1</mode>
+          </widget>
         </children>
       </tab>
       <tab>
@@ -5785,6 +5835,42 @@ $(pv_value)</tooltip>
             <maximum>1.0E8</maximum>
             <limits_from_pv>false</limits_from_pv>
           </widget>
+          <widget type="spinner" version="2.0.0">
+            <name>Spinner_17</name>
+            <pv_name>$(PRI)-BI{BPM:$(N)}ADC:IDLY-SP</pv_name>
+            <x>147</x>
+            <y>499</y>
+            <width>79</width>
+            <height>25</height>
+            <format>0</format>
+            <precision>3</precision>
+            <background_color>
+              <color red="192" green="192" blue="192">
+              </color>
+            </background_color>
+            <horizontal_alignment>1</horizontal_alignment>
+            <vertical_alignment>1</vertical_alignment>
+            <actions>
+            </actions>
+            <maximum>1.0E8</maximum>
+            <limits_from_pv>false</limits_from_pv>
+          </widget>
+          <widget type="label" version="2.0.0">
+            <name>Label_85</name>
+            <text>ADC idly</text>
+            <x>54</x>
+            <y>493</y>
+            <width>107</width>
+            <height>36</height>
+            <horizontal_alignment>1</horizontal_alignment>
+            <vertical_alignment>1</vertical_alignment>
+            <actions>
+            </actions>
+            <border_color>
+              <color red="0" green="128" blue="255">
+              </color>
+            </border_color>
+          </widget>
         </children>
       </tab>
       <tab>
@@ -5925,16 +6011,53 @@ $(pv_value)</tooltip>
         </children>
       </tab>
     </tabs>
-    <x>37</x>
-    <y>29</y>
+    <x>36</x>
+    <y>30</y>
     <width>1290</width>
     <height>734</height>
     <background_color>
       <color red="240" green="240" blue="240">
       </color>
     </background_color>
+    <active_tab>2</active_tab>
     <tab_height>10</tab_height>
     <actions>
     </actions>
+  </widget>
+  <widget type="spinner" version="2.0.0">
+    <name>Spinner_18</name>
+    <pv_name>$(PRI)-BI{BPM:$(N)}ADC:IDLY-SP</pv_name>
+    <x>762</x>
+    <y>97</y>
+    <width>79</width>
+    <height>25</height>
+    <format>0</format>
+    <precision>3</precision>
+    <background_color>
+      <color red="192" green="192" blue="192">
+      </color>
+    </background_color>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <actions>
+    </actions>
+    <maximum>1.0E8</maximum>
+    <limits_from_pv>false</limits_from_pv>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_87</name>
+    <text>ADC idly</text>
+    <x>669</x>
+    <y>91</y>
+    <width>107</width>
+    <height>36</height>
+    <horizontal_alignment>1</horizontal_alignment>
+    <vertical_alignment>1</vertical_alignment>
+    <actions>
+    </actions>
+    <border_color>
+      <color red="0" green="128" blue="255">
+      </color>
+    </border_color>
   </widget>
 </display>
