@@ -111,6 +111,15 @@ record(bo, "$(P){BPM:$(NO)}ADC:MMCM1DLY-SP") {
 }
 
 
+#ADC IDLY Value
+record(ao, "$(P){BPM:$(NO)}ADC:SPI-SP") {
+    field(DESC, "ADC IDLY Ctrl")
+    field(DTYP, "PSC Single I32")
+    field(OUT , "@aie_tx_$(NO) 1 24")
+    info(autosaveFields, "VAL")
+    field(FLNK, "$(P){BPM:$(NO)}GoRegSingleWrite")
+}
+
 
 
 

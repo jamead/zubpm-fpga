@@ -141,6 +141,7 @@ typedef struct StatusMsg {
 #define ADC_IDLY_MSG1 12
 #define ADC_MMCM0_MSG1 16
 #define ADC_MMCM1_MSG1 20
+#define ADC_SPI_MSG1 24
 #define DMA_TRIG_SRC_MSG1 52
 #define DMA_ADCLEN_MSG1 56
 #define DMA_TBTLEN_MSG1 60

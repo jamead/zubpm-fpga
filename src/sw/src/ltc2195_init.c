@@ -32,6 +32,7 @@ void ltc2195_init()
    Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_SPI_REG, 0x8000 | regAddr<<8 | regVal);
    usleep(1000);
    rdbk = Xil_In32(XPAR_M_AXI_BASEADDR + ADC_SPI_REG);
+   usleep(1000);
    xil_printf("SPI Read Back ADC0 Reg 1  = %x\r\n",rdbk);
    //read back from adc1
    Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_SPI_REG, 0x10000 | 0x8000 | regAddr<<8 | regVal);
@@ -62,6 +63,7 @@ void ltc2195_init()
    Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_SPI_REG, 0x8000 | regAddr<<8 | regVal);
    usleep(1000);
    rdbk = Xil_In32(XPAR_M_AXI_BASEADDR + ADC_SPI_REG);
+   usleep(1000);
    xil_printf("SPI Read Back ADC0 Reg 4  = %x\r\n",rdbk);
    Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_SPI_REG, 0x10000 | 0x8000 | regAddr<<8 | regVal);
    usleep(1000);
@@ -74,7 +76,7 @@ void ltc2195_init()
 
    //set 4 lane output
    regAddr = 2;
-   regVal = 1;  //set to 1 for normal, set to 5 for test pattern
+   regVal = 5;  //set to 1 for normal, set to 5 for test pattern
    Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_SPI_REG, regAddr<<8 | regVal);
    //fpgabase[ADC_SPI_REG] = regAddr<<8 | regVal;
    usleep(1000);
