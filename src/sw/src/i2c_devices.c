@@ -21,11 +21,6 @@ static const u32 lmk61e2_values [] = {
 
 
 
-
-
-
-
-
 void init_i2c() {
     //s32 Status;
     XIicPs_Config *ConfigPtr;
@@ -62,6 +57,60 @@ s32 i2c_read(u8 *buf, u8 len, u8 addr) {
     return status;
 
 }
+
+
+
+// 24AA025E48 EEPROM  --------------------------------------
+#define IIC_EEPROM_ADDR 0x50
+#define IIC_MAC_REG 0xFA
+
+void i2c_get_mac_address(){
+	i2c_set_port_expander(I2C_PORTEXP1_ADDR,0x80);
+    u8 buf[6] = {0};
+    buf[0] = IIC_MAC_REG;
+    i2c_write(buf,1,IIC_EEPROM_ADDR);
+    i2c_read(buf,6,IIC_EEPROM_ADDR);
+    xil_printf("EEPROM MAC ADDR = %2x %2x %2x %2x %2x %2x\r\n",buf[0], buf[1], buf[2], buf[3], buf[4], buf[5]);
+    //iic_chp_recv_repeated_start(buf, 1, mac, 6, IIC_EEPROM_ADDR);
+}
+
+/*
+void i2c_eeprom_writeByte(u8 addr, u8 data){
+	i2c_set_port_expander(I2C_PORTEXP1_ADDR,0x80);
+    u8 buf[] = {addr, data};
+    iic_chp_send(buf, 2, IIC_EEPROM_ADDR);
+    iic_pe_disable(2, 0);
+}
+
+
+u8 i2c_eeprom_readByte(u8 addr){
+	i2c_set_port_expander(I2C_PORTEXP1_ADDR,0x80);
+    u8 buf[] = {addr};
+    u8 recvBuf[1];
+    iic_chp_recv_repeated_start(buf, 1, recvBuf, 1, IIC_EEPROM_ADDR);
+    iic_pe_disable(2, 0);
+    return recvBuf[0];
+}
+
+
+void i2c_eeprom_writeBytes(u8 startAddr, u8 *data, u8 len){
+	i2c_set_port_expander(I2C_PORTEXP1_ADDR,0x80);
+    u8 buf[len + 1];
+    buf[0] = startAddr;
+    for(int i = 0; i < len; i++) buf[i+1] = data[i];
+    iic_chp_send(buf, len + 1, IIC_EEPROM_ADDR);
+    iic_pe_disable(2, 0);
+}
+
+
+void i2c_eeprom_readBytes(u8 startAddr, u8 *data, u8 len){
+	i2c_set_port_expander(I2C_PORTEXP1_ADDR,0x80);
+    u8 buf[] = {startAddr};
+    iic_chp_recv_repeated_start(buf, 1, data, len, IIC_EEPROM_ADDR);
+    iic_pe_disable(2, 0);
+}
+
+*/
 
 
 void i2c_set_port_expander(u32 addr, u32 port)  {
@@ -102,9 +151,6 @@ void WriteLMK61E2()
 
 
 
-
-
-
 float read_i2c_temp(u8 addr) {
 
     u8 buf[3];
@@ -118,9 +164,6 @@ float read_i2c_temp(u8 addr) {
     return tempflt;
 
 }
-
-
-
 
 
 

@@ -24,6 +24,7 @@
 #define I2C_PORTEXP1_ADDR 0x71
 
 
+void i2c_get_mac_address();
 
 void prog_ad9510();
 void ltc2195_init();

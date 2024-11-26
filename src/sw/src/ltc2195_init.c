@@ -76,7 +76,7 @@ void ltc2195_init()
 
    //set 4 lane output
    regAddr = 2;
-   regVal = 5;  //set to 1 for normal, set to 5 for test pattern
+   regVal = 1;  //set to 1 for normal, set to 5 for test pattern
    Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_SPI_REG, regAddr<<8 | regVal);
    //fpgabase[ADC_SPI_REG] = regAddr<<8 | regVal;
    usleep(1000);
@@ -101,7 +101,7 @@ void ltc2195_init()
 	  chc = (s16) Xil_In16(XPAR_M_AXI_BASEADDR + ADC_RAWCHC_REG);
 	  chd = (s16) Xil_In16(XPAR_M_AXI_BASEADDR + ADC_RAWCHD_REG);
 
-      xil_printf("%x\t%x\t%x\t%x\r\n",cha,chb,chc,chd);
+      xil_printf("%d\t%d\t%d\t%d\r\n",cha,chb,chc,chd);
       usleep(100000);
    }
 

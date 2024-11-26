@@ -26,7 +26,7 @@
 
 #define PLATFORM_ZYNQMP
 
-#define DEFAULT_IP_ADDRESS "10.0.142.44"
+#define DEFAULT_IP_ADDRESS "10.0.142.43"
 #define DEFAULT_IP_MASK "255.255.255.0"
 #define DEFAULT_GW_ADDRESS "10.0.142.1"
 
@@ -228,7 +228,7 @@ s32 init_sysmon() {
 int main()
 {
     u32 i;
-    u32 val;
+    //u32 val;
     u32 ts_s, ts_ns;
 	time_t epoch_time;
 	struct tm *human_time;
@@ -254,14 +254,20 @@ int main()
     xil_printf("ts= %d    %d\r\n",ts_s,ts_ns);
 
 
-    
-
 	prog_ad9510();
 	ltc2195_init();
 	init_i2c();
 	init_sysmon();
 	
     WriteLMK61E2();
+
+
+    while (1) {
+      i2c_get_mac_address();
+      sleep(1);
+    }
+
+
 
 	//EVR reset
 	Xil_Out32(XPAR_M_AXI_BASEADDR + EVR_RST_REG, 1);
