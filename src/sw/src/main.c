@@ -30,6 +30,12 @@
 #define DEFAULT_IP_MASK "255.255.255.0"
 #define DEFAULT_GW_ADDRESS "10.0.142.1"
 
+//#define DEFAULT_IP_ADDRESS "130.199.104.34"
+//#define DEFAULT_IP_MASK "255.255.254.0"
+//#define DEFAULT_GW_ADDRESS "130.199.104.24"
+
+
+
 #define DELAY_100_MS            100UL
 #define DELAY_1_SECOND          (10*DELAY_100_MS)
 

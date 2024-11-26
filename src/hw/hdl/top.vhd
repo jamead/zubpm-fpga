@@ -479,8 +479,7 @@ evr: entity work.evr_top
     usr_trig => evr_dma_trig, 
     gps_trig => evr_gps_trig, 
     timestamp => evr_ts,  
-    evr_rcvd_clk => evr_rcvd_clk,
-    evr_ref_clk => evr_ref_clk
+    evr_rcvd_clk => evr_rcvd_clk
 );	
 
 

@@ -1,7 +1,7 @@
-#!//home/diag/epics/pscdrv/bin/linux-x86_64/pscdemo 
-epicsEnvSet("TOP","/home/diag/epics/pscdrv")
+#!//home/mead/epics/pscdrv/bin/linux-x86_64/pscdemo 
+epicsEnvSet("TOP","/home/mead/epics/pscdrv")
 epicsEnvSet("BPMDIR","$(TOP)")
-epicsEnvSet("ZUBPM_DBDIR","/home/diag/fwk/zubpm/ioc")
+epicsEnvSet("ZUBPM_DBDIR","/home/mead/rfbpm/fwk/zubpm/ioc")
 
 
 #epicsEnvSet("CNO","40")   ## Cell Number
@@ -54,8 +54,8 @@ var(PSCDebug, 5)	#5 full debug
 
 #bpm1 Create the PSC
 createPSC("aie_tx_1", $(BPM1_IP), 7, 0)
-createPSC("aie_wfm_rx_1", $(BPM1_IP), 20, 2)
-createPSC("Rx1", $(BPM1_IP), 600, 2)
+createPSC("aie_wfm_rx_1", $(BPM1_IP), 20, 1)
+createPSC("Rx1", $(BPM1_IP), 600, 1)
 
 ###########
 iocInit

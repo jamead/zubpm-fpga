@@ -59,8 +59,8 @@ entity evr_top is
   gps_trig       : out std_logic;
   timestamp      : out std_logic_vector(63 downto 0);
     
-  evr_rcvd_clk   : out std_logic;
-  evr_ref_clk    : out std_logic  
+  evr_rcvd_clk   : out std_logic  
+
 );  
  
 
@@ -169,8 +169,6 @@ end component;
   signal gth_cplllock      : std_logic;
   signal gth_cpllrefclklost  : std_logic;  
    
-  signal gth_refclk_odiv2      : std_logic;
-  
   signal gth_userclk_tx_srcclk : std_logic;
   signal gth_userclk_tx_usrclk : std_logic;
   signal gth_userclk_tx_usrclk2 : std_logic;
@@ -220,7 +218,6 @@ end component;
   
 
    attribute mark_debug     : string;
-   --attribute mark_debug of reg_o: signal is "true";
    attribute mark_debug of gth_txdata_in: signal is "true";  
    attribute mark_debug of gth_txcharisk_in: signal is "true";
    attribute mark_debug of gth_rx_userdata: signal is "true";
@@ -245,7 +242,6 @@ end component;
 begin 
 
 evr_rcvd_clk <= gth_rxusr_clk;
-evr_ref_clk <= '0';
 
 dma_trigno <= reg_o.dma_trigno;
 
@@ -257,7 +253,7 @@ refclk0_buf : IBUFDS_GTE4
  )
   port map (
       O => gth_refclk,         -- 1-bit output: Refer to Transceiver User Guide
-      ODIV2 => open,  -- 1-bit output: Refer to Transceiver User Guide
+      ODIV2 => open, --gth_refclk_odiv2,  -- 1-bit output: Refer to Transceiver User Guide
       CEB => '0',     -- 1-bit input: Refer to Transceiver User Guide
       I => gth_refclk_p,         -- 1-bit input: Refer to Transceiver User Guide
       IB => gth_refclk_n        -- 1-bit input: Refer to Transceiver User Guide
@@ -266,7 +262,7 @@ refclk0_buf : IBUFDS_GTE4
 --for debug, sends refclk to debug header   
 --BUFG_GT_refclk : BUFG_GT
 --   port map (
---      O => evr_ref_clk,             -- 1-bit output: Buffer
+--      O => gth_refclk_buf,             -- 1-bit output: Buffer
 --      CE => '1',           -- 1-bit input: Buffer enable
 --      CEMASK => '0',   -- 1-bit input: CE Mask
 --      CLR => '0', --gth_reset(0),         -- 1-bit input: Asynchronous clear

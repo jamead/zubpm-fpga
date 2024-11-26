@@ -75,15 +75,15 @@ record(bo, "$(P){BPM:$(NO)}Rf:PtPwr-SP") {
 }
 
 #ADC IDLY Value
-record(bo, "$(P){BPM:$(NO)}ADC:IDLY-SP") {
+record(ao, "$(P){BPM:$(NO)}ADC:IDLY-SP") {
     field(DESC, "ADC IDLY Ctrl")
-    field(DTYP, "PSC Single U32")
+    field(DTYP, "PSC Single I32")
     field(OUT , "@aie_tx_$(NO) 1 12")
-    field(ZNAM,"Off")
-    field(ONAM,"On")
     info(autosaveFields, "VAL")
     field(FLNK, "$(P){BPM:$(NO)}GoRegSingleWrite")
 }
+
+
 
 #Event Source Sel (0=int, 1=evr)
 record(bo, "$(P){BPM:$(NO)}CLK:EventSrc-SP") {
@@ -96,6 +96,38 @@ record(bo, "$(P){BPM:$(NO)}CLK:EventSrc-SP") {
     field(FLNK, "$(P){BPM:$(NO)}GoRegSingleWrite")
 }
 
+#ADC FCO MMCM Delay Strobe
+record(bo, "$(P){BPM:$(NO)}ADC:MMCM1DLY-SP") {
+    field(DESC, "MMCM1 FCO Delay Strobe")
+    field(DTYP, "PSC Single U32")
+    #field(DOL , "$(SYS=SR)-HLA{}AllBPMs-Rf:PtPwr-SP CP")
+    field(OUT , "@aie_tx_$(NO) 1 20")
+    field(ZNAM,"Off")
+    field(ONAM,"On")
+    info(autosaveFields, "VAL")
+    field(FLNK, "$(P){BPM:$(NO)}GoRegSingleWrite")
+}
+
+
+#ADC IDLY Value
+record(ao, "$(P){BPM:$(NO)}ADC:SPI-SP") {
+    field(DESC, "ADC IDLY Ctrl")
+    field(DTYP, "PSC Single I32")
+    field(OUT , "@aie_tx_$(NO) 1 24")
+    info(autosaveFields, "VAL")
+    field(FLNK, "$(P){BPM:$(NO)}GoRegSingleWrite")
+}
+
+#ADC FCO MMCM Delay Strobe
+record(bo, "$(P){BPM:$(NO)}ADC:MMCM0DLY-SP") {
+    field(DESC, "MMCM0 FCO Delay Strobe")
+    field(DTYP, "PSC Single U32")
+    field(OUT , "@aie_tx_$(NO) 1 28")
+    field(ZNAM,"Off")
+    field(ONAM,"On")
+    info(autosaveFields, "VAL")
+    field(FLNK, "$(P){BPM:$(NO)}GoRegSingleWrite")
+}
 
 
 

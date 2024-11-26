@@ -169,6 +169,7 @@ void psc_control_thread()
 	char buffer[RECV_BUF_SIZE];
 	int n, *bufptr, numpackets=0;
     u32 MsgAddr, MsgData, rdval;
+    u32 rdbk, regAddr, regVal;
 
 
 
@@ -345,10 +346,42 @@ reconnect:
             	xil_printf("ChC IDLY rval=%d\r\n",rdval);
             	rdval = Xil_In32(XPAR_M_AXI_BASEADDR + ADC_IDLYCHDRVAL_REG);
             	xil_printf("ChD IDLY rval=%d\r\n",rdval);
-
-
            	    break;
 
+
+            case ADC_MMCM0_MSG1:
+            	if (MsgData == 1) {
+            		xil_printf("Setting ADC0 MMCM FCO Delay\r\n");
+            	    Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_FCOMMCM_REG, 1);
+            	    Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_FCOMMCM_REG, 0);
+            	}
+                break;
+
+            case ADC_MMCM1_MSG1:
+            	if (MsgData == 1) {
+            		xil_printf("Setting ADC1 MMCM FCO Delay\r\n");
+            	    Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_FCOMMCM_REG, 2);
+            	    Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_FCOMMCM_REG, 0);
+            	}
+                break;
+
+            case ADC_SPI_MSG1:
+            	regAddr = (MsgData & 0xFF00) >> 8;
+            	regVal = (MsgData & 0xFF);
+            	xil_printf("Programming ADC SPI Register  Addr: %x   Data: %x \r\n", regAddr, regVal);
+            	Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_SPI_REG, regAddr<<8 | regVal);
+            	usleep(1000);
+            	//read back
+            	Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_SPI_REG, 0x8000 | regAddr<<8 | regVal);
+            	usleep(1000);
+            	rdbk = Xil_In32(XPAR_M_AXI_BASEADDR + ADC_SPI_REG);
+            	xil_printf("SPI Read Back ADC0 Reg: %d = %x\r\n",regAddr,rdbk);
+            	usleep(1000);
+            	Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_SPI_REG, 0x10000 | 0x8000 | regAddr<<8 | regVal);
+            	usleep(1000);
+            	rdbk = Xil_In32(XPAR_M_AXI_BASEADDR + ADC_SPI_REG);
+            	xil_printf("SPI Read Back ADC1 Reg: %d = %x\r\n",regAddr,rdbk);
+                break;
 
             default:
             	xil_printf("Msg not supported yet...\r\n");

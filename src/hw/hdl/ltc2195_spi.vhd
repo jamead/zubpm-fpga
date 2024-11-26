@@ -66,17 +66,17 @@ architecture rtl of ltc2195_spi is
   signal  rwbit        : std_logic;
   signal  adc_sel      : std_logic;
   
---  attribute mark_debug     : string;
---  attribute mark_debug of bcnt: signal is "true";
---  attribute mark_debug of state: signal is "true"; 
---  attribute mark_debug of adc_spi_wdata: signal is "true";
---  attribute mark_debug of adc_spi_rdata: signal is "true";   
---  attribute mark_debug of spi_wdata: signal is "true";
---  attribute mark_debug of spi_rdata: signal is "true";
---  attribute mark_debug of sclk: signal is "true";
---  attribute mark_debug of sdi: signal is "true";
---  attribute mark_debug of sdo: signal is "true";
---  attribute mark_debug of csb: signal is "true";   
+  attribute mark_debug     : string;
+  attribute mark_debug of bcnt: signal is "true";
+  attribute mark_debug of state: signal is "true"; 
+  attribute mark_debug of adc_spi_wdata: signal is "true";
+  attribute mark_debug of adc_spi_rdata: signal is "true";   
+  attribute mark_debug of spi_wdata: signal is "true";
+  attribute mark_debug of spi_rdata: signal is "true";
+  attribute mark_debug of sclk: signal is "true";
+  attribute mark_debug of sdi: signal is "true";
+  attribute mark_debug of sdo: signal is "true";
+  attribute mark_debug of csb: signal is "true";   
 
     
   
@@ -150,7 +150,7 @@ process (sys_clk, reset)
 
         when CLKP2 =>     -- CLKP2 clock phase HIGH
             sclk <= "11";
-            if (adc_sel = '1') then
+            if (adc_sel = '0') then
                spi_rdata(bcnt) <= sdo(0);
             else
                spi_rdata(bcnt) <= sdo(1);
