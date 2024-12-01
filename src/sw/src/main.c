@@ -11,6 +11,11 @@
 #include "xsysmonpsu.h"
 #include "xiicps.h"
 
+#include "xstatus.h"       // For XStatus
+#include "pm_defs.h"
+#include "pm_common.h"       // PM API functions
+#include "pm_api_sys.h"
+
 
 /* Hardware support includes */
 #include "../inc/zubpm_defs.h"
@@ -26,13 +31,9 @@
 
 #define PLATFORM_ZYNQMP
 
-#define DEFAULT_IP_ADDRESS "10.0.142.43"
-#define DEFAULT_IP_MASK "255.255.255.0"
-#define DEFAULT_GW_ADDRESS "10.0.142.1"
-
-//#define DEFAULT_IP_ADDRESS "130.199.104.34"
-//#define DEFAULT_IP_MASK "255.255.254.0"
-//#define DEFAULT_GW_ADDRESS "130.199.104.24"
+//#define DEFAULT_IP_ADDRESS "10.0.142.43"
+//#define DEFAULT_IP_MASK "255.255.255.0"
+//#define DEFAULT_GW_ADDRESS "10.0.142.1"
 
 
 
@@ -61,6 +62,11 @@ char msgid54_buf[MSGID54LEN];
 char msgid55_buf[MSGID55LEN];
 
 
+
+ip_t ip_settings;
+
+
+
 XIicPs IicPsInstance;	    // Instance of the IIC Device
 XSysMonPsu SysMonInstance;  // Instance of the Sysmon Device
 
@@ -82,6 +88,7 @@ static void print_ip(char *msg, ip_addr_t *ip)
 				ip4_addr3(ip), ip4_addr4(ip));
 }
 
+
 static void print_ip_settings(ip_addr_t *ip, ip_addr_t *mask, ip_addr_t *gw)
 {
 	print_ip("Board IP:       ", ip);
@@ -89,23 +96,49 @@ static void print_ip_settings(ip_addr_t *ip, ip_addr_t *mask, ip_addr_t *gw)
 	print_ip("Gateway :       ", gw);
 }
 
-static void assign_default_ip(ip_addr_t *ip, ip_addr_t *mask, ip_addr_t *gw)
-{
-	int err;
 
-	xil_printf("Configuring default IP %s \r\n", DEFAULT_IP_ADDRESS);
-	err = inet_aton(DEFAULT_IP_ADDRESS, ip);
-	if(!err)
-		xil_printf("Invalid default IP address: %d\r\n", err);
-	err = inet_aton(DEFAULT_IP_MASK, mask);
-	if(!err)
-		xil_printf("Invalid default IP MASK: %d\r\n", err);
-	err = inet_aton(DEFAULT_GW_ADDRESS, gw);
-	if(!err)
-		xil_printf("Invalid default gateway address: %d\r\n", err);
+static void assign_ip_settings()
+{
+	u8 data[4];
+
+	xil_printf("Getting IP Address from EEPROM\r\n");
+	//IP address is stored in EEPROM locations 0,1,2,3
+	i2c_eeprom_readBytes(0, data, 4);
+	//xil_printf("IP Addr: %u.%u.%u.%u\r\n",data[0],data[1],data[2],data[3]);
+	IP4_ADDR(&server_netif.ip_addr, data[0],data[1],data[2],data[3]);
+
+	xil_printf("Getting IP Netmask from EEPROM\r\n");
+	//IP netmask is stored in EEPROM locations 16,17,18,19
+	i2c_eeprom_readBytes(16, data, 4);
+	//xil_printf("IP Netmask: %u.%u.%u.%u\r\n",data[0],data[1],data[2],data[3]);
+	IP4_ADDR(&server_netif.netmask, data[0],data[1],data[2],data[3]);
+
+	xil_printf("Getting IP Netmask from EEPROM\r\n");
+	i2c_eeprom_readBytes(32, data, 4);
+	//IP gw is stored in EEPROM locations 32,33,34,35
+	//xil_printf("IP Gateway: %u.%u.%u.%u\r\n",data[0],data[1],data[2],data[3]);
+	IP4_ADDR(&server_netif.gw, data[0],data[1],data[2],data[3]);
+
 }
 
+void print_firmware_version()
+{
 
+  time_t epoch_time;
+  struct tm *human_time;
+  char timebuf[80];
+
+  xil_printf("Module ID Number: %x\r\n", Xil_In32(XPAR_M_AXI_BASEADDR + MOD_ID_NUM));
+  xil_printf("Module Version Number: %x\r\n", Xil_In32(XPAR_M_AXI_BASEADDR + MOD_ID_VER));
+  xil_printf("Project ID Number: %x\r\n", Xil_In32(XPAR_M_AXI_BASEADDR + PROJ_ID_NUM));
+  xil_printf("Project Version Number: %x\r\n", Xil_In32(XPAR_M_AXI_BASEADDR + PROJ_ID_VER));
+  //compare to git commit with command: git rev-parse --short HEAD
+  xil_printf("Git Checksum: %x\r\n", Xil_In32(XPAR_M_AXI_BASEADDR + GIT_SHASUM));
+  epoch_time = Xil_In32(XPAR_M_AXI_BASEADDR + COMPILE_TIMESTAMP);
+  human_time = localtime(&epoch_time);
+  strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", human_time);
+  xil_printf("Project Compilation Timestamp: %s\r\n", timebuf);
+}
 
 
 
@@ -113,10 +146,9 @@ static void assign_default_ip(ip_addr_t *ip, ip_addr_t *mask, ip_addr_t *gw)
 void main_thread(void *p)
 {
 
-	//const TickType_t x1second = pdMS_TO_TICKS(DELAY_1_SECOND);
 	/* the mac address of the board. this should be unique per board */
 	u8_t mac_ethernet_address[] = { 0x00, 0x0a, 0x35, 0x11, 0x11, 0x12 };
-
+    i2c_get_mac_address(mac_ethernet_address);
 
 	/* initialize lwIP before calling sys_thread_new */
 	lwip_init();
@@ -128,7 +160,6 @@ void main_thread(void *p)
 		return;
 	}
 
-
 	netif_set_default(&server_netif);
 
 	/* specify that the network if is up */
@@ -139,40 +170,39 @@ void main_thread(void *p)
 			(void(*)(void*))xemacif_input_thread, &server_netif,
 			THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
 
+	//IP address are read in from EEPROM
+	assign_ip_settings(&(server_netif.ip_addr),&(server_netif.netmask),&(server_netif.gw));
 
-	assign_default_ip(&(server_netif.ip_addr), &(server_netif.netmask),
-				&(server_netif.gw));
-
-	print_ip_settings(&(server_netif.ip_addr), &(server_netif.netmask),
-				&(server_netif.gw));
+	print_ip_settings(&(server_netif.ip_addr),&(server_netif.netmask),&(server_netif.gw));
 
 
     //Delay for 100ms
 	vTaskDelay(pdMS_TO_TICKS(100));
 
-    // Start the PSC Status Thread.  Handles incoming commands from IOC
+    // Start the Menu Thread.  Handles all Console Printing and Menu control
     xil_printf("\r\n");
-    sys_thread_new("psc_status_thread", psc_status_thread, 0,
-		THREAD_STACKSIZE,
-		DEFAULT_THREAD_PRIO);
+    sys_thread_new("menu_thread", menu_thread, 0,THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
+
+
+    // Start the PSC Status Thread.  Handles incoming commands from IOC
+    vTaskDelay(pdMS_TO_TICKS(100));
+    xil_printf("\r\n");
+    sys_thread_new("psc_status_thread", psc_status_thread, 0,THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
 
 
     // Delay for 100ms
     vTaskDelay(pdMS_TO_TICKS(100));
     // Start the PSC Waveform Thread.  Handles incoming commands from IOC
     xil_printf("\r\n");
-    sys_thread_new("psc_wvfm_thread", psc_wvfm_thread, 0,
-		THREAD_STACKSIZE,
-		DEFAULT_THREAD_PRIO);
+    sys_thread_new("psc_wvfm_thread", psc_wvfm_thread, 0, THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
 
 
     // Delay for 100 ms
     vTaskDelay(pdMS_TO_TICKS(100));
     // Start the PSC Control Thread.  Handles incoming commands from IOC
     xil_printf("\r\n");
-    sys_thread_new("psc_cntrl_thread", psc_control_thread, 0,
-		THREAD_STACKSIZE,
-		DEFAULT_THREAD_PRIO);
+    sys_thread_new("psc_cntrl_thread", psc_control_thread, 0, THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
+
 
 	//setup an Uptime Timer
 	xUptimeTimer = xTimerCreate("UptimeTimer", pdMS_TO_TICKS(1000), pdTRUE, (void *)0, vUptimeTimerCallback);
@@ -225,28 +255,15 @@ s32 init_sysmon() {
 
 
 
+
+
 int main()
 {
-    u32 i;
-    //u32 val;
+
     u32 ts_s, ts_ns;
-	time_t epoch_time;
-	struct tm *human_time;
-	char timebuf[80];
 
 	xil_printf("zuBPM ...\r\n");
-
-
-    xil_printf("Module ID Number: %x\r\n", Xil_In32(XPAR_M_AXI_BASEADDR + MOD_ID_NUM));
-    xil_printf("Module Version Number: %x\r\n", Xil_In32(XPAR_M_AXI_BASEADDR + MOD_ID_VER));
-    xil_printf("Project ID Number: %x\r\n", Xil_In32(XPAR_M_AXI_BASEADDR + PROJ_ID_NUM));
-    xil_printf("Project Version Number: %x\r\n", Xil_In32(XPAR_M_AXI_BASEADDR + PROJ_ID_VER));
-    //compare to git commit with command: git rev-parse --short HEAD
-    xil_printf("Git Checksum: %x\r\n", Xil_In32(XPAR_M_AXI_BASEADDR + GIT_SHASUM));
-    epoch_time = Xil_In32(XPAR_M_AXI_BASEADDR + COMPILE_TIMESTAMP);
-    human_time = localtime(&epoch_time);
-    strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", human_time);
-    xil_printf("Project Compilation Timestamp: %s\r\n", timebuf);
+    print_firmware_version();
 
     //read Timestamp
     ts_s = Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_S_REG);
@@ -258,15 +275,7 @@ int main()
 	ltc2195_init();
 	init_i2c();
 	init_sysmon();
-	
-    WriteLMK61E2();
-
-
-    while (1) {
-      i2c_get_mac_address();
-      sleep(1);
-    }
-
+    write_lmk61e2();
 
 
 	//EVR reset
@@ -274,14 +283,11 @@ int main()
 	Xil_Out32(XPAR_M_AXI_BASEADDR + EVR_RST_REG, 0);
 
 
-	for (i=0;i<10;i++) {
-	   Xil_Out32(XPAR_M_AXI_BASEADDR + 0x100, i);
-	   sleep(0.1);
-	}
+    // TODO:  This doesn't work
+    //xil_printf("System is about to reset...\n");
+    // Perform the system reset
+    //XPm_ResetAssert(XILPM_RESET_SOFT,XILPM_RESET_ACTION_PULSE);
 
-    //print DMA status
-	xil_printf("Reading DMA Status...\r\n");
-    xil_printf("DMA Status : %x\r\n",Xil_In32(XPAR_M_AXI_BASEADDR + DMA_STATUS_REG));
 
 
 	main_thread_handle = sys_thread_new("main_thread", main_thread, 0,

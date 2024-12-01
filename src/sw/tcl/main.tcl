@@ -64,7 +64,7 @@ proc doOnCreate {} {
   fwfwk::printInfo "doOnCreate in src/sw/main.tcl - Adding LWIP 211"
 
   #domain active {app_domain}
-  
+  bsp setlib xilpm 
   bsp config total_heap_size "1048576"
   bsp config minimal_stack_size "1024"
   bsp config max_task_name_len "32"

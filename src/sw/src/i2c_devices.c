@@ -64,13 +64,13 @@ s32 i2c_read(u8 *buf, u8 len, u8 addr) {
 #define IIC_EEPROM_ADDR 0x50
 #define IIC_MAC_REG 0xFA
 
-void i2c_get_mac_address(){
+void i2c_get_mac_address(u8 *mac){
 	i2c_set_port_expander(I2C_PORTEXP1_ADDR,0x80);
     u8 buf[6] = {0};
     buf[0] = IIC_MAC_REG;
     i2c_write(buf,1,IIC_EEPROM_ADDR);
-    i2c_read(buf,6,IIC_EEPROM_ADDR);
-    xil_printf("EEPROM MAC ADDR = %2x %2x %2x %2x %2x %2x\r\n",buf[0], buf[1], buf[2], buf[3], buf[4], buf[5]);
+    i2c_read(mac,6,IIC_EEPROM_ADDR);
+    xil_printf("EEPROM MAC ADDR = %2x %2x %2x %2x %2x %2x\r\n",mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
     //iic_chp_recv_repeated_start(buf, 1, mac, 6, IIC_EEPROM_ADDR);
 }
 
@@ -92,25 +92,93 @@ u8 i2c_eeprom_readByte(u8 addr){
     return recvBuf[0];
 }
 
-
+*/
 void i2c_eeprom_writeBytes(u8 startAddr, u8 *data, u8 len){
 	i2c_set_port_expander(I2C_PORTEXP1_ADDR,0x80);
     u8 buf[len + 1];
     buf[0] = startAddr;
     for(int i = 0; i < len; i++) buf[i+1] = data[i];
-    iic_chp_send(buf, len + 1, IIC_EEPROM_ADDR);
-    iic_pe_disable(2, 0);
+    i2c_write(buf, len + 1, IIC_EEPROM_ADDR);
 }
 
 
 void i2c_eeprom_readBytes(u8 startAddr, u8 *data, u8 len){
+	u8 buf[] = {startAddr};
 	i2c_set_port_expander(I2C_PORTEXP1_ADDR,0x80);
-    u8 buf[] = {startAddr};
-    iic_chp_recv_repeated_start(buf, 1, data, len, IIC_EEPROM_ADDR);
-    iic_pe_disable(2, 0);
+    i2c_write(buf,1,IIC_EEPROM_ADDR);
+    i2c_read(data,len,IIC_EEPROM_ADDR);
+    //u8 buf[] = {startAddr};
+    //iic_chp_recv_repeated_start(buf, 1, data, len, IIC_EEPROM_ADDR);
+    //iic_pe_disable(2, 0);
 }
 
+
+
+void eeprom_dump()
+{
+  u8 rdBuf[129];
+  memset(rdBuf, 0xFF, sizeof(rdBuf));
+  rdBuf[128] = 0;
+  i2c_eeprom_readBytes(0, rdBuf, 128);
+
+  printf("Read EEPROM:\r\n\r\n");
+  printf("%s\r\n", rdBuf);
+
+  for (int i = 0; i < 128; i++)
+  {
+    if ((i % 16) == 0)
+      printf("\r\n0x%02x:  ", i);
+    printf("%02x  ", rdBuf[i]);
+  }
+  printf("\r\n");
+}
+
+
+
+
+
+
+
+
+
+/*
+void eeprom_write_ipaddr()
+{
+  u8 ip_addr[16], wrBuf[128];
+  u8 octet1, octet2, octet3, octet4;
+
+  memset(wrBuf, 0, 128);
+
+
+  // Prompt the user to enter an IP address
+  printf("Enter an IP address (format: x.x.x.x): ");
+
+  // Read the IP address as four separate integers (octets)
+  if (scanf("%u%u%u%u", &octet1, &octet2, &octet3, &octet4) == 4) {
+        // Validate that each octet is within the range 0-255
+        if (octet1 <= 255 && octet2 <= 255 && octet3 <= 255 && octet4 <= 255) {
+            // Format and store the IP address as a string
+            snprintf((char *)wrBuf, sizeof(wrBuf), "%u.%u.%u.%u", octet1, octet2, octet3, octet4);
+            printf("IP Address Stored: %s\n", ip_addr);
+        } else {
+            printf("Error: One or more octets are out of range (0-255).\n");
+        }
+    } else
+        printf("Error: Invalid input format. Please enter in x.x.x.x format.\n");
+
+
+  printf("  Writing");
+  for (size_t loc = 0; loc < 128; loc += 16)
+  {
+    i2c_eeprom_writeBytes(loc, &wrBuf[loc], 16);
+    printf(".");
+    usleep(10*1000);
+  }
+  printf("\r\n");
+}
 */
+
+
 
 
 void i2c_set_port_expander(u32 addr, u32 port)  {
@@ -127,7 +195,7 @@ void i2c_set_port_expander(u32 addr, u32 port)  {
 }
 
 
-void WriteLMK61E2()
+void write_lmk61e2()
 {
    u8 buf[4] = {0};
    u32 regval, i;
