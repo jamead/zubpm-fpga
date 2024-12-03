@@ -28,13 +28,13 @@ dbLoadDatabase("$(BPMDIR)/dbd/pscdemo.dbd",0,0)
 pscdemo_registerRecordDeviceDriver(pdbbase) 
 
 # BPM IP address
-epicsEnvSet("BPM1_IP", "10.0.142.44");  #4009
+epicsEnvSet("BPM1_IP", "10.0.142.43");  #4009
 
 
 ## Load record instances
 epicsEnvSet("ALIVELEN", "8000");   # ADC Live length
 epicsEnvSet("TLIVELEN", "8000");   # ADC Live length
-epicsEnvSet("ALEN",1000000);        # ADC DMA Length
+epicsEnvSet("ALEN",100000);        # ADC DMA Length
 epicsEnvSet("TLEN", "100000");      # TbT Length
 
 ########## use template

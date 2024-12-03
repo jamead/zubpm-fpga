@@ -146,14 +146,14 @@ void print_firmware_version()
 void main_thread(void *p)
 {
 
-	/* the mac address of the board. this should be unique per board */
+	// the mac address of the board. this should be unique per board
 	u8_t mac_ethernet_address[] = { 0x00, 0x0a, 0x35, 0x11, 0x11, 0x12 };
     i2c_get_mac_address(mac_ethernet_address);
 
-	/* initialize lwIP before calling sys_thread_new */
+	// initialize lwIP before calling sys_thread_new
 	lwip_init();
 
-	/* Add network interface to the netif_list, and set it as default */
+	// Add network interface to the netif_list, and set it as default
 	if (!xemac_add(&server_netif, NULL, NULL, NULL, mac_ethernet_address,
 		PLATFORM_EMAC_BASEADDR)) {
 		xil_printf("Error adding N/W interface\r\n");
@@ -162,17 +162,16 @@ void main_thread(void *p)
 
 	netif_set_default(&server_netif);
 
-	/* specify that the network if is up */
+	// specify that the network if is up
 	netif_set_up(&server_netif);
 
-	/* start packet receive thread - required for lwIP operation */
+	// start packet receive thread - required for lwIP operation
 	sys_thread_new("xemacif_input_thread",
 			(void(*)(void*))xemacif_input_thread, &server_netif,
 			THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
 
 	//IP address are read in from EEPROM
 	assign_ip_settings(&(server_netif.ip_addr),&(server_netif.netmask),&(server_netif.gw));
-
 	print_ip_settings(&(server_netif.ip_addr),&(server_netif.netmask),&(server_netif.gw));
 
 
@@ -181,27 +180,27 @@ void main_thread(void *p)
 
     // Start the Menu Thread.  Handles all Console Printing and Menu control
     xil_printf("\r\n");
-    sys_thread_new("menu_thread", menu_thread, 0,THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
+    sys_thread_new("menu_thread", menu_thread, 0,THREAD_STACKSIZE, 0);
 
 
     // Start the PSC Status Thread.  Handles incoming commands from IOC
     vTaskDelay(pdMS_TO_TICKS(100));
     xil_printf("\r\n");
-    sys_thread_new("psc_status_thread", psc_status_thread, 0,THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
+    sys_thread_new("psc_status_thread", psc_status_thread, 0,THREAD_STACKSIZE, 1);
 
 
     // Delay for 100ms
     vTaskDelay(pdMS_TO_TICKS(100));
     // Start the PSC Waveform Thread.  Handles incoming commands from IOC
     xil_printf("\r\n");
-    sys_thread_new("psc_wvfm_thread", psc_wvfm_thread, 0, THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
+    sys_thread_new("psc_wvfm_thread", psc_wvfm_thread, 0, THREAD_STACKSIZE, 1);
 
 
     // Delay for 100 ms
     vTaskDelay(pdMS_TO_TICKS(100));
     // Start the PSC Control Thread.  Handles incoming commands from IOC
     xil_printf("\r\n");
-    sys_thread_new("psc_cntrl_thread", psc_control_thread, 0, THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
+    sys_thread_new("psc_cntrl_thread", psc_control_thread, 0, THREAD_STACKSIZE, 2);
 
 
 	//setup an Uptime Timer
@@ -289,9 +288,7 @@ int main()
     //XPm_ResetAssert(XILPM_RESET_SOFT,XILPM_RESET_ACTION_PULSE);
 
 
-
-	main_thread_handle = sys_thread_new("main_thread", main_thread, 0,
-			THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
+	main_thread_handle = sys_thread_new("main_thread", main_thread, 0, THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
 
 	vTaskStartScheduler();
 

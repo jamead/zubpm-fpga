@@ -84,17 +84,19 @@ record(ao, "$(P){BPM:$(NO)}ADC:IDLY-SP") {
 }
 
 
-
-#Event Source Sel (0=int, 1=evr)
-record(bo, "$(P){BPM:$(NO)}CLK:EventSrc-SP") {
-    field(DESC, "Event Source Select")
+#ADC FCO MMCM Delay Strobe
+record(bo, "$(P){BPM:$(NO)}ADC:MMCM0DLY-SP") {
+    field(DESC, "MMCM0 FCO Delay Strobe")
     field(DTYP, "PSC Single U32")
+    #field(DOL , "$(SYS=SR)-HLA{}AllBPMs-Rf:PtPwr-SP CP")
     field(OUT , "@aie_tx_$(NO) 1 16")
-    field(ZNAM,"INT")
-    field(ONAM,"EVR")
+    field(ZNAM,"Off")
+    field(ONAM,"On")
     info(autosaveFields, "VAL")
     field(FLNK, "$(P){BPM:$(NO)}GoRegSingleWrite")
 }
+
+
 
 #ADC FCO MMCM Delay Strobe
 record(bo, "$(P){BPM:$(NO)}ADC:MMCM1DLY-SP") {
@@ -108,8 +110,7 @@ record(bo, "$(P){BPM:$(NO)}ADC:MMCM1DLY-SP") {
     field(FLNK, "$(P){BPM:$(NO)}GoRegSingleWrite")
 }
 
-
-#ADC IDLY Value
+#ADC SPI Value
 record(ao, "$(P){BPM:$(NO)}ADC:SPI-SP") {
     field(DESC, "ADC IDLY Ctrl")
     field(DTYP, "PSC Single I32")
@@ -118,13 +119,21 @@ record(ao, "$(P){BPM:$(NO)}ADC:SPI-SP") {
     field(FLNK, "$(P){BPM:$(NO)}GoRegSingleWrite")
 }
 
-#ADC FCO MMCM Delay Strobe
-record(bo, "$(P){BPM:$(NO)}ADC:MMCM0DLY-SP") {
-    field(DESC, "MMCM0 FCO Delay Strobe")
+
+
+
+
+
+
+#Event Source Sel (0=int, 1=evr)
+#int = TbT,FA,SA triggers generated with internal counters
+#ext = TbT,FA,SA triggers received from EVR
+record(bo, "$(P){BPM:$(NO)}CLK:EventSrc-SP") {
+    field(DESC, "Event Source Select")
     field(DTYP, "PSC Single U32")
-    field(OUT , "@aie_tx_$(NO) 1 28")
-    field(ZNAM,"Off")
-    field(ONAM,"On")
+    field(OUT , "@aie_tx_$(NO) 1 36")
+    field(ZNAM,"INT")
+    field(ONAM,"EVR")
     info(autosaveFields, "VAL")
     field(FLNK, "$(P){BPM:$(NO)}GoRegSingleWrite")
 }
@@ -133,6 +142,8 @@ record(bo, "$(P){BPM:$(NO)}ADC:MMCM0DLY-SP") {
 
 
 #Trigger source (Internal/External)
+#int = soft trigger creates DMA trigger
+#evr = EVR trigger creates DMA trigger
 record(bo, "$(P){BPM:$(NO)}Trig:TrigSrc-SP") {
     field(DESC, "Trigger source")
     field(DTYP, "PSC Single U32")

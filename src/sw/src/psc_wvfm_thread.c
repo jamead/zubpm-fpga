@@ -159,6 +159,9 @@ void dma_arm() {
 	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TBTENABLE_REG, 1);
 	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_FAENABLE_REG, 1);
 
+	//Allow Soft or EVR triggers
+	//Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_PERMIT_REG, 1);
+
 }
 
 
@@ -168,10 +171,11 @@ void ReadDMAADCWvfm(char *msg) {
     u32 *adc_data;
     u32 *msg_u32ptr;
     u32 i;
-	s16 adc_cha, adc_chb, adc_chc, adc_chd;
+	//s16 adc_cha, adc_chb, adc_chc, adc_chd;
 
-	xil_printf("\r\nADC Data\r\n");
+	xil_printf("\r\nReading ADC Data from DDR...\r\n");
 	//print some debug information
+	/*
     adc_data = (u32 *) ADC_DMA_DATA;
 	for (i=0;i<20;i=i+2) {
 	   adc_chb = (short int) ((adc_data[i] & 0xFFFF0000) >> 16);
@@ -180,6 +184,7 @@ void ReadDMAADCWvfm(char *msg) {
 	   adc_chc = (short int) (adc_data[i+1] & 0xFFFF);
 	   xil_printf("%d: %d\t%d\t%d\t%d\r\n", i,adc_cha, adc_chb, adc_chc, adc_chd);
 	}
+	*/
 
     //write the PSC Header
     msg_u32ptr = (u32 *)msg;
@@ -195,6 +200,8 @@ void ReadDMAADCWvfm(char *msg) {
 	for (i=0;i<MSGID53LEN/4;i++) {
 	    *msg_u32ptr++ = *adc_data++;
 	     }
+	xil_printf("Done Reading ADC Data\r\n");
+
 }
 
 
@@ -204,11 +211,13 @@ void ReadDMATBTWvfm(char *msg) {
 
     u32 *tbt_data;
     u32 *msg_u32ptr;
-    u32 i, hdr, cnt;
-	s32 cha_mag, chb_mag, chc_mag, chd_mag, sum, xpos_nm, ypos_nm;
+    u32 i;
+    //u32 i, hdr, cnt;
+	//s32 cha_mag, chb_mag, chc_mag, chd_mag, sum, xpos_nm, ypos_nm;
 	//s32 rsvd, cha_phs, chb_phs, chc_phs, chd_phs, xpos, ypos;
 
-	xil_printf("\r\nTbT Data\r\n");
+	xil_printf("\r\nReading TbT Data from DDR\r\n");
+	/*
     tbt_data = (u32 *) TBT_DMA_DATA;
 	for (i=0;i<16*10;i=i+16) {
 	   hdr     = (u32) tbt_data[i];
@@ -231,6 +240,8 @@ void ReadDMATBTWvfm(char *msg) {
 			   	   	   	  cha_mag, chb_mag, chc_mag, chd_mag, sum, xpos_nm, ypos_nm);
 	   }
 
+	*/
+
     //write the PSC Header
     msg_u32ptr = (u32 *)msg;
     msg[0] = 'P';
@@ -245,7 +256,7 @@ void ReadDMATBTWvfm(char *msg) {
 	for (i=0;i<MSGID54LEN/4;i++) {
 	    *msg_u32ptr++ = *tbt_data++;
 	     }
-
+	xil_printf("Done Reading TbT Data\r\n");
 
 }
 
@@ -255,11 +266,13 @@ void ReadDMAFAWvfm(char *msg) {
 
     u32 *fa_data;
     u32 *msg_u32ptr;
-    u32 i, hdr, cnt;
-	s32 cha_mag, chb_mag, chc_mag, chd_mag, sum, xpos_nm, ypos_nm;
+    u32 i;
+    //u32 i, hdr, cnt;
+	//s32 cha_mag, chb_mag, chc_mag, chd_mag, sum, xpos_nm, ypos_nm;
 	//s32 rsvd, cha_phs, chb_phs, chc_phs, chd_phs, xpos, ypos;
 
-	xil_printf("\r\nFA Data\r\n");
+	xil_printf("\r\nReading FA Data from DDR...\r\n");
+	/*
     fa_data = (u32 *) FA_DMA_DATA;
 	for (i=0;i<10*10;i=i+10) {
 	   hdr     = (u32) fa_data[i];
@@ -274,7 +287,7 @@ void ReadDMAFAWvfm(char *msg) {
 	   xil_printf("%8x\t%8d \t%8d\t%8d\t%8d\t%8d\t%8d\t%8d\t%8d\r\n", hdr, cnt,
 			   	   	   	  cha_mag, chb_mag, chc_mag, chd_mag, sum, xpos_nm, ypos_nm);
 	   }
-
+    */
     //write the PSC Header
     msg_u32ptr = (u32 *)msg;
     msg[0] = 'P';
@@ -289,6 +302,7 @@ void ReadDMAFAWvfm(char *msg) {
 	for (i=0;i<MSGID55LEN/4;i++) {
 	    *msg_u32ptr++ = *fa_data++;
 	     }
+	xil_printf("Done Reading FA Data\r\n");
 
 
 }
@@ -452,7 +466,7 @@ reconnect:
         //xil_printf("\nTrig Num: %d  \r\n",trignum);
 		if (trignum != prevtrignum)  {
 			//received a DMA trigger
-			xil_printf("Disabling DMA\r\n");
+			xil_printf("Received DMA Trigger... Disabling DMA\r\n");
 			Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_ADCENABLE_REG, 0);
 			Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TBTENABLE_REG, 0);
 			Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_FAENABLE_REG, 0);
@@ -467,6 +481,7 @@ reconnect:
 
  	        ReadDMATBTWvfm(msgid54_buf);
             //write the DMA data
+ 	        xil_printf("Writing TbTWvfm to IOC...\r\n");
             Host2NetworkConvWvfm(msgid54_buf,sizeof(msgid54_buf)+MSGHDRLEN);
             n = write(newsockfd,msgid54_buf,MSGID54LEN+MSGHDRLEN);
             xil_printf("TbTWvfm bytes Written: %d\r\n",n);
@@ -479,6 +494,7 @@ reconnect:
 
  	        //Read and send the ADC DMA data
  	        ReadDMAADCWvfm(msgid53_buf);
+ 	        xil_printf("Writing ADCWvfm to IOC...\r\n");
             Host2NetworkConvWvfm(msgid53_buf,sizeof(msgid53_buf)+MSGHDRLEN);
             n = write(newsockfd,msgid53_buf,MSGID53LEN+MSGHDRLEN);
             xil_printf("ADCWvfm bytes Written: %d\r\n",n);
@@ -491,6 +507,7 @@ reconnect:
 
 	        //Read and send the FA DMA data
             ReadDMAFAWvfm(msgid55_buf);
+ 	        xil_printf("Writing FAWvfm to IOC...\r\n");
             Host2NetworkConvWvfm(msgid55_buf,sizeof(msgid55_buf)+MSGHDRLEN);
             n = write(newsockfd,msgid55_buf,MSGID55LEN+MSGHDRLEN);
             xil_printf("FAWvfm bytes Written: %d\r\n",n);

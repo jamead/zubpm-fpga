@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--Saved on 2024-11-25 11:34:55 by mead-->
+<!--Saved on 2024-12-03 08:43:46 by mead-->
 <display version="2.0.0">
   <name>$(PRI):$(Sec)-BPM$(N)LN_LTB_bpm_Ctrl</name>
   <width>1350</width>
@@ -703,7 +703,7 @@ $(pv_value)</tooltip>
                       <autoscale>true</autoscale>
                       <log_scale>false</log_scale>
                       <minimum>0.0</minimum>
-                      <maximum>1000000.0</maximum>
+                      <maximum>10.0</maximum>
                       <show_grid>true</show_grid>
                       <title_font>
                         <font name="Default Bold" family="Liberation Sans" style="BOLD" size="14.0">
@@ -777,7 +777,7 @@ $(pv_value)</tooltip>
                       <autoscale>true</autoscale>
                       <log_scale>false</log_scale>
                       <minimum>0.0</minimum>
-                      <maximum>1000000.0</maximum>
+                      <maximum>100000.0</maximum>
                       <show_grid>true</show_grid>
                       <title_font>
                         <font name="Default Bold" family="Liberation Sans" style="BOLD" size="14.0">
@@ -851,7 +851,7 @@ $(pv_value)</tooltip>
                       <autoscale>true</autoscale>
                       <log_scale>false</log_scale>
                       <minimum>0.0</minimum>
-                      <maximum>1000000.0</maximum>
+                      <maximum>100000.0</maximum>
                       <show_grid>true</show_grid>
                       <title_font>
                         <font name="Default Bold" family="Liberation Sans" style="BOLD" size="14.0">
@@ -925,7 +925,7 @@ $(pv_value)</tooltip>
                       <autoscale>true</autoscale>
                       <log_scale>false</log_scale>
                       <minimum>0.0</minimum>
-                      <maximum>1000000.0</maximum>
+                      <maximum>100000.0</maximum>
                       <show_grid>true</show_grid>
                       <title_font>
                         <font name="Default Bold" family="Liberation Sans" style="BOLD" size="14.0">
@@ -5695,13 +5695,44 @@ $(pv_value)</tooltip>
             <maximum>1.0E8</maximum>
             <limits_from_pv>false</limits_from_pv>
           </widget>
-          <widget type="bool_button" version="2.0.0">
-            <name>Boolean Button</name>
+          <widget type="choice" version="2.0.0">
+            <name>Choice Button_14</name>
             <pv_name>$(PRI)-BI{BPM:$(N)}CLK:EventSrc-SP</pv_name>
-            <x>130</x>
-            <y>486</y>
-            <off_image>INT</off_image>
-            <on_image>EVR</on_image>
+            <x>352</x>
+            <y>480</y>
+            <width>67</width>
+            <height>67</height>
+            <background_color>
+              <color red="0" green="240" blue="240">
+              </color>
+            </background_color>
+            <selected_color>
+              <color red="0" green="255" blue="0">
+              </color>
+            </selected_color>
+            <horizontal>false</horizontal>
+            <actions>
+            </actions>
+            <items>
+              <item>Item 1</item>
+              <item>Item 2</item>
+            </items>
+          </widget>
+          <widget type="label" version="2.0.0">
+            <name>Label_85</name>
+            <text>CLK Source</text>
+            <x>334</x>
+            <y>444</y>
+            <width>107</width>
+            <height>36</height>
+            <horizontal_alignment>1</horizontal_alignment>
+            <vertical_alignment>1</vertical_alignment>
+            <actions>
+            </actions>
+            <border_color>
+              <color red="0" green="128" blue="255">
+              </color>
+            </border_color>
           </widget>
         </children>
       </tab>
@@ -5851,6 +5882,7 @@ $(pv_value)</tooltip>
       <color red="240" green="240" blue="240">
       </color>
     </background_color>
+    <active_tab>1</active_tab>
     <tab_height>10</tab_height>
     <actions>
     </actions>

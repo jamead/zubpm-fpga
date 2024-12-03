@@ -184,6 +184,7 @@ architecture behv of top is
   signal sa_trig         : std_logic;
   signal sa_trig_stretch : std_logic;
   signal dma_trig        : std_logic;
+  signal dma_permit      : std_logic;
 
 
 
@@ -198,11 +199,11 @@ architecture behv of top is
 begin
 
 afe_pwrenb <= '1';
-reg_i_pll.locked <= ad9510_status;
+reg_i_pll.locked <= not ad9510_status;
 
 
 dbg(0) <= pl_clk0;
-dbg(1) <= '0'; --adc_fco_dlystr(0); --'0';
+dbg(1) <= not dma_permit; --'0'; --adc_fco_dlystr(0); --'0';
 dbg(2) <= adc_dbg(1);  --psdone 
 dbg(3) <= '0';
 dbg(4) <= adc_dbg(2); -- adc_fco_bufg 
@@ -231,8 +232,9 @@ fp_out(3) <= tbt_trig;
 fp_led(7) <= dma_adc_active;
 fp_led(6) <= dma_tbt_active; 
 fp_led(5) <= dma_fa_active; 
-fp_led(4) <= ad9510_status; 
-fp_led(3 downto 1) <= ps_leds(2 downto 0); 
+fp_led(4) <= not dma_permit; 
+fp_led(3) <= not ad9510_status; 
+fp_led(2 downto 1) <= ps_leds(1 downto 0); 
 fp_led(0) <= sa_trig_stretch;
 
 
@@ -351,6 +353,7 @@ dmatrig: entity work.trig_logic
     dma_fa_active => dma_fa_active,
     evr_ts => evr_ts,
     evr_ts_lat => open, --evr_ts_lat, 
+    dma_permit => dma_permit,
     dma_trig => dma_trig
   );    
 

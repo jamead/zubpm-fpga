@@ -37,6 +37,7 @@ entity trig_logic is
     dma_fa_active   : in  std_logic;  
     evr_ts          : in  std_logic_vector(63 downto 0);
     evr_ts_lat      : out std_logic_vector(63 downto 0);
+    dma_permit      : out std_logic;
     dma_trig        : out std_logic
   );    
 end trig_logic;
@@ -54,6 +55,7 @@ architecture behv of trig_logic is
   signal dma_running       : std_logic;
   signal dma_done          : std_logic;
   signal trig_cnt          : std_logic_vector(31 downto 0);
+  signal adc_enb_last      : std_logic;
 
   --debug signals (connect to ila)
    attribute mark_debug     : string;
@@ -77,11 +79,18 @@ architecture behv of trig_logic is
 begin  
 
 reg_i.trig_cnt <= trig_cnt;
-reg_i.status <= dma_adc_active & dma_tbt_active & dma_fa_active & dma_done & dma_running;
+reg_i.status <= dma_adc_active & dma_tbt_active & dma_fa_active & dma_permit & dma_running;
 
 
 
 dma_active <= dma_adc_active or dma_tbt_active or dma_fa_active;
+
+--only allow trigger when all enables are asserted and dma is not running
+dma_permit <= reg_o.adc_enb and reg_o.tbt_enb and reg_o.fa_enb and not dma_trig_lat;
+
+
+
+
 
 --register outputs
 process (adc_clk)
@@ -91,9 +100,9 @@ begin
       dma_trig <= '0';
     else
       if (reg_o.trigsrc = '0') then
-         dma_trig <= evr_trig_s;
+         dma_trig <= evr_trig_s when (dma_permit = '1') else '0';
       else 
-         dma_trig <= soft_trig_s;
+         dma_trig <= soft_trig_s when (dma_permit = '1') else '0';
       end if; 
     end if;
   end if;
@@ -109,7 +118,9 @@ begin
       dma_trig_lat <= '0';
       dma_running <= '0';
       dma_done <= '0';
+      
     else
+      adc_enb_last <= reg_o.adc_enb;
       dma_done <= '0';
       if (dma_trig = '1') then
         dma_trig_lat <= '1';
@@ -117,9 +128,11 @@ begin
       if (dma_trig_lat = '1' and dma_active = '1') then
         dma_running <= '1';
       end if;
-      if (dma_running = '1' and dma_active = '0') then
+      if (dma_running = '1' and dma_active = '0') then 
         dma_done <= '1';
         dma_running <= '0';
+      end if;
+      if (dma_running = '0' and reg_o.adc_enb = '1' and adc_enb_last = '0') then
         dma_trig_lat <= '0';
       end if;
     end if;
