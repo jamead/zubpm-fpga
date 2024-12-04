@@ -31,6 +31,10 @@ typedef struct {
 } ip_t;
 
 
+void setup_thermistors(u8);
+void read_thermistors(u8, float *, float *);
+
+
 void i2c_get_mac_address();
 void i2c_eeprom_readBytes(u8, u8 *, u8);
 void i2c_eeprom_writeBytes(u8, u8 *, u8);

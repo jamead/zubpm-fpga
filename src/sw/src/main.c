@@ -272,14 +272,12 @@ int main()
 {
 
     u32 ts_s, ts_ns;
+    float temp1, temp2;
 
 	xil_printf("zuBPM ...\r\n");
     print_firmware_version();
 
-    //read Timestamp
-    ts_s = Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_S_REG);
-    ts_ns = Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_NS_REG);
-    xil_printf("ts= %d    %d\r\n",ts_s,ts_ns);
+
 
 
 	prog_ad9510();
@@ -288,10 +286,37 @@ int main()
 	init_sysmon();
     write_lmk61e2();
 
+    setup_thermistors(0);
+    setup_thermistors(1);
+    setup_thermistors(2);
+
+    read_thermistors(0,&temp1,&temp2);
+    printf("Chip0:  = %5.3f  %5.3f  \r\n",temp1,temp2);
+    read_thermistors(1,&temp1,&temp2);
+    printf("Chip1:  = %5.3f  %5.3f  \r\n",temp1,temp2);
+
+    Xil_Out32(XPAR_M_AXI_BASEADDR + THERM_SEL_REG, 0x2);
+    read_thermistors(2,&temp1,&temp2);
+    printf("Chip2:  = %5.3f  %5.3f  \r\n",temp1,temp2);
+
+
+    //read AFE temperature from i2c bus
+    i2c_set_port_expander(I2C_PORTEXP1_ADDR,0x40);
+    temp1 = read_i2c_temp(BRDTEMP0_ADDR);
+    temp2 = read_i2c_temp(BRDTEMP2_ADDR);
+    printf("AFE:  = %5.3f  %5.3f  \r\n",temp1,temp2);
+
 
 	//EVR reset
 	Xil_Out32(XPAR_M_AXI_BASEADDR + EVR_RST_REG, 1);
-	Xil_Out32(XPAR_M_AXI_BASEADDR + EVR_RST_REG, 0);
+	Xil_Out32(XPAR_M_AXI_BASEADDR + EVR_RST_REG, 2);
+    usleep(1000);
+
+    //read Timestamp
+    ts_s = Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_S_REG);
+    ts_ns = Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_NS_REG);
+    xil_printf("ts= %d    %d\r\n",ts_s,ts_ns);
+
 
 
     // TODO:  This doesn't work

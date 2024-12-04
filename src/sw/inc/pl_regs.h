@@ -47,6 +47,9 @@
 #define ADC_RAWCHC_REG 0x58
 #define ADC_RAWCHD_REG 0x5C
 
+#define THERM_SPI_REG 0x60
+#define THERM_SEL_REG 0x64
+
 #define KX_REG 0x90
 #define KY_REG 0x94
 #define CHA_GAIN_REG 0x98

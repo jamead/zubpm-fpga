@@ -291,6 +291,7 @@ void ReadSysInfo(char *msg) {
 
     u32 *msg_u32ptr;
     u8 i;
+    float temp1, temp2;
     struct SysHealthMsg syshealth;
 
     //write the PSC header
@@ -305,12 +306,25 @@ void ReadSysInfo(char *msg) {
 
     //read FPGA version (git checksum) from PL register
     syshealth.git_shasum = Xil_In32(XPAR_M_AXI_BASEADDR + GIT_SHASUM);
-    //read temperature from i2c bus
+
+    //read DFE temperature from i2c bus
     i2c_set_port_expander(I2C_PORTEXP1_ADDR,1);
     syshealth.dfe_temp[0] = read_i2c_temp(BRDTEMP0_ADDR);
     syshealth.dfe_temp[1] = read_i2c_temp(BRDTEMP1_ADDR);
     syshealth.dfe_temp[2] = read_i2c_temp(BRDTEMP2_ADDR);
     syshealth.dfe_temp[3] = read_i2c_temp(BRDTEMP3_ADDR);
+
+    //read AFE temperature from i2c bus
+    i2c_set_port_expander(I2C_PORTEXP1_ADDR,0x40);
+    syshealth.afe_temp[0] = read_i2c_temp(BRDTEMP0_ADDR);
+    syshealth.afe_temp[1] = read_i2c_temp(BRDTEMP2_ADDR);
+
+    //read temperatures from Thermistors on AFE
+    for (i=0;i<3;i++) {
+    	read_thermistors(i,&temp1,&temp2);
+        syshealth.therm_temp[i*2] = temp1;
+        syshealth.therm_temp[i*2+1] = temp2;
+    }
 
     //read voltage & currents from LTC2991 chips
 	i2c_set_port_expander(I2C_PORTEXP1_ADDR,4);

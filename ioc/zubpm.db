@@ -1499,6 +1499,133 @@ record(ai, "$(P){BPM:$(NO)}Temp:DfeRegSense3-I") {
     field(LSV,"MINOR")
 }
 
+record(ai, "$(P){BPM:$(NO)}Temp:Thermistor0-I") {
+    field(DESC, "AFE Thermistor 0 read")
+    field(DTYP, "PSC Reg F32")
+    field(INP , "@Rx$(NO) 32 324")
+    field(LINR,"LINEAR")
+    field(PREC,"3")
+    field(SCAN,"I/O Intr")
+    field(EGU,  "C")
+    field(HIHI,"60")
+    field(LOLO,"10")
+    field(HIGH,"50")
+    field(LOW,"20")
+    field(HHSV,"MAJOR")
+    field(HSV,"MINOR")
+    field(LLSV,"INVALID")
+    field(LSV,"MINOR")
+}
+
+record(ai, "$(P){BPM:$(NO)}Temp:Thermistor0-I") {
+    field(DESC, "AFE Thermistor 0 read")
+    field(DTYP, "PSC Reg F32")
+    field(INP , "@Rx$(NO) 32 324")
+    field(LINR,"LINEAR")
+    field(PREC,"3")
+    field(SCAN,"I/O Intr")
+    field(EGU,  "C")
+    field(HIHI,"60")
+    field(LOLO,"10")
+    field(HIGH,"50")
+    field(LOW,"20")
+    field(HHSV,"MAJOR")
+    field(HSV,"MINOR")
+    field(LLSV,"INVALID")
+    field(LSV,"MINOR")
+}
+
+record(ai, "$(P){BPM:$(NO)}Temp:Thermistor1-I") {
+    field(DESC, "AFE Thermistor 1 read")
+    field(DTYP, "PSC Reg F32")
+    field(INP , "@Rx$(NO) 32 328")
+    field(LINR,"LINEAR")
+    field(PREC,"3")
+    field(SCAN,"I/O Intr")
+    field(EGU,  "C")
+    field(HIHI,"60")
+    field(LOLO,"10")
+    field(HIGH,"50")
+    field(LOW,"20")
+    field(HHSV,"MAJOR")
+    field(HSV,"MINOR")
+    field(LLSV,"INVALID")
+    field(LSV,"MINOR")
+}
+
+record(ai, "$(P){BPM:$(NO)}Temp:Thermistor2-I") {
+    field(DESC, "AFE Thermistor 2 read")
+    field(DTYP, "PSC Reg F32")
+    field(INP , "@Rx$(NO) 32 332")
+    field(LINR,"LINEAR")
+    field(PREC,"3")
+    field(SCAN,"I/O Intr")
+    field(EGU,  "C")
+    field(HIHI,"60")
+    field(LOLO,"10")
+    field(HIGH,"50")
+    field(LOW,"20")
+    field(HHSV,"MAJOR")
+    field(HSV,"MINOR")
+    field(LLSV,"INVALID")
+    field(LSV,"MINOR")
+}
+
+record(ai, "$(P){BPM:$(NO)}Temp:Thermistor3-I") {
+    field(DESC, "AFE Thermistor 3 read")
+    field(DTYP, "PSC Reg F32")
+    field(INP , "@Rx$(NO) 32 336")
+    field(LINR,"LINEAR")
+    field(PREC,"3")
+    field(SCAN,"I/O Intr")
+    field(EGU,  "C")
+    field(HIHI,"60")
+    field(LOLO,"10")
+    field(HIGH,"50")
+    field(LOW,"20")
+    field(HHSV,"MAJOR")
+    field(HSV,"MINOR")
+    field(LLSV,"INVALID")
+    field(LSV,"MINOR")
+}
+
+record(ai, "$(P){BPM:$(NO)}Temp:Thermistor4-I") {
+    field(DESC, "AFE Thermistor 4 read")
+    field(DTYP, "PSC Reg F32")
+    field(INP , "@Rx$(NO) 32 340")
+    field(LINR,"LINEAR")
+    field(PREC,"3")
+    field(SCAN,"I/O Intr")
+    field(EGU,  "C")
+    field(HIHI,"60")
+    field(LOLO,"10")
+    field(HIGH,"50")
+    field(LOW,"20")
+    field(HHSV,"MAJOR")
+    field(HSV,"MINOR")
+    field(LLSV,"INVALID")
+    field(LSV,"MINOR")
+}
+
+record(ai, "$(P){BPM:$(NO)}Temp:Thermistor5-I") {
+    field(DESC, "AFE Thermistor 5 read")
+    field(DTYP, "PSC Reg F32")
+    field(INP , "@Rx$(NO) 32 344")
+    field(LINR,"LINEAR")
+    field(PREC,"3")
+    field(SCAN,"I/O Intr")
+    field(EGU,  "C")
+    field(HIHI,"60")
+    field(LOLO,"10")
+    field(HIGH,"50")
+    field(LOW,"20")
+    field(HHSV,"MAJOR")
+    field(HSV,"MINOR")
+    field(LLSV,"INVALID")
+    field(LSV,"MINOR")
+}
+
+
 
 
 record(ai, "$(P){BPM:$(NO)}Temp:PwrMgmt-I") {

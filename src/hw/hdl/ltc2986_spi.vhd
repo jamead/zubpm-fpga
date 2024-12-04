@@ -16,12 +16,6 @@ entity ltc2986_spi is
    reset  	       : in  std_logic;    
    reg_o           : in  t_reg_o_therm;
    reg_i           : out t_reg_i_therm;   
-                    
-   --we		       : in  std_logic;
-   --sel             : in  std_logic_vector(1 downto 0);
-   --wrdata	       : in  std_logic_vector(31 downto 0);
-   --rddata          : out std_logic_vector(7 downto 0);
-
    csn             : out std_logic_vector(2 downto 0);
    sck             : out std_logic;                   
    sdi 	           : out std_logic;
@@ -51,17 +45,17 @@ architecture rtl of ltc2986_spi is
 
   
     --debug signals (connect to ila)
---    attribute mark_debug                 : string;
---    attribute mark_debug of sys_clk: signal is "true";   
---    attribute mark_debug of state: signal is "true";
---    attribute mark_debug of sck: signal is "true";
---    attribute mark_debug of sdi: signal is "true";
---    attribute mark_debug of sdo: signal is "true";    
---    attribute mark_debug of csn_i: signal is "true";
---    attribute mark_debug of csn: signal is "true";
---    attribute mark_debug of we_lat: signal is "true";
---    attribute mark_debug of wrdata: signal is "true";  
---    attribute mark_debug of rddata: signal is "true";  
+    attribute mark_debug                 : string;
+    attribute mark_debug of sys_clk: signal is "true";   
+    attribute mark_debug of state: signal is "true";
+    attribute mark_debug of sck: signal is "true";
+    attribute mark_debug of sdi: signal is "true";
+    attribute mark_debug of sdo: signal is "true";    
+    attribute mark_debug of csn_i: signal is "true";
+    attribute mark_debug of csn: signal is "true";
+    attribute mark_debug of we_lat: signal is "true";
+    attribute mark_debug of reg_o: signal is "true";  
+    attribute mark_debug of reg_i: signal is "true";  
   
   
 begin  

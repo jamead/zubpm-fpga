@@ -65,10 +65,10 @@ begin
 
 fp_leds <= reg_o.FP_LEDS.val.data;
 
---reg_o_therm.spi_we <= reg_o.therm_spi.data.swmod;
---reg_o_therm.spi_wdata <= reg_o.therm_spi.data.data;
---reg_o_therm.sel <= reg_o.therm_sel.data.data;
---reg_i.therm_spi.data.data <= reg_i_therm.spi_rdata;
+reg_o_therm.spi_we <= reg_o.therm_spi.data.swmod;
+reg_o_therm.spi_wdata <= reg_o.therm_spi.data.data;
+reg_o_therm.sel <= reg_o.therm_sel.data.data;
+reg_i.therm_spi.data.data <= 24d"0" & reg_i_therm.spi_rdata;
 
 
 reg_o_adc.spi_we <= reg_o.adc_spi.data.swmod; 

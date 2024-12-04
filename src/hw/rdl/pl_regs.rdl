@@ -204,6 +204,27 @@ reg {
     field {} data[16];
   } adc_chd @0x5C;
   
+  
+reg {
+    desc="LTC2986 Thermistor Controller SPI data";
+    default sw = rw;
+    default hw = rw;
+    default swacc=true;
+    default swmod=true;
+    field {} data[32];
+  } therm_spi @0x60;
+
+reg {
+    desc="LTC2986 Thermistor Controller SPI data";
+    default sw = rw;
+    default hw = r;
+    field {} data[2];
+  } therm_sel @0x64;
+
+
+  
+  
+  
 
 reg {
     desc="Kx";
