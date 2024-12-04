@@ -186,47 +186,6 @@ void Host2NetworkConvStatus(char *inbuf, int len) {
 }
 
 
-/*
-void ReadReg(volatile unsigned int *fpgabase, int regaddr, char *msg) {
-
-    int rawreg;
-
-    rawreg = fpgabase[regaddr];
-    memcpy(msg,&rawreg,sizeof(int));
-
-}
-
-u32 ReadPLioReg(u32 regaddr) {
-
-    u32 *fpgabase;
-
-    fpgabase = (u32 *) IOBUS_BASEADDR;
-    return fpgabase[regaddr];
-}
-
-
-
-void ReadAtten(volatile unsigned int *fpgabase, int regaddr, char *msg) {
-
-    int attenraw;
-
-    attenraw = fpgabase[regaddr];
-    attenraw = attenraw >> 2;  //atten register is 0.25dB / bit, but interface uses 1dB / bit
-    memcpy(msg,&attenraw,sizeof(int));
-}
-
-
-void ReadBrdTemp(u8 addr, char *msg) {
-
-    float temp;
-
-    temp = read_i2c_temp(addr);
-    //printf("Temp = %f\r\n",temp);
-    memcpy(msg,&temp,sizeof(int));
-    //printf("Size of int: %d\n",sizeof(int));
-}
-*/
-
 
 
 
@@ -273,6 +232,7 @@ void ReadGenRegs(char *msg) {
     status.dma_adc_active = (dmastatus & 0x10) >> 4;
     status.dma_tbt_active = (dmastatus & 0x8) >> 3;
     status.dma_fa_active = (dmastatus & 0x4) >> 2;
+    status.dma_tx_active = (dmastatus & 0x2) >> 1;
     //xil_printf("DMA Status :  %x:   %d   %d   %d\r\n",dmastatus,status.dma_adc_active,status.dma_tbt_active,status.dma_fa_active);
 
     //xil_printf("Trig TS_S: %d\r\n",status.evr_ts_s_triglat);

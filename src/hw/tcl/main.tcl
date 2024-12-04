@@ -31,7 +31,7 @@ proc setSources {} {
   lappend Sources {"../hdl/adc2dma.vhd" "VHDL 2008"} 
   lappend Sources {"../hdl/tbt2dma.vhd" "VHDL 2008"}    
   lappend Sources {"../hdl/fa2dma.vhd" "VHDL 2008"}   
-  
+  lappend Sources {"../hdl/ltc2986_spi.vhd" "VHDL 2008"}  
   lappend Sources {"../hdl/dsp/tbt_dsp.vhd" "VHDL 2008"}   
   lappend Sources {"../hdl/dsp/beam_sine_rom.vhd" "VHDL 2008"} 
   lappend Sources {"../hdl/dsp/beam_cos_rom.vhd" "VHDL 2008"}    

@@ -84,6 +84,20 @@ type t_reg_i_pll is record
 end record t_reg_i_pll;
 
 
+type t_reg_o_therm is record
+   spi_we     : std_logic;
+   spi_wdata  : std_logic_vector(31 downto 0);
+   sel        : std_logic_vector(1 downto 0);
+end record t_reg_o_therm;
+
+type t_reg_i_therm is record
+   spi_rdata    : std_logic_vector(7 downto 0);
+end record t_reg_i_therm;
+
+
+
+
+
 type sdi_cntrl_type is record
    reset       : std_logic_vector(15 downto 0);
    my_addr     : std_logic_vector(15 downto 0);

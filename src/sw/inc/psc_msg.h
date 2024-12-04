@@ -136,6 +136,7 @@ typedef struct StatusMsg {
 	u32 dma_adc_active;     //PSC Offset 84
 	u32 dma_tbt_active;     //PSC Offset 88
 	u32 dma_fa_active;      //PSC Offset 92
+	u32 dma_tx_active;      //PSC Offset 96
 } StatusMsg;
 
 

@@ -815,6 +815,21 @@ record(bi, "$(P){BPM:$(NO)}DMA:fa_active-I") {
     #field(OSV,"MAJOR")
 }
 
+record(bi, "$(P){BPM:$(NO)}DMA:tx_active-I") {
+    field(DESC, "DMA FA Active")
+    field(DTYP, "PSC Reg")
+    field(INP , "@Rx$(NO) 30 96")
+    field(MASK, "0x1")
+    field(SCAN,"I/O Intr")
+    field(ZNAM,"Complete")
+    field(ONAM,"Running")
+    #field(ZSV,"NO_ALARM")
+    #field(OSV,"MAJOR")
+}
+
+
+
+
 
 
 

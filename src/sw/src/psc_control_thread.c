@@ -226,6 +226,9 @@ reconnect:
         xil_printf("Msg Addr : %d\t",MsgAddr);
 	    MsgData = ntohl(*bufptr);
         xil_printf("Data : %d\r\n",MsgData);
+        //blink fp_led on message received
+        set_fpleds(1);
+        set_fpleds(0);
 
 
         switch(MsgAddr) {

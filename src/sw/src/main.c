@@ -105,18 +105,30 @@ static void assign_ip_settings()
 	//IP address is stored in EEPROM locations 0,1,2,3
 	i2c_eeprom_readBytes(0, data, 4);
 	//xil_printf("IP Addr: %u.%u.%u.%u\r\n",data[0],data[1],data[2],data[3]);
+	data[0] = 10;
+	data[1] = 0;
+	data[2] = 142;
+	data[3] = 43;
 	IP4_ADDR(&server_netif.ip_addr, data[0],data[1],data[2],data[3]);
 
 	xil_printf("Getting IP Netmask from EEPROM\r\n");
 	//IP netmask is stored in EEPROM locations 16,17,18,19
 	i2c_eeprom_readBytes(16, data, 4);
 	//xil_printf("IP Netmask: %u.%u.%u.%u\r\n",data[0],data[1],data[2],data[3]);
+	data[0] = 255;
+	data[1] = 255;
+	data[2] = 254;
+	data[3] = 0;
 	IP4_ADDR(&server_netif.netmask, data[0],data[1],data[2],data[3]);
 
 	xil_printf("Getting IP Netmask from EEPROM\r\n");
 	i2c_eeprom_readBytes(32, data, 4);
 	//IP gw is stored in EEPROM locations 32,33,34,35
 	//xil_printf("IP Gateway: %u.%u.%u.%u\r\n",data[0],data[1],data[2],data[3]);
+	data[0] = 10;
+	data[1] = 0;
+	data[2] = 142;
+	data[3] = 51;
 	IP4_ADDR(&server_netif.gw, data[0],data[1],data[2],data[3]);
 
 }

@@ -138,6 +138,8 @@ architecture behv of top is
   signal reg_i_dma       : t_reg_i_dma;
   signal reg_o_evr       : t_reg_o_evr;
   signal reg_i_evr       : t_reg_i_evr;
+  signal reg_o_therm     : t_reg_o_therm;
+  signal reg_i_therm     : t_reg_i_therm;
   
   signal tbt_data        : t_tbt_data;    
   signal sa_data         : t_sa_data;
@@ -183,6 +185,7 @@ architecture behv of top is
   signal fa_trig         : std_logic;
   signal sa_trig         : std_logic;
   signal sa_trig_stretch : std_logic;
+  signal ps_fpled_stretch: std_logic;
   signal dma_trig        : std_logic;
   signal dma_permit      : std_logic;
 
@@ -226,15 +229,16 @@ dbg(19) <= fp_in(3);
 
 fp_out(0) <= pl_clk0;
 fp_out(1) <= evr_rcvd_clk; --pl_clk1; --adc_clk_in;
-fp_out(2) <= adc_clk; 
-fp_out(3) <= tbt_trig; 
+fp_out(2) <= adc_clk_in; --adc_clk; 
+fp_out(3) <= tbt_extclk; --tbt_trig; 
 
 fp_led(7) <= dma_adc_active;
 fp_led(6) <= dma_tbt_active; 
 fp_led(5) <= dma_fa_active; 
 fp_led(4) <= not dma_permit; 
-fp_led(3) <= not ad9510_status; 
-fp_led(2 downto 1) <= ps_leds(1 downto 0); 
+fp_led(3) <= not ad9510_status;
+fp_led(2) <= ps_fpled_stretch; 
+fp_led(1) <= '0';
 fp_led(0) <= sa_trig_stretch;
 
 
@@ -325,6 +329,28 @@ pll_spi: entity work.spi_ad9510
     csb => ad9510_lat, 
     func => ad9510_func
   );  
+
+
+
+
+therm_rdbk: entity work.ltc2986_spi 
+  port map (
+    clk => pl_clk0,                     
+    reset => pl_reset, 
+    reg_o => reg_o_therm,  
+    reg_i => reg_i_therm,                    
+    --we => therm_we, 
+    --sel => therm_sel,
+    --wrdata => therm_wrdata,
+    --rddata => therm_rddata, 
+    csn => therm_csn, 
+    sck => therm_sclk,                    
+    sdi => therm_sdi, 
+    sdo => therm_sdo,
+    rstn => therm_rstn             
+  );    
+
+
 
 
 --programmable attenuator for rf chain  
@@ -500,6 +526,8 @@ ps_pl: entity work.ps_io
     reg_o_tbt => reg_o_tbt,
     reg_o_adc => reg_o_adc,
     reg_i_adc => reg_i_adc,
+    reg_o_therm => reg_o_therm,
+    reg_i_therm => reg_i_therm,    
     reg_o_adcfifo => reg_o_adcfifo, 
 	reg_i_adcfifo => reg_i_adcfifo,
 	reg_o_tbtfifo => reg_o_tbtfifo, 
@@ -573,7 +601,15 @@ sa_led : entity work.stretch
 	sig_out => sa_trig_stretch
 );	  	
 
-
+--stretch the sa_trig signal so can be seen on LED
+pscmsg_led : entity work.stretch
+  port map (
+	clk => pl_clk0,
+	reset => pl_reset, 
+	sig_in => ps_leds(0), 
+	len => 3000000, -- ~25ms;
+	sig_out => ps_fpled_stretch
+);	  	
 
 
 

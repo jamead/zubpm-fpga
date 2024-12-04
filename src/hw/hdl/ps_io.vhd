@@ -27,6 +27,8 @@ entity ps_io is
      sa_data         : in t_sa_data;
      
 	 reg_o_dsa       : out t_reg_o_dsa;
+	 reg_o_therm     : out t_reg_o_therm;
+	 reg_i_therm     : in  t_reg_i_therm;
 	 reg_o_pll       : out t_reg_o_pll;
 	 reg_i_pll       : in  t_reg_i_pll;
 	 reg_o_tbt       : out t_reg_o_tbt;	
@@ -62,6 +64,12 @@ architecture behv of ps_io is
 begin
 
 fp_leds <= reg_o.FP_LEDS.val.data;
+
+--reg_o_therm.spi_we <= reg_o.therm_spi.data.swmod;
+--reg_o_therm.spi_wdata <= reg_o.therm_spi.data.data;
+--reg_o_therm.sel <= reg_o.therm_sel.data.data;
+--reg_i.therm_spi.data.data <= reg_i_therm.spi_rdata;
+
 
 reg_o_adc.spi_we <= reg_o.adc_spi.data.swmod; 
 reg_o_adc.spi_wdata <= reg_o.adc_spi.data.data; 
