@@ -93,7 +93,7 @@ reg {
 reg {
     desc="ADC IDLY strobe";
     default sw = rw;
-    default hw = rw;
+    default hw = r;
     default swacc=true;
     default swmod=true;
     field {} data[16];

@@ -15,6 +15,8 @@ proc setSources {} {
   ::fwfwk::printCBM "In ./hw/src/main.tcl setSources()..."
 
   variable Sources 
+  lappend Sources {"../hdl/top_tb.sv" "SystemVerilog"} 
+  
   lappend Sources {"../hdl/top.vhd" "VHDL 2008"} 
   lappend Sources {"../hdl/ps_io.vhd" "VHDL 2008"} 
   lappend Sources {"../hdl/bpm_package.vhd" "VHDL 2008"} 
@@ -53,6 +55,7 @@ proc setSources {} {
   lappend Sources {"../cstr/timing.xdc"  "XDC"} 
   lappend Sources {"../cstr/debug.xdc"  "XDC"} 
   
+  
 }
 
 # ==============================================================================
@@ -69,11 +72,15 @@ proc setAddressSpace {} {
 proc doOnCreate {} {
   # variable Vhdl
   variable TclPath
+
       
   ::fwfwk::printCBM "In ./hw/src/main.tcl doOnCreate()"
   set_property part             xczu6eg-ffvb1156-1-e         [current_project]
   set_property target_language  VHDL                         [current_project]
   set_property default_lib      xil_defaultlib               [current_project]
+   
+  #set_property used_in_synthesis false [get_files /home/mead/rfbpm/fwk/zubpm/src/hw/hdl/top_tb.sv] 
+  #set_property used_in_implementation false [get_files  top_tb.v] 
    
   source ${TclPath}/system.tcl
   source ${TclPath}/adc_fco_phaseshift.tcl
@@ -84,7 +91,18 @@ proc doOnCreate {} {
   source ${TclPath}/evr_gth.tcl
 
   addSources "Sources" 
+  
+  ::fwfwk::printCBM "TclPath = ${TclPath}"
+  ::fwfwk::printCBM "SrcPath = ${::fwfwk::SrcPath}"
+  
+  set_property used_in_synthesis false [get_files ${::fwfwk::SrcPath}/hw/hdl/top_tb.sv] 
+  set_property used_in_implementation false [get_files ${::fwfwk::SrcPath}/hw/hdl/top_tb.sv] 
+  
+  #open_wave_config "${::fwfwk::SrcPath}/hw/sim/top_tb_behav.wcfg"
+  
 
+  
+  
 }
 
 # ==============================================================================
@@ -94,8 +112,6 @@ proc doOnBuild {} {
 
 
 }
-
-
 
 
 # ==============================================================================

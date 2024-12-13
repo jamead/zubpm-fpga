@@ -1,4 +1,6 @@
 `timescale 1ns / 1ps
+`define ZYNQ_VIP top_tb.dut.system_i.zynq_ultra_ps_e_0.inst
+
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer: 
@@ -56,25 +58,40 @@ module top_tb;
         repeat(5) @(posedge tb_ACLK); 
 
            
-  	    tb.mpsoc_sys.mpsoc_preset_i.zynq_ultra_ps_e_0.inst.por_srstb_reset(1'b1); 
+  	    `ZYNQ_VIP.por_srstb_reset(1'b1); 
         #200; 
-        tb.mpsoc_sys.mpsoc_preset_i.zynq_ultra_ps_e_0.inst.por_srstb_reset(1'b0); 
-        tb.mpsoc_sys.mpsoc_preset_i.zynq_ultra_ps_e_0.inst.fpga_soft_reset(32'h1); 
+        `ZYNQ_VIP.por_srstb_reset(1'b0); 
+        `ZYNQ_VIP.fpga_soft_reset(32'h1); 
         #2000 ;  // This delay depends on your clock frequency. It should be at least 16 clock cycles.  
-        tb.mpsoc_sys.mpsoc_preset_i.zynq_ultra_ps_e_0.inst.por_srstb_reset(1'b1); 
-        tb.mpsoc_sys.mpsoc_preset_i.zynq_ultra_ps_e_0.inst.fpga_soft_reset(32'h0); 
+        `ZYNQ_VIP.por_srstb_reset(1'b1); 
+        `ZYNQ_VIP.fpga_soft_reset(32'h0); 
         #2000 ; 
 
+
+        //Write the adc dly value
+        `ZYNQ_VIP.write_data(32'hA0000020,4, 32'h1, resp);      
+        #2000
+        `ZYNQ_VIP.write_data(32'hA0000020,4, 32'h2, resp);    
+        #2000
+        `ZYNQ_VIP.write_data(32'hA0000020,4, 32'h3, resp);             
+        #2000
+
+        //Write the adc dly strobe
+        `ZYNQ_VIP.write_data(32'hA0000024,4, 32'h0, resp);      
+        #2000
+        `ZYNQ_VIP.write_data(32'hA0000024,4, 32'h1, resp);    
+        #2000
+        `ZYNQ_VIP.write_data(32'hA0000024,4, 32'h0, resp);             
  
         //This drives the LEDs on the GPIO output 
-        tb.mpsoc_sys.mpsoc_preset_i.zynq_ultra_ps_e_0.inst.write_data(32'hA0000000,4, 32'hFFFFFFFF, resp); 
-        tb.mpsoc_sys.mpsoc_preset_i.zynq_ultra_ps_e_0.inst.read_data(32'hA0000000,4, read_data, resp); 
+       `ZYNQ_VIP.write_data(32'hA0000140,4, 32'h55, resp); 
+        `ZYNQ_VIP.read_data(32'hA0000140,4, read_data, resp); 
         $display ("LEDs are toggled, observe the waveform"); 
 
         //Write into the BRAM through GP0 and read back 
-        tb.mpsoc_sys.mpsoc_preset_i.zynq_ultra_ps_e_0.inst.write_data(32'hA0010000,4, 32'hDEADBEEF, resp); 
-        tb.mpsoc_sys.mpsoc_preset_i.zynq_ultra_ps_e_0.inst.read_data(32'hA0010000,4,read_data,resp); 
-        $display ("%t, running the testbench, data read from BRAM was 32'h%x",$time, read_data); 
+        //`ZYNQ_VIP.write_data(32'hA0010000,4, 32'hDEADBEEF, resp); 
+        //`ZYNQ_VIP.read_data(32'hA0010000,4,read_data,resp); 
+        //$display ("%t, running the testbench, data read from BRAM was 32'h%x",$time, read_data); 
 
     if(read_data == 32'hDEADBEEF) begin 
            $display ("AXI VIP Test PASSED"); 
@@ -92,13 +109,7 @@ module top_tb;
     assign temp_rstn = tb_ARESETn; 
 
  
-system system_i
-
-( 
-
-.led_8bits_tri_o(leds)     
-
-); 
+top dut (); 
 
   
 
