@@ -32,6 +32,7 @@ typedef struct {
 
 
 void setup_thermistors(u8);
+void trig_thermistors(u8);
 void read_thermistors(u8, float *, float *);
 
 
@@ -49,6 +50,7 @@ void menu_thread();
 void psc_control_thread();
 void psc_status_thread();
 void psc_wvfm_thread();
+void read_thermistor_thread();
 
 void init_i2c();
 s32 i2c_read(u8 *, u8, u8);

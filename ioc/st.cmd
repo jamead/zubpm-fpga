@@ -1,7 +1,7 @@
 #!//home/mead/epics/pscdrv/bin/linux-x86_64/pscdemo 
 epicsEnvSet("TOP","/home/mead/epics/pscdrv")
 epicsEnvSet("BPMDIR","$(TOP)")
-epicsEnvSet("ZUBPM_DBDIR","/home/mead/rfbpm/fwk/zubpm/ioc")
+epicsEnvSet("ZUBPM_DBDIR","/home/mead/rfbpm/zubpm/ioc")
 
 
 #epicsEnvSet("CNO","40")   ## Cell Number
@@ -28,7 +28,7 @@ dbLoadDatabase("$(BPMDIR)/dbd/pscdemo.dbd",0,0)
 pscdemo_registerRecordDeviceDriver(pdbbase) 
 
 # BPM IP address
-epicsEnvSet("BPM1_IP", "10.0.142.43");  #4009
+epicsEnvSet("BPM1_IP", "10.0.142.165");  #4009
 
 
 ## Load record instances

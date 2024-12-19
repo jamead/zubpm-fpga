@@ -61,6 +61,8 @@ char msgid53_buf[MSGID53LEN];
 char msgid54_buf[MSGID54LEN];
 char msgid55_buf[MSGID55LEN];
 
+float thermistors[6];
+
 
 
 ip_t ip_settings;
@@ -73,6 +75,7 @@ XSysMonPsu SysMonInstance;  // Instance of the Sysmon Device
 
 TimerHandle_t xUptimeTimer;  // Timer handle
 u32 UptimeCounter = 0;  // Uptime counter
+
 
 
 // Timer callback function
@@ -105,30 +108,30 @@ static void assign_ip_settings()
 	//IP address is stored in EEPROM locations 0,1,2,3
 	i2c_eeprom_readBytes(0, data, 4);
 	//xil_printf("IP Addr: %u.%u.%u.%u\r\n",data[0],data[1],data[2],data[3]);
-	data[0] = 10;
-	data[1] = 0;
-	data[2] = 142;
-	data[3] = 43;
+	//data[0] = 10;
+	//data[1] = 0;
+	//data[2] = 142;
+	//data[3] = 43;
 	IP4_ADDR(&server_netif.ip_addr, data[0],data[1],data[2],data[3]);
 
 	xil_printf("Getting IP Netmask from EEPROM\r\n");
 	//IP netmask is stored in EEPROM locations 16,17,18,19
 	i2c_eeprom_readBytes(16, data, 4);
 	//xil_printf("IP Netmask: %u.%u.%u.%u\r\n",data[0],data[1],data[2],data[3]);
-	data[0] = 255;
-	data[1] = 255;
-	data[2] = 254;
-	data[3] = 0;
+	//data[0] = 255;
+	//data[1] = 255;
+	//data[2] = 254;
+	//data[3] = 0;
 	IP4_ADDR(&server_netif.netmask, data[0],data[1],data[2],data[3]);
 
 	xil_printf("Getting IP Netmask from EEPROM\r\n");
 	i2c_eeprom_readBytes(32, data, 4);
 	//IP gw is stored in EEPROM locations 32,33,34,35
 	//xil_printf("IP Gateway: %u.%u.%u.%u\r\n",data[0],data[1],data[2],data[3]);
-	data[0] = 10;
-	data[1] = 0;
-	data[2] = 142;
-	data[3] = 51;
+	//data[0] = 10;
+	//data[1] = 0;
+	//data[2] = 142;
+	//data[3] = 51;
 	IP4_ADDR(&server_netif.gw, data[0],data[1],data[2],data[3]);
 
 }
@@ -198,7 +201,7 @@ void main_thread(void *p)
     // Start the PSC Status Thread.  Handles incoming commands from IOC
     vTaskDelay(pdMS_TO_TICKS(100));
     xil_printf("\r\n");
-    sys_thread_new("psc_status_thread", psc_status_thread, 0,THREAD_STACKSIZE, 1);
+    sys_thread_new("psc_status_thread", psc_status_thread, 0,THREAD_STACKSIZE, 2);
 
 
     // Delay for 100ms
@@ -212,7 +215,14 @@ void main_thread(void *p)
     vTaskDelay(pdMS_TO_TICKS(100));
     // Start the PSC Control Thread.  Handles incoming commands from IOC
     xil_printf("\r\n");
-    sys_thread_new("psc_cntrl_thread", psc_control_thread, 0, THREAD_STACKSIZE, 2);
+    sys_thread_new("psc_cntrl_thread", psc_control_thread, 0, THREAD_STACKSIZE, 3);
+
+
+     // Delay for 100 ms
+     vTaskDelay(pdMS_TO_TICKS(100));
+     // Start the PSC Control Thread.  Handles incoming commands from IOC
+     xil_printf("\r\n");
+     sys_thread_new("read_thermistors", read_thermistor_thread, 0, THREAD_STACKSIZE, 0);
 
 
 	//setup an Uptime Timer
@@ -277,9 +287,6 @@ int main()
 	xil_printf("zuBPM ...\r\n");
     print_firmware_version();
 
-
-
-
 	prog_ad9510();
 	ltc2195_init();
 	init_i2c();
@@ -290,6 +297,8 @@ int main()
     setup_thermistors(1);
     setup_thermistors(2);
 
+    /*
+    xil_printf("Reading Thermistors...\r\n");
     read_thermistors(0,&temp1,&temp2);
     printf("Chip0:  = %5.3f  %5.3f  \r\n",temp1,temp2);
     read_thermistors(1,&temp1,&temp2);
@@ -298,13 +307,14 @@ int main()
     Xil_Out32(XPAR_M_AXI_BASEADDR + THERM_SEL_REG, 0x2);
     read_thermistors(2,&temp1,&temp2);
     printf("Chip2:  = %5.3f  %5.3f  \r\n",temp1,temp2);
-
+    */
 
     //read AFE temperature from i2c bus
     i2c_set_port_expander(I2C_PORTEXP1_ADDR,0x40);
     temp1 = read_i2c_temp(BRDTEMP0_ADDR);
     temp2 = read_i2c_temp(BRDTEMP2_ADDR);
     printf("AFE:  = %5.3f  %5.3f  \r\n",temp1,temp2);
+    sleep(1);
 
 
 	//EVR reset

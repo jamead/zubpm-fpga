@@ -35,6 +35,7 @@
 extern XIicPs IicPsInstance;
 extern XSysMonPsu SysMonInstance;
 extern u32 UptimeCounter;
+extern float thermistors[6];
 
 
 
@@ -291,7 +292,7 @@ void ReadSysInfo(char *msg) {
 
     u32 *msg_u32ptr;
     u8 i;
-    float temp1, temp2;
+    //float temp1, temp2;
     struct SysHealthMsg syshealth;
 
     //write the PSC header
@@ -302,7 +303,7 @@ void ReadSysInfo(char *msg) {
     msg[3] = (short int) MSGID32;
     *++msg_u32ptr = htonl(MSGID32LEN); //body length
 
-    //write the PSC message
+
 
     //read FPGA version (git checksum) from PL register
     syshealth.git_shasum = Xil_In32(XPAR_M_AXI_BASEADDR + GIT_SHASUM);
@@ -314,17 +315,14 @@ void ReadSysInfo(char *msg) {
     syshealth.dfe_temp[2] = read_i2c_temp(BRDTEMP2_ADDR);
     syshealth.dfe_temp[3] = read_i2c_temp(BRDTEMP3_ADDR);
 
+
     //read AFE temperature from i2c bus
     i2c_set_port_expander(I2C_PORTEXP1_ADDR,0x40);
     syshealth.afe_temp[0] = read_i2c_temp(BRDTEMP0_ADDR);
     syshealth.afe_temp[1] = read_i2c_temp(BRDTEMP2_ADDR);
 
-    //read temperatures from Thermistors on AFE
-    for (i=0;i<3;i++) {
-    	read_thermistors(i,&temp1,&temp2);
-        syshealth.therm_temp[i*2] = temp1;
-        syshealth.therm_temp[i*2+1] = temp2;
-    }
+
+
 
     //read voltage & currents from LTC2991 chips
 	i2c_set_port_expander(I2C_PORTEXP1_ADDR,4);
@@ -351,9 +349,11 @@ void ReadSysInfo(char *msg) {
     syshealth.reg_temp[1] = i2c_ltc2991_reg2_temp();
     syshealth.reg_temp[2] = i2c_ltc2991_reg3_temp();
 
+
     // read SFP status information from i2c bus
     for (i=0;i<=5;i++)
        i2c_sfp_get_stats(&syshealth, i);
+
 
     // Read power management info from i2c bus
     i2c_ltc2977_stats(&syshealth);
@@ -364,6 +364,16 @@ void ReadSysInfo(char *msg) {
     // Read the Uptime counter
     syshealth.uptime = UptimeCounter;
     //xil_printf("Uptime: %d\r\n",UptimeCounter);
+
+
+
+    //read temperatures from Thermistors on AFE
+    for (i=0;i<5;i++) {
+        syshealth.therm_temp[i] = thermistors[i];
+        //printf("Therm %d:  = %5.3f \r\n",i,syshealth.therm_temp[i]);
+    }
+
+
 
     //copy the syshealth structure to the PSC msg buffer
     memcpy(&msg[MSGHDRLEN],&syshealth,sizeof(syshealth));
