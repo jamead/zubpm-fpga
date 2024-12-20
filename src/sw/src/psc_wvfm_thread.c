@@ -355,6 +355,7 @@ void ReadLiveADCWvfm(char *msg) {
     u16 *msg_u16ptr;
     u32 *msg_u32ptr;
     int regval;
+    s16 cha,chb,chc,chd;
 
     Xil_Out32(XPAR_M_AXI_BASEADDR + ADCFIFO_STREAMENB_REG, 1);
     Xil_Out32(XPAR_M_AXI_BASEADDR + ADCFIFO_STREAMENB_REG, 0);
@@ -377,12 +378,19 @@ void ReadLiveADCWvfm(char *msg) {
     for (i=0;i<8000;i++) {
         //chA and chB are in a single 32 bit word
     	regval = Xil_In32(XPAR_M_AXI_BASEADDR + ADCFIFO_DATA_REG);
-        *msg_u16ptr++ = (short int) ((regval & 0xFFFF0000) >> 16);
-        *msg_u16ptr++ = (short int) (regval & 0xFFFF);
-        //chC and chD are in a single 32 bit word
+    	cha = (short int) ((regval & 0xFFFF0000) >> 16);
+    	chb = (short int) (regval & 0xFFFF);
         regval = Xil_In32(XPAR_M_AXI_BASEADDR + ADCFIFO_DATA_REG);
-        *msg_u16ptr++ = (short int) ((regval & 0xFFFF0000) >> 16);
-        *msg_u16ptr++ = (short int) (regval & 0xFFFF);
+    	chc = (short int) ((regval & 0xFFFF0000) >> 16);
+    	chd = (short int) (regval & 0xFFFF);
+
+        //chC and chD are in a single 32 bit word
+        *msg_u16ptr++ = chc;
+        *msg_u16ptr++ = chd;
+        *msg_u16ptr++ = cha;
+        *msg_u16ptr++ = chb;
+
+
     }
 
     //printf("Resetting FIFO...\n");
