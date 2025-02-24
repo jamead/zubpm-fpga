@@ -368,10 +368,10 @@ void ReadSysInfo(char *msg) {
 
 
     //read temperatures from Thermistors on AFE
-    for (i=0;i<=5;i++) {
-        syshealth.therm_temp[i] = thermistors[i];
-        printf("Therm %d:  = %5.3f \r\n",i,syshealth.therm_temp[i]);
-    }
+    //for (i=0;i<=5;i++) {
+    //    syshealth.therm_temp[i] = thermistors[i];
+        //printf("Therm %d:  = %5.3f \r\n",i,syshealth.therm_temp[i]);
+    //}
 
 
 

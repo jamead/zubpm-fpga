@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--Saved on 2024-12-03 08:43:46 by mead-->
+<!--Saved on 2025-01-23 17:06:38 by mead-->
 <display version="2.0.0">
   <name>$(PRI):$(Sec)-BPM$(N)LN_LTB_bpm_Ctrl</name>
   <width>1350</width>
@@ -5725,6 +5725,41 @@ $(pv_value)</tooltip>
             <y>444</y>
             <width>107</width>
             <height>36</height>
+            <horizontal_alignment>1</horizontal_alignment>
+            <vertical_alignment>1</vertical_alignment>
+            <actions>
+            </actions>
+            <border_color>
+              <color red="0" green="128" blue="255">
+              </color>
+            </border_color>
+          </widget>
+          <widget type="spinner" version="2.0.0">
+            <name>Spinner_4</name>
+            <pv_name>$(PRI)-BI{BPM:$(N)}ADC:IDLY-SP</pv_name>
+            <x>694</x>
+            <y>276</y>
+            <height>25</height>
+            <format>0</format>
+            <precision>3</precision>
+            <background_color>
+              <color red="192" green="192" blue="192">
+              </color>
+            </background_color>
+            <horizontal_alignment>1</horizontal_alignment>
+            <vertical_alignment>1</vertical_alignment>
+            <actions>
+            </actions>
+            <maximum>511.0</maximum>
+            <increment>0.1</increment>
+          </widget>
+          <widget type="label" version="2.0.0">
+            <name>Label_19</name>
+            <text>ADC IDLY</text>
+            <x>584</x>
+            <y>273</y>
+            <width>109</width>
+            <height>22</height>
             <horizontal_alignment>1</horizontal_alignment>
             <vertical_alignment>1</vertical_alignment>
             <actions>

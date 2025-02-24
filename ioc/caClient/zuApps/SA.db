@@ -1,0 +1,297 @@
+record(longin,"$(P)$(N)TS-I"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(longin,"$(P)$(N)TS:NS-I"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(longin,"$(P)$(N)Cnt:Trig-I"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+  field(FLNK,"$(P)$(N)SA:fanout.PROC")
+}
+
+record(ai,"$(P)$(N)Ampl:ASA-I"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(ai,"$(P)$(N)Ampl:BSA-I"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(ai,"$(P)$(N)Ampl:CSA-I"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(ai,"$(P)$(N)Ampl:DSA-I"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(ai,"$(P)$(N)Ampl:SSA-Calc"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(ai,"$(P)$(N)Pos:X-I"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(ai,"$(P)$(N)Pos:Y-I"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(ai,"$(P)$(N)Ampl:Aavg-I"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(ai,"$(P)$(N)Ampl:Bavg-I"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(ai,"$(P)$(N)Ampl:Cavg-I"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(ai,"$(P)$(N)Ampl:Davg-I"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(ai,"$(P)$(N)Pos:Xavg-I"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(ai,"$(P)$(N)Pos:Yavg-I"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(ai,"$(P)$(N)Ampl:Savg-I"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(ai,"$(P)$(N)Ampl:AStd-I"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(ai,"$(P)$(N)Ampl:BStd-I"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(ai,"$(P)$(N)Ampl:CStd-I"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(ai,"$(P)$(N)Ampl:DStd-I"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(ai,"$(P)$(N)Pos:XStd-I"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(ai,"$(P)$(N)Pos:YStd-I"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(ai,"$(P)$(N)Ampl:SStd-I"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(ai,"$(P)$(N)Pos:X-RMS"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(ai,"$(P)$(N)Pos:Y-RMS"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(waveform,"$(P)$(N)SA:A-Wfm"){
+  field(DTYP,"Soft Channel")
+  field(DESC,"History")
+  field(NELM,"2000")
+  field(FTVL,"FLOAT")
+}
+
+record(waveform,"$(P)$(N)SA:B-Wfm"){
+  field(DTYP,"Soft Channel")
+  field(DESC,"History")
+  field(NELM,"2000")
+  field(FTVL,"FLOAT")
+}
+
+record(waveform,"$(P)$(N)SA:C-Wfm"){
+  field(DTYP,"Soft Channel")
+  field(DESC,"History")
+  field(NELM,"2000")
+  field(FTVL,"FLOAT")
+}
+
+record(waveform,"$(P)$(N)SA:D-Wfm"){
+  field(DTYP,"Soft Channel")
+  field(DESC,"History")
+  field(NELM,"2000")
+  field(FTVL,"FLOAT")
+}
+
+record(waveform,"$(P)$(N)SA:S-Wfm"){
+  field(DTYP,"Soft Channel")
+  field(DESC,"History")
+  field(NELM,"2000")
+  field(FTVL,"FLOAT")
+}
+
+record(waveform,"$(P)$(N)SA:X-Wfm"){
+  field(DTYP,"Soft Channel")
+  field(DESC,"History")
+  field(NELM,"2000")
+  field(FTVL,"FLOAT")
+}
+
+record(waveform,"$(P)$(N)SA:Y-Wfm"){
+  field(DTYP,"Soft Channel")
+  field(DESC,"History")
+  field(NELM,"2000")
+  field(FTVL,"FLOAT")
+}
+
+record(longout,"$(P)$(N)SA:Hist:len-SP"){
+  field(DTYP,"Soft Channel")
+  field(VAL,0)
+  field(UDF,1)
+}
+
+record(waveform,"$(P)$(N)SA:Hist:A-Wfm"){
+  field(DTYP,"Soft Channel")
+  field(DESC,"History")
+  field(NELM,"2000")
+  field(FTVL,"FLOAT")
+}
+
+record(waveform,"$(P)$(N)SA:Hist:B-Wfm"){
+  field(DTYP,"Soft Channel")
+  field(DESC,"History")
+  field(NELM,"2000")
+  field(FTVL,"FLOAT")
+}
+
+record(waveform,"$(P)$(N)SA:Hist:C-Wfm"){
+  field(DTYP,"Soft Channel")
+  field(DESC,"History")
+  field(NELM,"2000")
+  field(FTVL,"FLOAT")
+}
+
+record(waveform,"$(P)$(N)SA:Hist:D-Wfm"){
+  field(DTYP,"Soft Channel")
+  field(DESC,"History")
+  field(NELM,"2000")
+  field(FTVL,"FLOAT")
+}
+
+record(waveform,"$(P)$(N)SA:Hist:S-Wfm"){
+  field(DTYP,"Soft Channel")
+  field(DESC,"History")
+  field(NELM,"2000")
+  field(FTVL,"FLOAT")
+}
+
+record(waveform,"$(P)$(N)SA:Hist:X-Wfm"){
+  field(DTYP,"Soft Channel")
+  field(DESC,"History")
+  field(NELM,"2000")
+  field(FTVL,"FLOAT")
+}
+
+record(waveform,"$(P)$(N)SA:Hist:Y-Wfm"){
+  field(DTYP,"Soft Channel")
+  field(DESC,"History")
+  field(NELM,"2000")
+  field(FTVL,"FLOAT")
+}
+
+record(waveform,"$(P)$(N)SA:Hist:Time-Wfm"){
+  field(DTYP,"Soft Channel")
+  field(DESC,"History")
+  field(NELM,"2000")
+  field(FTVL,"FLOAT")
+}
+
+record(waveform,"$(P)$(N)SA:HistX-Wfm"){
+  field(DTYP,"Soft Channel")
+  field(DESC,"History")
+  field(NELM,"100")
+  field(FTVL,"LONG")
+}
+
+record(waveform,"$(P)$(N)SA:HistY-Wfm"){
+  field(DTYP,"Soft Channel")
+  field(DESC,"History")
+  field(NELM,"100")
+  field(FTVL,"LONG")
+}
+
+record(waveform,"$(P)$(N)SA:HistX:Bins-Wfm"){
+  field(DTYP,"Soft Channel")
+  field(DESC,"History")
+  field(NELM,"100")
+  field(FTVL,"FLOAT")
+}
+
+record(waveform,"$(P)$(N)SA:HistY:Bins-Wfm"){
+  field(DTYP,"Soft Channel")
+  field(DESC,"History")
+  field(NELM,"100")
+  field(FTVL,"FLOAT")
+}
+
+

@@ -1,0 +1,7 @@
+NAME=zubpm
+PORT=8008
+USER=root
+HOST=diagioc-c28-dev
+CHDIR="$CHDIR"
+EXEC="$CHDIR/st.cmd"
+

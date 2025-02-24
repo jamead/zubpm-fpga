@@ -220,9 +220,9 @@ void main_thread(void *p)
 
      // Delay for 100 ms
      vTaskDelay(pdMS_TO_TICKS(100));
-     // Start the PSC Control Thread.  Handles incoming commands from IOC
-     xil_printf("\r\n");
-     sys_thread_new("read_thermistors", read_thermistor_thread, 0, THREAD_STACKSIZE, 0);
+     // Start the Thermistor Read Thread.  Handles incoming commands from IOC
+     //xil_printf("\r\n");
+     //sys_thread_new("read_thermistors", read_thermistor_thread, 0, THREAD_STACKSIZE, 0);
 
 
 	//setup an Uptime Timer
@@ -289,9 +289,13 @@ int main()
 
 	prog_ad9510();
 	ltc2195_init();
+	xil_printf("Init I2c...\r\n");
 	init_i2c();
+	xil_printf("Init Sysmon...\r\n");
 	init_sysmon();
+	xil_printf("Init lmk1e2...\r\n");
     write_lmk61e2();
+    xil_printf("Configuration done...\r\n");
 
     setup_thermistors(0);
     setup_thermistors(1);

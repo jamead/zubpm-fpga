@@ -200,16 +200,15 @@ void write_lmk61e2()
    u8 buf[4] = {0};
    u32 regval, i;
 
-
    u32 num_values = sizeof(lmk61e2_values) / sizeof(lmk61e2_values[0]);  // Get the number of elements in the array
-
    i2c_set_port_expander(I2C_PORTEXP1_ADDR,0x20);
    for (i=0; i<num_values; i++) {
 	  regval = lmk61e2_values[i];
       buf[0] = (char) ((regval & 0x00FF00) >> 8);
       buf[1] = (char) (regval & 0xFF);
+      //xil_printf("Writing I2c\r\n");
       i2c_write(buf,2,0x5A);
-      printf("LMK61e2 Write = 0x%x\t    B0 = %x    B1 = %x\n",regval, buf[0], buf[1]);
+      xil_printf("LMK61e2 Write = 0x%x\t    B0 = %x    B1 = %x\r\n",regval, buf[0], buf[1]);
    };
 
 
