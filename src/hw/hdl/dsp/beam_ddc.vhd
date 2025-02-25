@@ -59,6 +59,19 @@ component fir_lp_ddc is
  );
 end component;
 
+component fir_compiler_lp_ddc is
+  port (
+    aclk : IN STD_LOGIC;
+    s_axis_data_tvalid : IN STD_LOGIC;
+    s_axis_data_tready : OUT STD_LOGIC;
+    s_axis_data_tdata : IN STD_LOGIC_VECTOR(23 DOWNTO 0);
+    m_axis_data_tvalid : OUT STD_LOGIC;
+    m_axis_data_tdata : OUT STD_LOGIC_VECTOR(47 DOWNTO 0)
+  );
+end component;
+
+
+
 
 component seqpolar 
   port (
@@ -96,22 +109,30 @@ end component;
 
 
 
-signal qraw    : signed(39 downto 0);
-signal qraw_sc : signed(23 downto 0);
-signal qfir    : signed(23 downto 0);
-signal iraw    : signed(39 downto 0);
-signal iraw_sc : signed(23 downto 0);
-signal ifir    : signed(23 downto 0);
+signal qraw            : signed(39 downto 0);
+signal qraw_sc         : signed(23 downto 0);
+signal qfir            : signed(23 downto 0);
+signal iraw            : signed(39 downto 0);
+signal iraw_sc         : signed(23 downto 0);
+signal ifir            : signed(23 downto 0);
 
---signal isum    : signed(31 downto 0);
---signal qsum    : signed(31 downto 0);
-signal iacc    : signed(31 downto 0);
-signal qacc    : signed(31 downto 0);
+signal qfilt_tready    : std_logic;
+signal qfilt_tvalid    : std_logic;
+signal qfilt_tdata_fp  : std_logic_vector(47 downto 0);
+signal qfilt_tdata     : signed(23 downto 0);
 
-signal cordic_done : std_logic;
+signal ifilt_tready    : std_logic;
+signal ifilt_tvalid    : std_logic;
+signal ifilt_tdata_fp  : std_logic_vector(47 downto 0);
+signal ifilt_tdata     : signed(23 downto 0);
 
-signal mag_i  : signed(25 downto 0);
-signal phs_i  : signed(25 downto 0);
+signal iacc            : signed(31 downto 0);
+signal qacc            : signed(31 downto 0);
+
+signal cordic_done     : std_logic;
+
+signal mag_i           : signed(25 downto 0);
+signal phs_i           : signed(25 downto 0);
 
 
 
@@ -145,22 +166,57 @@ iraw_sc <= iraw(39 downto 16);
 
 -- low pass filters to cut out the sum term from the multiply
 -- 4 tap fir filter  
-q_firfilt: fir_lp_ddc
-    port map ( 
-      clk => clk, 
-      rst => rst, 
-      din => qraw_sc,
-      dout => qfir
-   );
+--q_firfilt: fir_lp_ddc
+--    port map ( 
+--      clk => clk, 
+--      rst => rst, 
+--      din => qraw_sc,
+--      dout => qfir
+--   );
+   
+   
+-- 101 tap fir filter (to remove Pilot Tone)   
+q_fircompfilt:  fir_compiler_lp_ddc 
+  port map (
+    aclk => clk, 
+    s_axis_data_tvalid => '1', 
+    s_axis_data_tready => qfilt_tready,  
+    s_axis_data_tdata => std_logic_vector(qraw_sc), 
+    m_axis_data_tvalid => qfilt_tvalid, 
+    m_axis_data_tdata => qfilt_tdata_fp
+  );  
+   
+ qfir <= signed(qfilt_tdata_fp(47 downto 24));  
+
+
 
   
-i_firfilt: fir_lp_ddc
-    port map ( 
-      clk => clk, 
-      rst => rst, 
-      din => iraw_sc,
-      dout => ifir
-   );
+--i_firfilt: fir_lp_ddc
+--    port map ( 
+--      clk => clk, 
+--      rst => rst, 
+--      din => iraw_sc,
+--      dout => ifir
+--   );
+
+
+-- 101 tap fir filter (to remove Pilot Tone)   
+i_fircompfilt:  fir_compiler_lp_ddc 
+  port map (
+    aclk => clk, 
+    s_axis_data_tvalid => '1', 
+    s_axis_data_tready => ifilt_tready,  
+    s_axis_data_tdata => std_logic_vector(iraw_sc), 
+    m_axis_data_tvalid => ifilt_tvalid, 
+    m_axis_data_tdata => ifilt_tdata_fp
+  );  
+   
+ ifir <= signed(ifilt_tdata_fp(47 downto 24));  
+
+
+
+
+
 
 
 -- accumulate I,Q for a turn

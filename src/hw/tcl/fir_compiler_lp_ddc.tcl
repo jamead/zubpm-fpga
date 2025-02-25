@@ -64,9 +64,10 @@ set fir_compiler_lp_ddc [create_ip -name fir_compiler -vendor xilinx.com -librar
 
 # User Parameters
 set_property -dict [list \
+  CONFIG.BestPrecision {true} \
   CONFIG.Clock_Frequency {117.3491} \
   CONFIG.CoefficientSource {COE_File} \
-  CONFIG.Coefficient_File {/home/mead/rfbpm/zubpm/python/fir_filter.coe} \
+  CONFIG.Coefficient_File {/home/mead/rfbpm/fwk/zubpm/python/fir_filter.coe} \
   CONFIG.Coefficient_Fractional_Bits {21} \
   CONFIG.Coefficient_Sets {1} \
   CONFIG.Coefficient_Sign {Unsigned} \
@@ -89,4 +90,3 @@ set_property -dict {
 } $fir_compiler_lp_ddc
 
 ##################################################################
-
