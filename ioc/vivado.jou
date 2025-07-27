@@ -1,0 +1,31 @@
+#-----------------------------------------------------------
+# Vivado v2022.2 (64-bit)
+# SW Build 3671981 on Fri Oct 14 04:59:54 MDT 2022
+# IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
+# Start of session at: Wed Mar  5 16:31:15 2025
+# Process ID: 1112380
+# Current directory: /home/mead/rfbpm/zubpm/ioc
+# Command line: vivado
+# Log file: /home/mead/rfbpm/zubpm/ioc/vivado.log
+# Journal file: /home/mead/rfbpm/zubpm/ioc/vivado.jou
+# Running On: mead-office, OS: Linux, CPU Frequency: 2880.989 MHz, CPU Physical cores: 16, Host memory: 67192 MB
+#-----------------------------------------------------------
+start_gui
+open_project /home/mead/xbpm/xbpmD_picozed_iso_v14/vivado/vivado.xpr
+update_compile_order -fileset sources_1
+open_hw_manager
+connect_hw_server -url 10.0.142.201:3121 -allow_non_jtag
+current_hw_target [get_hw_targets */xilinx_tcf/Xilinx/AAo1HSXz0]
+set_property PARAM.FREQUENCY 20000000 [get_hw_targets */xilinx_tcf/Xilinx/AAo1HSXz0]
+open_hw_target
+set_property PROGRAM.FILE {/home/mead/xbpm/xbpmD_picozed_iso_v14/vivado/vivado.runs/impl_1/top.bit} [get_hw_devices xc7z030_1]
+set_property PROBES.FILE {/home/mead/xbpm/xbpmD_picozed_iso_v14/vivado/vivado.runs/impl_1/top.ltx} [get_hw_devices xc7z030_1]
+set_property FULL_PROBES.FILE {/home/mead/xbpm/xbpmD_picozed_iso_v14/vivado/vivado.runs/impl_1/top.ltx} [get_hw_devices xc7z030_1]
+current_hw_device [get_hw_devices xc7z030_1]
+refresh_hw_device [lindex [get_hw_devices xc7z030_1] 0]
+set_property PROBES.FILE {/home/mead/xbpm/xbpmD_picozed_iso_v14/vivado/vivado.runs/impl_1/top.ltx} [get_hw_devices xc7z030_1]
+set_property FULL_PROBES.FILE {/home/mead/xbpm/xbpmD_picozed_iso_v14/vivado/vivado.runs/impl_1/top.ltx} [get_hw_devices xc7z030_1]
+set_property PROGRAM.FILE {/home/mead/xbpm/xbpmD_picozed_iso_v14/vivado/vivado.runs/impl_1/top.bit} [get_hw_devices xc7z030_1]
+program_hw_devices [get_hw_devices xc7z030_1]
+refresh_hw_device [lindex [get_hw_devices xc7z030_1] 0]
+display_hw_ila_data [ get_hw_ila_data hw_ila_data_1 -of_objects [get_hw_ilas -of_objects [get_hw_devices xc7z030_1] -filter {CELL_NAME=~"u_ila_0"}]]

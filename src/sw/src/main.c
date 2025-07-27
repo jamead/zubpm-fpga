@@ -287,7 +287,11 @@ int main()
 	xil_printf("zuBPM ...\r\n");
     print_firmware_version();
 
-	prog_ad9510();
+    while (1) {
+	  prog_ad9510();
+	  sleep(1);
+    }
+
 	ltc2195_init();
 	xil_printf("Init I2c...\r\n");
 	init_i2c();

@@ -67,7 +67,7 @@ set_property -dict [list \
   CONFIG.BestPrecision {true} \
   CONFIG.Clock_Frequency {117.3491} \
   CONFIG.CoefficientSource {COE_File} \
-  CONFIG.Coefficient_File {/home/mead/rfbpm/fwk/zubpm/python/fir_filter.coe} \
+  CONFIG.Coefficient_File {/home/mead/rfbpm/zubpm/src/hw/tcl/fir_filter.coe} \
   CONFIG.Coefficient_Fractional_Bits {21} \
   CONFIG.Coefficient_Sets {1} \
   CONFIG.Coefficient_Sign {Unsigned} \
