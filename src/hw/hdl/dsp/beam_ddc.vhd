@@ -166,52 +166,52 @@ iraw_sc <= iraw(39 downto 16);
 
 -- low pass filters to cut out the sum term from the multiply
 -- 4 tap fir filter  
---q_firfilt: fir_lp_ddc
---    port map ( 
---      clk => clk, 
---      rst => rst, 
---      din => qraw_sc,
---      dout => qfir
---   );
+q_firfilt: fir_lp_ddc
+    port map ( 
+      clk => clk, 
+      rst => rst, 
+      din => qraw_sc,
+      dout => qfir
+   );
    
    
 -- 101 tap fir filter (to remove Pilot Tone)   
-q_fircompfilt:  fir_compiler_lp_ddc 
-  port map (
-    aclk => clk, 
-    s_axis_data_tvalid => '1', 
-    s_axis_data_tready => qfilt_tready,  
-    s_axis_data_tdata => std_logic_vector(qraw_sc), 
-    m_axis_data_tvalid => qfilt_tvalid, 
-    m_axis_data_tdata => qfilt_tdata_fp
-  );  
+--q_fircompfilt:  fir_compiler_lp_ddc 
+--  port map (
+--    aclk => clk, 
+--    s_axis_data_tvalid => '1', 
+--    s_axis_data_tready => qfilt_tready,  
+--    s_axis_data_tdata => std_logic_vector(qraw_sc), 
+--    m_axis_data_tvalid => qfilt_tvalid, 
+--    m_axis_data_tdata => qfilt_tdata_fp
+--  );  
    
- qfir <= signed(qfilt_tdata_fp(47 downto 24));  
+-- qfir <= signed(qfilt_tdata_fp(47 downto 24));  
 
 
 
   
---i_firfilt: fir_lp_ddc
---    port map ( 
---      clk => clk, 
---      rst => rst, 
---      din => iraw_sc,
---      dout => ifir
---   );
+i_firfilt: fir_lp_ddc
+    port map ( 
+      clk => clk, 
+      rst => rst, 
+      din => iraw_sc,
+      dout => ifir
+   );
 
 
 -- 101 tap fir filter (to remove Pilot Tone)   
-i_fircompfilt:  fir_compiler_lp_ddc 
-  port map (
-    aclk => clk, 
-    s_axis_data_tvalid => '1', 
-    s_axis_data_tready => ifilt_tready,  
-    s_axis_data_tdata => std_logic_vector(iraw_sc), 
-    m_axis_data_tvalid => ifilt_tvalid, 
-    m_axis_data_tdata => ifilt_tdata_fp
-  );  
+--i_fircompfilt:  fir_compiler_lp_ddc 
+--  port map (
+--    aclk => clk, 
+--    s_axis_data_tvalid => '1', 
+--    s_axis_data_tready => ifilt_tready,  
+--    s_axis_data_tdata => std_logic_vector(iraw_sc), 
+--    m_axis_data_tvalid => ifilt_tvalid, 
+--    m_axis_data_tdata => ifilt_tdata_fp
+--  );  
    
- ifir <= signed(ifilt_tdata_fp(47 downto 24));  
+-- ifir <= signed(ifilt_tdata_fp(47 downto 24));  
 
 
 

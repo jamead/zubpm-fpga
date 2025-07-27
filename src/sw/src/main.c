@@ -221,8 +221,8 @@ void main_thread(void *p)
      // Delay for 100 ms
      vTaskDelay(pdMS_TO_TICKS(100));
      // Start the Thermistor Read Thread.  Handles incoming commands from IOC
-     //xil_printf("\r\n");
-     //sys_thread_new("read_thermistors", read_thermistor_thread, 0, THREAD_STACKSIZE, 0);
+     xil_printf("\r\n");
+     sys_thread_new("read_thermistors", read_thermistor_thread, 0, THREAD_STACKSIZE, 0);
 
 
 	//setup an Uptime Timer
@@ -287,10 +287,7 @@ int main()
 	xil_printf("zuBPM ...\r\n");
     print_firmware_version();
 
-    while (1) {
-	  prog_ad9510();
-	  sleep(1);
-    }
+	prog_ad9510();
 
 	ltc2195_init();
 	xil_printf("Init I2c...\r\n");
@@ -305,17 +302,16 @@ int main()
     setup_thermistors(1);
     setup_thermistors(2);
 
-    /*
+
     xil_printf("Reading Thermistors...\r\n");
     read_thermistors(0,&temp1,&temp2);
     printf("Chip0:  = %5.3f  %5.3f  \r\n",temp1,temp2);
     read_thermistors(1,&temp1,&temp2);
     printf("Chip1:  = %5.3f  %5.3f  \r\n",temp1,temp2);
-
     Xil_Out32(XPAR_M_AXI_BASEADDR + THERM_SEL_REG, 0x2);
     read_thermistors(2,&temp1,&temp2);
     printf("Chip2:  = %5.3f  %5.3f  \r\n",temp1,temp2);
-    */
+
 
     //read AFE temperature from i2c bus
     i2c_set_port_expander(I2C_PORTEXP1_ADDR,0x40);
