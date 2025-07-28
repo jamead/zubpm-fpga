@@ -298,6 +298,15 @@ int main()
     write_lmk61e2();
     xil_printf("Configuration done...\r\n");
 
+    i2c_set_port_expander(I2C_PORTEXP1_ADDR,0x40);
+
+    //read_i2c_temp(BRDTEMP0_ADDR);
+
+    read_si571();
+    prog_si571();
+
+
+
     setup_thermistors(0);
     setup_thermistors(1);
     setup_thermistors(2);
