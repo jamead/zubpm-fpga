@@ -112,6 +112,8 @@ architecture behv of top is
   
   signal adc_clk_in      : std_logic;
   signal adc_data        : t_adc_raw; 
+  signal adc_data_dma    : t_adc_raw;
+  signal adc_data_sw     : t_adc_raw;
   signal adc_dbg         : std_logic_vector(3 downto 0);
   
   signal adc_spi_we      : std_logic;
@@ -140,10 +142,14 @@ architecture behv of top is
   signal reg_i_evr       : t_reg_i_evr;
   signal reg_o_therm     : t_reg_o_therm;
   signal reg_i_therm     : t_reg_i_therm;
+  signal reg_o_swrffe    : t_reg_o_swrffe;
   
   signal tbt_data        : t_tbt_data;    
   signal sa_data         : t_sa_data;
   signal fa_data         : t_fa_data;
+  
+  signal sw_rffe_demux   : std_logic;
+  signal sw_rffe_time    : std_logic;
   
   signal dma_adc_active  : std_logic;
   signal dma_adc_tdata   : std_logic_vector(63 downto 0);
@@ -197,6 +203,8 @@ architecture behv of top is
   attribute mark_debug of dsa_clk: signal is "true";
   attribute mark_debug of dsa_sdata: signal is "true";
   attribute mark_debug of dsa_latch: signal is "true";  
+  attribute mark_debug of adc_data: signal is "true";
+  attribute mark_debug of adc_data_sw: signal is "true";
  
 
 begin
@@ -221,8 +229,8 @@ dbg(12) <= tbt_trig;
 dbg(13) <= fa_trig;
 dbg(14) <= sa_trig;
 dbg(15) <= tbt_extclk;
-dbg(16) <= fp_in(0);
-dbg(17) <= fp_in(1);
+dbg(16) <= sw_rffe_demux; --fp_in(0);
+dbg(17) <= sw_rffe_time; --fp_in(1);
 dbg(18) <= fp_in(2);
 dbg(19) <= fp_in(3);
 
@@ -279,11 +287,29 @@ adc_inst: entity work.adc_ltc2195
     );     
 
 
+rffe_switcher: entity work.rffe_switch 
+  port map ( 
+    rst => pl_reset, 
+    clk => adc_clk, 
+    tbt_trig => tbt_trig,
+    fa_trig => fa_trig,
+    reg_o => reg_o_swrffe, 
+    adc_data_i => adc_data,
+    adc_data_o => adc_data_sw,
+    adc_data_dma => adc_data_dma,
+    sw_rffe_p => afe_sw_rffe_p,
+    sw_rffe_n => afe_sw_rffe_n,
+    sw_rffe_demux => sw_rffe_demux,
+    sw_rffe_time => sw_rffe_time
+);
+
+
+
 tbt_engine: entity work.tbt_dsp 
   port map( 
     rst => pl_reset, 
     clk => adc_clk, 
-    adc_data => adc_data, 
+    adc_data => adc_data_sw, 
     tbt_trig => tbt_trig, 
     tbt_data => tbt_data,
     tbt_params => reg_o_tbt
@@ -413,7 +439,7 @@ adcstream:  entity work.adc2fifo
     reset => pl_reset,   
   	reg_o => reg_o_adcfifo,
 	reg_i => reg_i_adcfifo,  
-    tbt_trig => tbt_trig,                     
+    tbt_trig => sw_rffe_time, --tbt_trig,                     
 	adc_data => adc_data
 );    
 
@@ -538,7 +564,8 @@ ps_pl: entity work.ps_io
 	reg_o_pll => reg_o_pll,
 	reg_i_pll => reg_i_pll,
 	reg_o_evr => reg_o_evr, 
-	reg_i_evr => reg_i_evr
+	reg_i_evr => reg_i_evr,
+	reg_o_swrffe => reg_o_swrffe
           
   );
 

@@ -42,6 +42,7 @@ entity ps_io is
 	 reg_i_adc       : in  t_reg_i_adc_status; 
 	 reg_o_evr       : out t_reg_o_evr;
 	 reg_i_evr       : in  t_reg_i_evr;
+	 reg_o_swrffe    : out t_reg_o_swrffe;
  
      fp_leds         : out std_logic_vector(7 downto 0)
   );
@@ -149,6 +150,17 @@ reg_i.sa_chd.data.data <= std_logic_vector(sa_data.chd_mag);
 reg_i.sa_sum.data.data <= std_logic_vector(sa_data.sum);
 reg_i.sa_xpos.data.data <= std_logic_vector(sa_data.xpos);
 reg_i.sa_ypos.data.data <= std_logic_vector(sa_data.ypos);
+
+
+reg_o_swrffe.enb <= reg_o.swrffe_enb.data.data;
+reg_o_swrffe.trigdly <= reg_o.swrffe_trigdly.data.data;
+reg_o_swrffe.demuxdly <= reg_o.swrffe_demuxdly.data.data;
+reg_o_swrffe.adcdma_sel <= reg_o.swrffe_adcdma_sel.data.data(0);
+
+
+
+
+
 
 
 

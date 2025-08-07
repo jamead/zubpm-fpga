@@ -135,7 +135,7 @@ void read_thermistor_thread()
 
     while (1)  {
       //read temperatures from Thermistors on AFE
-      for (i=0;i<3;i++) {
+      for (i=3;i>0;i--) {
     	read_thermistors(i,&temp1,&temp2);
     	thermistors[i*2] = temp1;
     	thermistors[i*2+1] = temp2;

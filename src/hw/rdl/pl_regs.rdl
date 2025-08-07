@@ -376,6 +376,8 @@ reg {
 
 
 
+
+
 /*  DMA Registers */
 reg {
     desc="DMA Soft Trigger";
@@ -592,9 +594,35 @@ reg {
   } tbtfifo_rdcnt @0x21C;
    
 
+/* RFFE Switching Registers */
 
+reg {
+    desc="Switching Enable 0=static,1=static switched, 2=switching";
+    default sw = rw;
+    default hw = r;
+    field {} data[2];
+  } swrffe_enb @0x250;
 
+reg {
+    desc="Switching Trigger Delay.  Delay Switch to anywhere in Turn";
+    default sw = rw;
+    default hw = r;
+    field {} data[16];
+  } swrffe_trigdly @0x254;
 
+reg {
+    desc="Switching Demux Delay.  Delay to compensate for switch prop delay";
+    default sw = rw;
+    default hw = r;
+    field {} data[9];
+  } swrffe_demuxdly @0x258;
+
+reg {
+    desc="Switching ADC DMA Source.  0=ADC data before switch, 1=ADC data after switch";
+    default sw = rw;
+    default hw = r;
+    field {} data[1];
+  } swrffe_adcdma_sel @0x25C;
 
 
 

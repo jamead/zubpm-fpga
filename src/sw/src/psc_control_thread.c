@@ -334,6 +334,23 @@ reconnect:
               	Xil_Out32(XPAR_M_AXI_BASEADDR + EVENT_SRC_SEL_REG, MsgData);
               	break;
 
+
+            case RFFESW_ENB_MSG1:
+              	xil_printf("Setting RF Switching Enable   Value=%d\r\n",MsgData);
+              	Xil_Out32(XPAR_M_AXI_BASEADDR + SWRFFE_ENB_REG, MsgData);
+              	break;
+
+            case RFFESW_TRIGDLY_MSG1:
+              	xil_printf("Setting RF Switching Trigger Delay   Value=%d\r\n",MsgData);
+              	Xil_Out32(XPAR_M_AXI_BASEADDR + SWRFFE_TRIGDLY_REG, MsgData);
+              	break;
+
+            case RFFESW_DEMUXDLY_MSG1:
+              	xil_printf("Setting RF Switching Demux Delay   Value=%d\r\n",MsgData);
+              	Xil_Out32(XPAR_M_AXI_BASEADDR + SWRFFE_DEMUXDLY_REG, MsgData);
+              	break;
+
+
             case ADC_IDLY_MSG1:
             	xil_printf("Setting ADC IDLY:  Value=%d\r\n",MsgData);
             	Xil_Out32(XPAR_M_AXI_BASEADDR + ADC_IDLYWVAL_REG, MsgData);

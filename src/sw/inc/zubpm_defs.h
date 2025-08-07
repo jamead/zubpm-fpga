@@ -59,6 +59,9 @@ void i2c_set_port_expander(u32, u32);
 float read_i2c_temp(u8);
 void write_lmk61e2();
 
+void read_si571();
+void prog_si571();
+
 float L11_to_float(s32);
 
 void i2c_configure_ltc2991();

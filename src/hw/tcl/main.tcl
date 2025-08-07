@@ -41,6 +41,8 @@ proc setSources {} {
   lappend Sources {"../hdl/dsp/fir_lp_ddc.vhd" "VHDL 2008"}
   lappend Sources {"../hdl/dsp/pos_calc.vhd" "VHDL 2008"}  
   lappend Sources {"../hdl/dsp/seqpolar.v" "Verilog"}      
+    
+  lappend Sources {"../hdl/rffe_switch.vhd" "VHDL 2008"}       
       
   lappend Sources {"../hdl/dsp/fa_dsp.vhd" "VHDL 2008"} 
   lappend Sources {"../hdl/dsp/sa_dsp.vhd" "VHDL 2008"}  
@@ -90,6 +92,7 @@ proc doOnCreate {} {
   source ${TclPath}/div_gen.tcl
   source ${TclPath}/evr_gth.tcl
   source ${TclPath}/fir_compiler_lp_ddc.tcl
+  source ${TclPath}/rffe_sw_shift.tcl
 
   addSources "Sources" 
   

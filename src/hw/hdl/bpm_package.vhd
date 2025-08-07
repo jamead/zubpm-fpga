@@ -197,12 +197,12 @@ type t_fa_data is record
 end record t_fa_data;
 
 
-type rffe_sw_params_type is record
+type t_reg_o_swrffe is record
     adcdma_sel   : std_logic;
     enb          : std_logic_vector(1 downto 0);
     demuxdly     : std_logic_vector(8 downto 0);
     trigdly      : std_logic_vector(15 downto 0);
-end record rffe_sw_params_type;
+end record t_reg_o_swrffe;
 
 
 type t_reg_o_tbt is record
