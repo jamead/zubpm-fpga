@@ -34,6 +34,7 @@ static const u32 lmk61e2_values [] = {
 };*/
 
 // Registers to program si571 to 117.3491MHz.
+/*
 static const uint8_t si571_values[][2] = {
 	{137, 0x10}, //Freeze DCO
 	{7, 0x61},
@@ -45,6 +46,80 @@ static const uint8_t si571_values[][2] = {
     {137, 0x0},  //Unfreeze DCO
 	{135, 0x40}  //Enable New Frequency
 };
+*/
+
+static const uint8_t si571_values[][2] = {
+	{137, 0x10}, //Freeze DCO
+	{7, 0xA0},
+    {8, 0xC2},
+    {9, 0xD3},
+    {10, 0x69},
+    {11, 0xB0},
+    {12, 0x13},
+    {137, 0x0},  //Unfreeze DCO
+	{135, 0x40}  //Enable New Frequency
+};
+
+
+static const uint8_t si569_values[][2] = {
+	{255, 0x10}, //Freeze DCO
+	{69, 0x00},
+    {17, 0x00},
+	{23, 0x5E},
+	{24, 0x00},
+	{26, 0x66},
+	{27, 0x2F},
+	{28, 0x2B},
+	{29, 0x49},
+	{30, 0x48},
+	{31, 0x00},
+	{32, 0x08},
+	{35, 0x86},
+	{7,  0x08},
+	{17, 0x01}
+};
+
+
+
+
+void read_si569() {
+   u8 i, buf[2], stat;
+
+   xil_printf("Read si569 registers\r\n");
+   for (i=0;i<9;i++) {
+       buf[0] = i+23;
+       i2c_write(buf,1,0x56);
+       stat = i2c_read(buf, 1, 0x56);
+       xil_printf("Stat: %d:   val0:%x  \r\n",stat, buf[0]);
+	}
+	xil_printf("\r\n");
+}
+
+
+void prog_si569() {
+	u8 buf[2], stat;
+
+	//xil_printf("Si571 Registers before re-programming...\r\n");
+	//read_si571();
+	xil_printf("Programming si569\r\n");
+
+
+	//Program New Registers
+	for (size_t i = 0; i < sizeof(si569_values) / sizeof(si569_values[0]); i++) {
+	    buf[0] = si569_values[i][0];
+	    buf[1] = si569_values[i][1];
+	    stat = i2c_write(buf, 2, 0x56);
+	    xil_printf("Stat: %d:   val0:%x  \r\n",stat, buf[0]);
+	    usleep(50000);
+	}
+	//xil_printf("Si571 Registers after re-programming...\r\n");
+    //read_si571();
+}
+
+
+
+
+
 
 
 
@@ -52,11 +127,11 @@ static const uint8_t si571_values[][2] = {
 void read_si571() {
    u8 i, buf[2], stat;
 
-   xil_printf("Read si570 registers\r\n");
+   xil_printf("Read si571 registers\r\n");
    for (i=0;i<6;i++) {
        buf[0] = i+7;
-       i2c_write(buf,1,0x55);
-       stat = i2c_read(buf, 1, 0x55);
+       i2c_write(buf,1,0x56);
+       stat = i2c_read(buf, 1, 0x56);
        xil_printf("Stat: %d:   val0:%x  \r\n",stat, buf[0]);
 	}
 	xil_printf("\r\n");
@@ -66,15 +141,15 @@ void read_si571() {
 void prog_si571() {
 	u8 buf[2];
 
-	xil_printf("Si570 Registers before re-programming...\r\n");
+	xil_printf("Si571 Registers before re-programming...\r\n");
 	read_si571();
 	//Program New Registers
 	for (size_t i = 0; i < sizeof(si571_values) / sizeof(si571_values[0]); i++) {
 	    buf[0] = si571_values[i][0];
 	    buf[1] = si571_values[i][1];
-	    i2c_write(buf, 2, 0x55);
+	    i2c_write(buf, 2, 0x56);
 	}
-	xil_printf("Si570 Registers after re-programming...\r\n");
+	xil_printf("Si571 Registers after re-programming...\r\n");
     read_si571();
 }
 

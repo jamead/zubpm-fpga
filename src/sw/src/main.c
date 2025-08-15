@@ -283,6 +283,7 @@ int main()
 
     u32 ts_s, ts_ns;
     float temp1, temp2;
+    u8 buf[2], stat;
 
 	xil_printf("zuBPM ...\r\n");
     print_firmware_version();
@@ -302,8 +303,39 @@ int main()
 
     //read_i2c_temp(BRDTEMP0_ADDR);
 
-    read_si571();
-    prog_si571();
+
+    //read_si569();
+
+
+    xil_printf("I2c\r\n");
+    prog_si569();
+    sleep(1);
+    read_si569();
+    /*
+    for (u8 addr = 0x55; addr <= 0xFC; addr++) {
+    	xil_printf("i2c trying address: %x        ",addr);
+    	buf[0] = 23;
+    	i2c_write(buf,1,addr);
+    	stat = i2c_read(buf, 1, addr);
+    	xil_printf("Stat: %d:   val0:%x  \r\n",stat, buf[0]);
+    }
+
+    */
+/*
+        Status = XIicPs_MasterSendPolled(&IicPsInstance, &dummy, 1, addr);
+        if (Status == XST_SUCCESS) {
+            xil_printf("I2C device found at address: 0x%02X\r\n", addr);
+        }
+*/
+
+
+
+    //read_si569();
+    //while (1) {
+    //  read_si569();
+    //  sleep(0.5);
+   // }
+    //prog_si571();
 
     // Enable Switching
     Xil_Out32(XPAR_M_AXI_BASEADDR + SWRFFE_ENB_REG, 2);
