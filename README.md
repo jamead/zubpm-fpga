@@ -1,4 +1,4 @@
-##uBPM Hardware Platform 
+## ZuBPM Hardware Platform 
 
 This is a custom designed hardware platform for the next gen rfBPM electroncs from the NSLS2 Diagnostics Group Using the Xilinx UltraScale+ technology.
 
