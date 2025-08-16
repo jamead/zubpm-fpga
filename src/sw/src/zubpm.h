@@ -59,10 +59,11 @@ void i2c_set_port_expander(u32, u32);
 float read_i2c_temp(u8);
 void write_lmk61e2();
 
-void read_si571();
-void prog_si571();
+void read_si569();
+void prog_si569();
 
 float L11_to_float(s32);
+float i2c_ltc2977_stats();
 
 void i2c_configure_ltc2991();
 void i2c_get_ltc2991();
@@ -88,7 +89,7 @@ float i2c_ltc2991_vcc_3v3_current();
 float i2c_ltc2991_vcc_0v85();
 float i2c_ltc2991_vcc_0v85_current();
 
-//void i2c_sfp_get_stats(struct *, u8);
+void i2c_sfp_get_stats(float *, u8);
 
 
 

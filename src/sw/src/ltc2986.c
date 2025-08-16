@@ -6,10 +6,9 @@
 ********************************************************************/
 #include "xil_printf.h"
 #include "sleep.h"
-#include "../inc/pl_regs.h"
-#include "../inc/zubpm_defs.h"
-
+#include "pl_regs.h"
 #include "FreeRTOS.h"
+#include "zubpm.h"
 
 extern float thermistors[6];
 

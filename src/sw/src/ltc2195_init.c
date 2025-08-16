@@ -6,7 +6,7 @@
 ********************************************************************/
 #include "xil_printf.h"
 #include <sleep.h>
-#include "../inc/pl_regs.h"
+#include "pl_regs.h"
 #include "xparameters.h"
 
 

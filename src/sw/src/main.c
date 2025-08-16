@@ -16,11 +16,11 @@
 #include "pm_common.h"       // PM API functions
 #include "pm_api_sys.h"
 
+#include "local.h"
+#include "control.h"
+#include "pl_regs.h"
+#include "zubpm.h"
 
-/* Hardware support includes */
-#include "../inc/zubpm_defs.h"
-#include "../inc/pl_regs.h"
-#include "../inc/psc_msg.h"
 
 
 
@@ -28,44 +28,29 @@
 #define PLATFORM_EMAC_BASEADDR XPAR_XEMACPS_0_BASEADDR
 #define SYSMON_DEVICE_ID XPAR_XSYSMONPSU_0_DEVICE_ID
 
+XIicPs IicPsInstance;	    // Instance of the IIC Device
+XSysMonPsu SysMonInstance;  // Instance of the Sysmon Device
+
 
 #define PLATFORM_ZYNQMP
 
-//#define DEFAULT_IP_ADDRESS "10.0.142.43"
-//#define DEFAULT_IP_MASK "255.255.255.0"
-//#define DEFAULT_GW_ADDRESS "10.0.142.1"
+
+psc_key* the_server;
+
+//static sys_thread_t main_thread_handle;
 
 
-
-#define DELAY_100_MS            100UL
-#define DELAY_1_SECOND          (10*DELAY_100_MS)
-
-
-
-static sys_thread_t main_thread_handle;
-
-
-
-#define THREAD_STACKSIZE 2048
-
-struct netif server_netif;
 
 //global buffers
 char msgid30_buf[1024];
 char msgid31_buf[1024];
 char msgid32_buf[1024];
 
-char msgid51_buf[MSGID51LEN];
-char msgid52_buf[MSGID52LEN];
-char msgid53_buf[MSGID53LEN];
-char msgid54_buf[MSGID54LEN];
-char msgid55_buf[MSGID55LEN];
-
 float thermistors[6];
 
+uint32_t git_hash;
 
-
-ip_t ip_settings;
+//ip_t ip_settings;
 
 
 
@@ -73,68 +58,17 @@ XIicPs IicPsInstance;	    // Instance of the IIC Device
 XSysMonPsu SysMonInstance;  // Instance of the Sysmon Device
 
 
-TimerHandle_t xUptimeTimer;  // Timer handle
-u32 UptimeCounter = 0;  // Uptime counter
+//TimerHandle_t xUptimeTimer;  // Timer handle
+//u32 UptimeCounter = 0;  // Uptime counter
 
 
 
 // Timer callback function
-void vUptimeTimerCallback(TimerHandle_t xTimer) {
-    UptimeCounter++;  // Increment uptime counter
-}
+//void vUptimeTimerCallback(TimerHandle_t xTimer) {
+//    UptimeCounter++;  // Increment uptime counter
+//}
 
 
-static void print_ip(char *msg, ip_addr_t *ip)
-{
-	xil_printf(msg);
-	xil_printf("%d.%d.%d.%d\n\r", ip4_addr1(ip), ip4_addr2(ip),
-				ip4_addr3(ip), ip4_addr4(ip));
-}
-
-
-static void print_ip_settings(ip_addr_t *ip, ip_addr_t *mask, ip_addr_t *gw)
-{
-	print_ip("Board IP:       ", ip);
-	print_ip("Netmask :       ", mask);
-	print_ip("Gateway :       ", gw);
-}
-
-
-static void assign_ip_settings()
-{
-	u8 data[4];
-
-	xil_printf("Getting IP Address from EEPROM\r\n");
-	//IP address is stored in EEPROM locations 0,1,2,3
-	i2c_eeprom_readBytes(0, data, 4);
-	//xil_printf("IP Addr: %u.%u.%u.%u\r\n",data[0],data[1],data[2],data[3]);
-	data[0] = 10;
-	data[1] = 0;
-	data[2] = 142;
-	data[3] = 43;
-	IP4_ADDR(&server_netif.ip_addr, data[0],data[1],data[2],data[3]);
-
-	xil_printf("Getting IP Netmask from EEPROM\r\n");
-	//IP netmask is stored in EEPROM locations 16,17,18,19
-	i2c_eeprom_readBytes(16, data, 4);
-	//xil_printf("IP Netmask: %u.%u.%u.%u\r\n",data[0],data[1],data[2],data[3]);
-	data[0] = 255;
-	data[1] = 255;
-	data[2] = 254;
-	data[3] = 0;
-	IP4_ADDR(&server_netif.netmask, data[0],data[1],data[2],data[3]);
-
-	xil_printf("Getting IP Netmask from EEPROM\r\n");
-	i2c_eeprom_readBytes(32, data, 4);
-	//IP gw is stored in EEPROM locations 32,33,34,35
-	//xil_printf("IP Gateway: %u.%u.%u.%u\r\n",data[0],data[1],data[2],data[3]);
-	data[0] = 10;
-	data[1] = 0;
-	data[2] = 142;
-	data[3] = 51;
-	IP4_ADDR(&server_netif.gw, data[0],data[1],data[2],data[3]);
-
-}
 
 void print_firmware_version()
 {
@@ -156,92 +90,6 @@ void print_firmware_version()
 }
 
 
-
-
-void main_thread(void *p)
-{
-
-	// the mac address of the board. this should be unique per board
-	u8_t mac_ethernet_address[] = { 0x00, 0x0a, 0x35, 0x11, 0x11, 0x12 };
-    i2c_get_mac_address(mac_ethernet_address);
-
-	// initialize lwIP before calling sys_thread_new
-	lwip_init();
-
-	// Add network interface to the netif_list, and set it as default
-	if (!xemac_add(&server_netif, NULL, NULL, NULL, mac_ethernet_address,
-		PLATFORM_EMAC_BASEADDR)) {
-		xil_printf("Error adding N/W interface\r\n");
-		return;
-	}
-
-	netif_set_default(&server_netif);
-
-	// specify that the network if is up
-	netif_set_up(&server_netif);
-
-	// start packet receive thread - required for lwIP operation
-	sys_thread_new("xemacif_input_thread",
-			(void(*)(void*))xemacif_input_thread, &server_netif,
-			THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
-
-	//IP address are read in from EEPROM
-	assign_ip_settings(&(server_netif.ip_addr),&(server_netif.netmask),&(server_netif.gw));
-	print_ip_settings(&(server_netif.ip_addr),&(server_netif.netmask),&(server_netif.gw));
-
-
-    //Delay for 100ms
-	vTaskDelay(pdMS_TO_TICKS(100));
-
-    // Start the Menu Thread.  Handles all Console Printing and Menu control
-    xil_printf("\r\n");
-    sys_thread_new("menu_thread", menu_thread, 0,THREAD_STACKSIZE, 0);
-
-
-    // Start the PSC Status Thread.  Handles incoming commands from IOC
-    vTaskDelay(pdMS_TO_TICKS(100));
-    xil_printf("\r\n");
-    sys_thread_new("psc_status_thread", psc_status_thread, 0,THREAD_STACKSIZE, 2);
-
-
-    // Delay for 100ms
-    vTaskDelay(pdMS_TO_TICKS(100));
-    // Start the PSC Waveform Thread.  Handles incoming commands from IOC
-    xil_printf("\r\n");
-    sys_thread_new("psc_wvfm_thread", psc_wvfm_thread, 0, THREAD_STACKSIZE, 1);
-
-
-    // Delay for 100 ms
-    vTaskDelay(pdMS_TO_TICKS(100));
-    // Start the PSC Control Thread.  Handles incoming commands from IOC
-    xil_printf("\r\n");
-    sys_thread_new("psc_cntrl_thread", psc_control_thread, 0, THREAD_STACKSIZE, 3);
-
-
-     // Delay for 100 ms
-     vTaskDelay(pdMS_TO_TICKS(100));
-     // Start the Thermistor Read Thread.  Handles incoming commands from IOC
-     xil_printf("\r\n");
-     sys_thread_new("read_thermistors", read_thermistor_thread, 0, THREAD_STACKSIZE, 0);
-
-
-	//setup an Uptime Timer
-	xUptimeTimer = xTimerCreate("UptimeTimer", pdMS_TO_TICKS(1000), pdTRUE, (void *)0, vUptimeTimerCallback);
-	// Check if the timer was created successfully
-	if (xUptimeTimer == NULL)
-	    // Handle error (e.g., log, assert, etc.)
-	    printf("Failed to create uptime timer.\n");
-	else
-	    // Start the timer with a block time of 0 (non-blocking)
-	    if (xTimerStart(xUptimeTimer, 0) != pdPASS)
-	       // Handle error (e.g., log, assert, etc.)
-	       printf("Failed to start uptime timer.\n");
-
-
-
-	vTaskDelete(NULL);
-	return;
-}
 
 
 
@@ -273,7 +121,108 @@ s32 init_sysmon() {
 }
 
 
+static void client_event(void *pvt, psc_event evt, psc_client *ckey)
+{
+    if(evt!=PSC_CONN)
+        return;
+    // send some "static" information once when a new client connects.
+    struct {
+        uint32_t git_hash;
+        uint32_t serial;
+    } msg = {
+        .git_hash = htonl(git_hash),
+        .serial = 0, // TODO: read from EEPROM
+    };
+    (void)pvt;
 
+    psc_send_one(ckey, 0x100, sizeof(msg), &msg);
+}
+
+
+
+
+static void client_msg(void *pvt, psc_client *ckey, uint16_t msgid, uint32_t msglen, void *msg)
+{
+    (void)pvt;
+
+	xil_printf("In Client_Msg:  MsgID=%d   MsgLen=%d\r\n",msgid,msglen);
+
+
+    //blink front panel LED
+    //Xil_Out32(XPAR_M_AXI_BASEADDR + IOC_ACCESS_REG, 1);
+    //Xil_Out32(XPAR_M_AXI_BASEADDR + IOC_ACCESS_REG, 0);
+
+    switch(msgid) {
+        case 0:
+        	//glob_settings(msg);
+        	break;
+
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+         	//chan_settings(msgid,msg,msglen);
+            break;
+        case 101:
+        	//write_ramptable(1,msg,msglen);
+            break;
+        case 102:
+        case 103:
+        case 104:
+            break;
+    }
+
+
+
+}
+
+
+
+
+
+static void on_startup(void *pvt, psc_key *key)
+{
+    (void)pvt;
+    (void)key;
+    lstats_setup();
+    brdstats_setup();
+    sadata_setup();
+    //snapshot_setup();
+    console_setup();
+}
+
+
+
+static void realmain(void *arg)
+{
+    (void)arg;
+
+    printf("Main thread running\n");
+
+    {
+        net_config conf = {};
+        sdcard_handle(&conf);
+        //InitSettingsfromQspi();
+        net_setup(&conf);
+
+    }
+
+    //discover_setup();
+    //tftp_setup();
+
+    const psc_config conf = {
+        .port = 3000,
+        .start = on_startup,
+        .conn = client_event,
+        .recv = client_msg,
+    };
+
+    psc_run(&the_server, &conf);
+    while(1) {
+        fprintf(stderr, "ERROR: PSC server loop returns!\n");
+        sys_msleep(1000);
+    }
+}
 
 
 
@@ -287,6 +236,7 @@ int main()
 
 	xil_printf("zuBPM ...\r\n");
     print_firmware_version();
+
 
 	prog_ad9510();
 
@@ -311,31 +261,7 @@ int main()
     prog_si569();
     sleep(1);
     read_si569();
-    /*
-    for (u8 addr = 0x55; addr <= 0xFC; addr++) {
-    	xil_printf("i2c trying address: %x        ",addr);
-    	buf[0] = 23;
-    	i2c_write(buf,1,addr);
-    	stat = i2c_read(buf, 1, addr);
-    	xil_printf("Stat: %d:   val0:%x  \r\n",stat, buf[0]);
-    }
 
-    */
-/*
-        Status = XIicPs_MasterSendPolled(&IicPsInstance, &dummy, 1, addr);
-        if (Status == XST_SUCCESS) {
-            xil_printf("I2C device found at address: 0x%02X\r\n", addr);
-        }
-*/
-
-
-
-    //read_si569();
-    //while (1) {
-    //  read_si569();
-    //  sleep(0.5);
-   // }
-    //prog_si571();
 
     // Enable Switching
     Xil_Out32(XPAR_M_AXI_BASEADDR + SWRFFE_ENB_REG, 2);
@@ -382,11 +308,11 @@ int main()
     //XPm_ResetAssert(XILPM_RESET_SOFT,XILPM_RESET_ACTION_PULSE);
 
 
-	main_thread_handle = sys_thread_new("main_thread", main_thread, 0, THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
+    sys_thread_new("main", realmain, NULL, THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
+
 
 	vTaskStartScheduler();
 
-	while(1);
-
+    //never reached
 	return 0;
 }

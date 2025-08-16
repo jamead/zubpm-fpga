@@ -1,11 +1,11 @@
 #include "xparameters.h"
 #include "xiicps.h"
-#include "../inc/zubpm_defs.h"
 #include <sleep.h>
 #include "xil_printf.h"
 #include <stdio.h>
 #include "FreeRTOS.h"
 #include "task.h"
+#include "zubpm.h"
 
 
 extern XIicPs IicPsInstance;			/* Instance of the IIC Device */
@@ -370,42 +370,53 @@ float read_i2c_temp(u8 addr) {
 
 
 
-/*
-void i2c_sfp_get_stats(struct SysHealthStatsMsg *p, u8 sfp_slot) {
+void i2c_sfp_get_stats(float *p, u8 sfp_slot) {
 
+	const float TEMP_SCALE = 256;   //Temp is a 16bit signed 2's comp integer in increments of 1/256 degree C
+	const float VCC_SCALE = 10000;  //VCC is a 16bit unsigned int in increments of 100uV
+	const float TXBIAS_SCALE = 2000; //TxBias is a 16 bit unsigned integer in increments of 2uA
+	const float PWR_SCALE = 10000;  //Tx and Rx Pwr is 16 bit unsigned integer in increments of 0.1uW
+
+	s32 status;
     u8 addr = 0x51;  //SFP A2 address space
-    u8 buf[10];
-    u32 temp;
-    float tempflt;
+    u8 txBuf[3] = {96};
+    u8 rxBuf[10] = {0,0,0,0,0,0,0,0,0,0};
 
-    buf[0] = 96;  //offset location
-
-
-	i2c_set_port_expander(I2C_PORTEXP0_ADDR,1);
+	i2c_set_port_expander(I2C_PORTEXP0_ADDR,(1 << sfp_slot));
 	i2c_set_port_expander(I2C_PORTEXP1_ADDR,0);
 	//read 10 bytes starting at address 96 (see data sheet)
-    i2c_write(buf,1,addr);
-    i2c_read(buf,10,addr);
-    temp = (buf[0] << 8) | (buf[1]);
-    p->sfp_temp[0] = (float)temp/256.0;
+    i2c_write(txBuf,1,addr);
+    status = i2c_read(rxBuf,10,addr);
+    if (status != XST_SUCCESS) {
+    	//No SFP module was found, read error, set all values to zero
+    	p[0] = 0;
+        p[1] = 0;
+        p[2] = 0;
+        p[3] = 0;
+        p[4] = 0;
+    }
+    else {
+    	p[0]   = (float) ((rxBuf[0] << 8) | (rxBuf[1])) / TEMP_SCALE;
+    	p[1]    = (float) ((rxBuf[2] << 8) | (rxBuf[3])) / VCC_SCALE;
+    	p[2] = (float) ((rxBuf[4] << 8) | (rxBuf[5])) / TXBIAS_SCALE;
+    	p[3]  = (float) ((rxBuf[6] << 8) | (rxBuf[7])) / PWR_SCALE;
+    	p[4]  = (float) ((rxBuf[8] << 8) | (rxBuf[9])) / PWR_SCALE;
+    }
+   /*
+    xil_printf("SFP Slot : %d\r\n",sfp_slot);
     printf("SFP Temp = %f\r\n", p->sfp_temp[sfp_slot]);
-
-    temp = (buf[2] << 8) | (buf[3]);
-    tempflt = (float)temp/10000.0;
-
-    printf("SFP VCC = %f\r\n", tempflt);
-    temp = (buf[4] << 8) | (buf[5]);
-    tempflt = (float)temp/200.0;
-    printf("SFP Tx Laser Bias = %f\r\n", tempflt);
-    temp = (buf[6] << 8) | (buf[7]);
-    tempflt = (float)temp/10000.0;
-    printf("SFP Tx Pwr = %f\r\n", tempflt);
-    temp = (buf[8] << 8) | (buf[9]);
-    tempflt = (float)temp/10000.0;
-    printf("SFP Rx Pwr = %f\r\n", tempflt);
+    printf("SFP VCC = %f\r\n", p->sfp_vcc[sfp_slot]);
+    printf("SFP txbias = %f\r\n", p->sfp_txbias[sfp_slot]);
+    printf("SFP Tx Pwr = %f\r\n", p->sfp_txpwr[sfp_slot]);
+    printf("SFP Rx Pwr = %f\r\n", p->sfp_rxpwr[sfp_slot]);
+    xil_printf("\r\n");
+    */
 
 }
-*/
+
+
+
+
 
 void i2c_get_ltc2991()
 {
@@ -437,7 +448,71 @@ void i2c_get_ltc2991()
 }
 
 
+float power(float base, int exponent) {
+    float result = 1.0;
+    int i;
 
+    // Handle negative exponents by inverting the base and using positive exponent
+    if (exponent < 0) {
+        base = 1.0 / base;
+        exponent = -exponent;
+    }
+    for (i = 0; i < exponent; i++) {
+        result *= base;
+    }
+    return result;
+}
+
+
+float L11_to_float(int input_val)
+{
+    // extract exponent as MS 5 bits
+    int exponent = input_val >> 11;
+    // extract mantissa as LS 11 bits
+    int mantissa = input_val & 0x7ff;
+    // sign extend exponent from 5 to 8 bits
+    if( exponent > 0x0F ) exponent = (exponent|0xE0)-256;
+    // ints are 32 bits so using subtraction to adjust for negative numbers
+    // sign extend mantissa from 11 to 16 bits
+    if( mantissa > 0x03FF ) mantissa = (mantissa|0xF800)-65536;
+    // compute value as mantissa * 2^(exponent)
+    return mantissa * power(2,exponent);
+}
+
+
+
+
+float i2c_ltc2977_stats() {
+
+	const u8 I2C_ADDR = 0x5C;
+	const u8 TEMP_REG = 0x8D;
+	const s32 TXLEN = 1;
+	const s32 RXLEN = 2;
+
+	u8 txBuf[] = {TEMP_REG};
+	u8 rxBuf[] = {0,0};
+	u32 res;
+
+
+	i2c_set_port_expander(I2C_PORTEXP0_ADDR,0);
+	i2c_set_port_expander(I2C_PORTEXP1_ADDR,8);
+
+    // The LTC2977 requires a repeated start i2c transaction
+    while (XIicPs_BusIsBusy(&IicPsInstance)); //Make sure bus is not busy
+    XIicPs_SetOptions(&IicPsInstance, XIICPS_REP_START_OPTION);
+    //write the command address
+
+    XIicPs_MasterSendPolled(&IicPsInstance, txBuf, TXLEN, I2C_ADDR);
+    XIicPs_ClearOptions(&IicPsInstance, XIICPS_REP_START_OPTION);
+    //read the register
+    XIicPs_MasterRecvPolled(&IicPsInstance, rxBuf, RXLEN, I2C_ADDR);
+
+    res = (rxBuf[1] << 8) | (rxBuf[0]);
+    return(L11_to_float(res));
+
+    //printf("Pwr Temp: %f\r\n",p->pwrmgmt_temp);
+
+}
 
 
 

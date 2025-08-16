@@ -4,20 +4,9 @@ proc setSources {} {
   variable Sources
   ::fwfwk::printInfo "Set Sources..."
   # path relative to tcl file
-  lappend Sources {../inc "includes"}
+  #lappend Sources {../inc "includes"}
   lappend Sources {../src "sources"}
-  #lappend Sources {../../common/inc "includes"}
-  #lappend Sources {../../common/src "sources"}
 
-  # add libraries
-  #lappend Sources {../../lib/i2c "includes"}
-  #lappend Sources {../../lib/i2c "sources"}
-  #lappend Sources {../../lib/spi "includes"}
-  #lappend Sources {../../lib/spi "sources"}
-  #lappend Sources {../../lib/gpiops "includes"}
-  #lappend Sources {../../lib/gpiops "sources"}
-  #lappend Sources {../../lib/sysmon "includes"}
-  #lappend Sources {../../lib/sysmon "sources"}
 }
 
 proc customizeFsblBsp {} {
@@ -64,13 +53,38 @@ proc doOnCreate {} {
   fwfwk::printInfo "doOnCreate in src/sw/main.tcl - Adding LWIP 211"
 
   #domain active {app_domain}
-  bsp setlib xilpm 
-  bsp config total_heap_size "1048576"
+  #bsp setlib xilpm 
+  bsp config total_heap_size "16777216"
   bsp config minimal_stack_size "1024"
   bsp config max_task_name_len "32"
+  # when adding the runtime_stats, makes vtaskdelay(pdMS_TO_TICKS(1000)) 10 times faster, why ???
+  # bsp config generate_runtime_stats "1"
+  
+  bsp setlib -name xilffs
+  bsp config enable_exfat true
+  bsp config use_strfunc "1"
+  bsp config set_fs_rpath "2"
+  # XilFFS overrides
+
 
   bsp setlib -name lwip211
   bsp config api_mode "SOCKET_API"
+  bsp config dhcp_does_arp_check true
+  bsp config lwip_dhcp "true"
+  bsp config pbuf_pool_size 2048 
+  bsp config mem_size 16777216
+  bsp config tick_rate 750
+  bsp config lwip_stats true 
+  # bsp config lwip_debug true
+  # bsp config pbuf_debug true 
+  
+  # HACK: inject extra lwipopts.h options the xilinx generator doesn't know about...
+  # Make available socket send()/recv() timeout sockopts.
+  bsp config udp_ttl "255\n#define LWIP_SO_RCVTIMEO 1\n#define LWIP_SO_SNDTIMEO 1"
+  
+  #domain active {app_domain}
+  bsp setlib xilpm 
+  
   bsp write
   bsp reload
   bsp regenerate
