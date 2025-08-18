@@ -43,7 +43,7 @@
 
 
 
-
+/*
 //global buffers
 extern char msgid30_buf[MSGID30LEN];
 extern char msgid31_buf[MSGID31LEN];
@@ -54,9 +54,10 @@ extern char msgid52_buf[MSGID52LEN];
 extern char msgid53_buf[MSGID53LEN];
 extern char msgid54_buf[MSGID54LEN];
 extern char msgid55_buf[MSGID55LEN];
-
+*/
 
 // PSC Message ID 31
+/*
 typedef struct SAdataMsg {
 	u32 count;        // PSC Offset 0
 	u32 evr_ts_ns;    // PSC Offset 4
@@ -69,8 +70,9 @@ typedef struct SAdataMsg {
 	s32 xpos_nm;      // PSC Offset 32
 	s32 ypos_nm;      // PSC Offset 36
 } SAdataMsg;
+*/
 
-
+/*
 // PSC Message ID 30
 typedef struct SysHealthMsg {
 	u32   git_shasum;    // PSC Offset 0   Firmware Version (git checksum)
@@ -109,8 +111,9 @@ typedef struct SysHealthMsg {
     u32   rsvd4[10];
     float therm_temp[6]; // PSC Offset 324
 } SysHealthMsg;
+*/
 
-
+/*
 //PSC Message ID 31
 typedef struct StatusMsg {
 	u32 pll_locked;         //PSC Offset 0
@@ -139,42 +142,42 @@ typedef struct StatusMsg {
 	u32 dma_fa_active;      //PSC Offset 92
 	u32 dma_tx_active;      //PSC Offset 96
 } StatusMsg;
-
+*/
 
 
 // Control Message Offsets
-#define SOFT_TRIG_MSG1 0
-#define FP_LED_MSG1 4
-#define PILOT_TONE_ENB_MSG1 8
-#define ADC_IDLY_MSG1 12
-#define ADC_MMCM0_MSG1 16
-#define ADC_MMCM1_MSG1 20
-#define ADC_SPI_MSG1 24
-#define EVENT_SRC_SEL_MSG1 36 
-#define DMA_TRIG_SRC_MSG1 52
-#define DMA_ADCLEN_MSG1 56
-#define DMA_TBTLEN_MSG1 60
-#define DMA_FALEN_MSG1 64
-#define MACHINE_SEL_MSG1 76
-#define PILOT_TONE_SPI_MSG1 104
-#define RF_ATTEN_MSG1 132
-#define PT_ATTEN_MSG1 136
-#define KX_MSG1 144
-#define KY_MSG1 148
-#define BBA_XOFF_MSG1 152
-#define BBA_YOFF_MSG1 156
-#define CHA_GAIN_MSG1 160
-#define CHB_GAIN_MSG1 164
-#define CHC_GAIN_MSG1 168
-#define CHD_GAIN_MSG1 172
-#define FINE_TRIG_DLY_MSG1 192  //Geo Delay
-#define TBT_GATE_WIDTH_MSG1 196
-#define COARSE_TRIG_DLY_MSG1 272
-#define TRIGTOBEAM_THRESH_MSG1 276
-#define EVENT_NO_MSG1 320
-#define RFFESW_ENB_MSG1 400
-#define RFFESW_TRIGDLY_MSG1 404
-#define RFFESW_DEMUXDLY_MSG1 408
+#define SOFT_TRIG_MSG 0
+#define FP_LED_MSG 4
+#define PILOT_TONE_ENB_MSG 8
+#define ADC_IDLY_MSG 12
+#define ADC_MMCM0_MSG 16
+#define ADC_MMCM1_MSG 20
+#define ADC_SPI_MSG 24
+#define EVENT_SRC_SEL_MSG 36
+#define DMA_TRIG_SRC_MSG 52
+#define DMA_ADCLEN_MSG 56
+#define DMA_TBTLEN_MSG 60
+#define DMA_FALEN_MSG 64
+#define MACHINE_SEL_MSG 76
+#define PILOT_TONE_SPI_MSG 104
+#define RF_ATTEN_MSG 132
+#define PT_ATTEN_MSG 136
+#define KX_MSG 144
+#define KY_MSG 148
+#define BBA_XOFF_MSG 152
+#define BBA_YOFF_MSG 156
+#define CHA_GAIN_MSG 160
+#define CHB_GAIN_MSG 164
+#define CHC_GAIN_MSG 168
+#define CHD_GAIN_MSG 172
+#define FINE_TRIG_DLY_MSG 192  //Geo Delay
+#define TBT_GATE_WIDTH_MSG 196
+#define COARSE_TRIG_DLY_MSG 272
+#define TRIGTOBEAM_THRESH_MSG 276
+#define EVENT_NO_MSG 320
+#define RFFESW_ENB_MSG 400
+#define RFFESW_TRIGDLY_MSG 404
+#define RFFESW_DEMUXDLY_MSG 408
 
 
 

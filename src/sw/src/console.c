@@ -270,7 +270,7 @@ void printTaskStats(void)
                taskStatusArray[i].pcTaskName,
                stateChar,
                (unsigned long)taskStatusArray[i].uxCurrentPriority,
-               taskStatusArray[i].usStackHighWaterMark,
+               (unsigned long) taskStatusArray[i].usStackHighWaterMark,
                (unsigned long)taskStatusArray[i].ulRunTimeCounter,
                cpuPercent);
     }

@@ -37,7 +37,9 @@ void discover_setup(void);
 void tftp_setup(void);
 void lstats_setup(void);
 void sadata_setup(void);
-void snapshot_setup(void);
+void brdstats_setup(void);
+void livedata_setup(void);
+void dmadata_setup(void);
 void console_setup(void);
 void sdcard_handle(net_config *conf);
 void init_i2c(void);
@@ -47,10 +49,8 @@ void i2c_eeprom_writeBytes(u8, u8 *, u8);
 void eeprom_dump();
 void menu_get_ipaddr();
 void prog_si570();
-void InitSettingsfromQspi();
-void chan_settings(u32, void *, u32);
-float ReadAccumSA(u32, u32);
-void write_ramptable(u32, void *, u32);
+void reg_settings(void *);
+
 
 
 /* registers from Controller.v by word offset

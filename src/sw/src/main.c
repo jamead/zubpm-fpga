@@ -145,7 +145,7 @@ static void client_msg(void *pvt, psc_client *ckey, uint16_t msgid, uint32_t msg
 {
     (void)pvt;
 
-	xil_printf("In Client_Msg:  MsgID=%d   MsgLen=%d\r\n",msgid,msglen);
+	//xil_printf("In Client_Msg:  MsgID=%d   MsgLen=%d\r\n",msgid,msglen);
 
 
     //blink front panel LED
@@ -153,22 +153,10 @@ static void client_msg(void *pvt, psc_client *ckey, uint16_t msgid, uint32_t msg
     //Xil_Out32(XPAR_M_AXI_BASEADDR + IOC_ACCESS_REG, 0);
 
     switch(msgid) {
-        case 0:
-        	//glob_settings(msg);
+        case 1: //register settings
+        	reg_settings(msg);
         	break;
-
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-         	//chan_settings(msgid,msg,msglen);
-            break;
-        case 101:
-        	//write_ramptable(1,msg,msglen);
-            break;
-        case 102:
-        case 103:
-        case 104:
+        case 5: //ping event
             break;
     }
 
@@ -187,6 +175,8 @@ static void on_startup(void *pvt, psc_key *key)
     lstats_setup();
     brdstats_setup();
     sadata_setup();
+    livedata_setup();
+    dmadata_setup();
     //snapshot_setup();
     console_setup();
 }
@@ -232,7 +222,6 @@ int main()
 
     u32 ts_s, ts_ns;
     float temp1, temp2;
-    u8 buf[2], stat;
 
 	xil_printf("zuBPM ...\r\n");
     print_firmware_version();
