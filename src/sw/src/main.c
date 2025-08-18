@@ -177,6 +177,7 @@ static void on_startup(void *pvt, psc_key *key)
     sadata_setup();
     livedata_setup();
     dmadata_setup();
+    gendata_setup();
     //snapshot_setup();
     console_setup();
 }
@@ -229,7 +230,7 @@ int main()
 
 	prog_ad9510();
 
-	ltc2195_init();
+
 	xil_printf("Init I2c...\r\n");
 	init_i2c();
 	xil_printf("Init Sysmon...\r\n");
@@ -250,7 +251,8 @@ int main()
     prog_si569();
     sleep(1);
     read_si569();
-
+    xil_printf("ADC Init...\r\n");
+	ltc2195_init();
 
     // Enable Switching
     Xil_Out32(XPAR_M_AXI_BASEADDR + SWRFFE_ENB_REG, 2);

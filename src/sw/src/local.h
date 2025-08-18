@@ -38,6 +38,7 @@ void tftp_setup(void);
 void lstats_setup(void);
 void sadata_setup(void);
 void brdstats_setup(void);
+void gendata_setup(void);
 void livedata_setup(void);
 void dmadata_setup(void);
 void console_setup(void);

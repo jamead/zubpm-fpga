@@ -20,7 +20,7 @@
 
 
 
-static void sadata_push(void *unused)
+static void gendata_push(void *unused)
 {
     (void)unused;
     u32 sa_trigwait, sa_cnt=0, sa_cnt_prev=0;
@@ -75,9 +75,9 @@ static void sadata_push(void *unused)
     }
 }
 
-void sadata_setup(void)
+void gendata_setup(void)
 {
-    printf("INFO: Starting SA Data daemon\n");
-    sys_thread_new("sadata", sadata_push, NULL, THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
+    printf("INFO: Starting Gen Data daemon\n");
+    sys_thread_new("genata", gendata_push, NULL, THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
 }
 
