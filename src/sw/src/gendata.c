@@ -12,7 +12,7 @@
 
 #include "local.h"
 #include "zubpm.h"
-#include "control.h"
+#include "pl_regs.h"
 
 #include "xtime_l.h"
 
@@ -62,38 +62,38 @@ static void gendata_push(void *unused)
         //update at 5Hz
         vTaskDelay(pdMS_TO_TICKS(200));
 
-        msg.cha_gain = Xil_In32(XPAR_M_AXI_BASEADDR + CHA_GAIN_REG);
-        msg.chb_gain = Xil_In32(XPAR_M_AXI_BASEADDR + CHB_GAIN_REG);
-        msg.chc_gain = Xil_In32(XPAR_M_AXI_BASEADDR + CHC_GAIN_REG);
-        msg.chd_gain = Xil_In32(XPAR_M_AXI_BASEADDR + CHD_GAIN_REG);
-        msg.pll_locked = Xil_In32(XPAR_M_AXI_BASEADDR + PLL_LOCKED_REG);
-        msg.kx = Xil_In32(XPAR_M_AXI_BASEADDR + KX_REG);
-        msg.ky = Xil_In32(XPAR_M_AXI_BASEADDR + KY_REG);
-        msg.bba_xoff = Xil_In32(XPAR_M_AXI_BASEADDR + BBA_XOFF_REG);
-        msg.bba_yoff = Xil_In32(XPAR_M_AXI_BASEADDR + BBA_YOFF_REG);
-        msg.rf_atten = Xil_In32(XPAR_M_AXI_BASEADDR + RF_DSA_REG) / 4;
-        msg.coarse_trig_dly = Xil_In32(XPAR_M_AXI_BASEADDR + COARSE_TRIG_DLY_REG);
+        msg.cha_gain = htonl(Xil_In32(XPAR_M_AXI_BASEADDR + CHA_GAIN_REG));
+        msg.chb_gain = htonl(Xil_In32(XPAR_M_AXI_BASEADDR + CHB_GAIN_REG));
+        msg.chc_gain = htonl(Xil_In32(XPAR_M_AXI_BASEADDR + CHC_GAIN_REG));
+        msg.chd_gain = htonl(Xil_In32(XPAR_M_AXI_BASEADDR + CHD_GAIN_REG));
+        msg.pll_locked = htonl(Xil_In32(XPAR_M_AXI_BASEADDR + PLL_LOCKED_REG));
+        msg.kx = htonl(Xil_In32(XPAR_M_AXI_BASEADDR + KX_REG));
+        msg.ky = htonl(Xil_In32(XPAR_M_AXI_BASEADDR + KY_REG));
+        msg.bba_xoff = htonl(Xil_In32(XPAR_M_AXI_BASEADDR + BBA_XOFF_REG));
+        msg.bba_yoff = htonl(Xil_In32(XPAR_M_AXI_BASEADDR + BBA_YOFF_REG));
+        msg.rf_atten = htonl(Xil_In32(XPAR_M_AXI_BASEADDR + RF_DSA_REG) / 4);
+        msg.coarse_trig_dly = htonl(Xil_In32(XPAR_M_AXI_BASEADDR + COARSE_TRIG_DLY_REG));
         //msg.fine_trig_dly = Xil_In32(XPAR_M_AXI_BASEADDR + FINE_TRIG_DLY_REG);
 
-        msg.trig_dmacnt = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_TRIGCNT_REG);
-        msg.dma_adclen = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_ADCBURSTLEN_REG);
-        msg.dma_tbtlen = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_TBTBURSTLEN_REG);
-        msg.dma_falen = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_FABURSTLEN_REG);
+        msg.trig_dmacnt = htonl(Xil_In32(XPAR_M_AXI_BASEADDR + DMA_TRIGCNT_REG));
+        msg.dma_adclen = htonl(Xil_In32(XPAR_M_AXI_BASEADDR + DMA_ADCBURSTLEN_REG));
+        msg.dma_tbtlen = htonl(Xil_In32(XPAR_M_AXI_BASEADDR + DMA_TBTBURSTLEN_REG));
+        msg.dma_falen = htonl(Xil_In32(XPAR_M_AXI_BASEADDR + DMA_FABURSTLEN_REG));
 
-        msg.trig_eventno = Xil_In32(XPAR_M_AXI_BASEADDR + EVR_DMA_TRIGNUM_REG);
-        msg.evr_ts_s_triglat = Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_S_LAT_REG);
-        msg.evr_ts_ns_triglat = Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_NS_LAT_REG);
+        msg.trig_eventno = htonl(Xil_In32(XPAR_M_AXI_BASEADDR + EVR_DMA_TRIGNUM_REG));
+        msg.evr_ts_s_triglat = htonl(Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_S_LAT_REG));
+        msg.evr_ts_ns_triglat = htonl(Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_NS_LAT_REG));
         //msg.trigtobeam_thresh = Xil_In32(XPAR_M_AXI_BASEADDR + TRIGTOBEAM_THRESH_REG);
         //msg.trigtobeam_dly = Xil_In32(XPAR_M_AXI_BASEADDR + TRIGTOBEAM_DLY_REG);
 
         dmastatus = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_STATUS_REG);
-        msg.dma_adc_active = (dmastatus & 0x10) >> 4;
-        msg.dma_tbt_active = (dmastatus & 0x8) >> 3;
-        msg.dma_fa_active = (dmastatus & 0x4) >> 2;
-        msg.dma_tx_active = (dmastatus & 0x2) >> 1;
+        msg.dma_adc_active = htonl((dmastatus & 0x10) >> 4);
+        msg.dma_tbt_active = htonl((dmastatus & 0x8) >> 3);
+        msg.dma_fa_active = htonl((dmastatus & 0x4) >> 2);
+        msg.dma_tx_active = htonl((dmastatus & 0x2) >> 1);
 
-
-        //psc_send(the_server, 30, sizeof(msg), &msg);
+        //xil_printf("Sending GenRegs...\r\n");
+        psc_send(the_server, 30, sizeof(msg), &msg);
     }
 }
 

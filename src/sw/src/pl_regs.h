@@ -50,6 +50,8 @@
 #define THERM_SPI_REG 0x60
 #define THERM_SEL_REG 0x64
 
+#define DDC_LPFILT_SEL_REG 0x68
+
 #define KX_REG 0x90
 #define KY_REG 0x94
 #define CHA_GAIN_REG 0x98

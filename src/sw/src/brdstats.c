@@ -13,7 +13,7 @@
 
 #include "local.h"
 #include "zubpm.h"
-#include "control.h"
+#include "pl_regs.h"
 
 #include "xsysmonpsu.h"
 
@@ -51,54 +51,57 @@ static void brdstats_push(void *unused)
     u32 i;
     float sfpregs[5];
 
+    static struct {
+        uint32_t githash;  // 0
+        struct {
+            uint32_t dfe_brd[4]; // 4,8,12,16
+            uint32_t afe_brd[2]; //20,24
+            uint32_t die_ps; // 28
+            uint32_t die_pl; //32
+            uint32_t rsvd; // 36
+        } brd_temps;
+        struct {
+        	uint32_t vin_v;   //40
+        	uint32_t vin_i;   //44
+            uint32_t v3_3_v; // 48
+            uint32_t v3_3_i; // 52
+            uint32_t v2_5_v; // 56
+            uint32_t v2_5_i; // 60
+            uint32_t v1_8_v; // 64
+            uint32_t v1_8_i; // 68
+            uint32_t v1_2ddr_v; // 72
+            uint32_t v1_2ddr_i; // 76
+            uint32_t v0_85_v; // 80
+            uint32_t v0_85_i; // 84
+            uint32_t v2_5mgt_v; // 88
+            uint32_t v2_5mgt_i; // 92
+            uint32_t v1_2mgt_v; // 96
+            uint32_t v1_2mgt_i; // 100
+            uint32_t v0_9mgt_v; // 104
+            uint32_t v0_9mgt_i; // 108
+        } pwr;
+        struct {
+        	uint32_t reg[3];  //112,116,120
+        	uint32_t pwrmgmt; //124
+        	uint32_t rsvd[3]; //124,128,132,136
+        } reg_temps;
+        struct {
+        	uint32_t temp[6];   //140,144,148,152,156,160
+        	uint32_t vcc[6];    //164,168,172,176,180,184
+        	uint32_t txbias[6]; //188,192,196,200,204,208
+        	uint32_t txpwr[6];  //212,216,220,224,228,232
+        	uint32_t rxpwr[6];  //236,240,244,248,252,256
+        }sfp;
+        // for backwards compatibility, must only append new values.
+    } msg;
+
+
+
 
     while(1) {
 
         vTaskDelay(pdMS_TO_TICKS(1000));
 
-        struct {
-            uint32_t githash;  // 0
-            struct {
-                uint32_t dfe_brd[4]; // 4,8,12,16
-                uint32_t afe_brd[2]; //20,24
-                uint32_t die_ps; // 28
-                uint32_t die_pl; //32
-                uint32_t rsvd; // 36
-            } brd_temps;
-            struct {
-            	uint32_t vin_v;   //40
-            	uint32_t vin_i;   //44
-                uint32_t v3_3_v; // 48
-                uint32_t v3_3_i; // 52
-                uint32_t v2_5_v; // 56
-                uint32_t v2_5_i; // 60
-                uint32_t v1_8_v; // 64
-                uint32_t v1_8_i; // 68
-                uint32_t v1_2ddr_v; // 72
-                uint32_t v1_2ddr_i; // 76
-                uint32_t v0_85_v; // 80
-                uint32_t v0_85_i; // 84
-                uint32_t v2_5mgt_v; // 88
-                uint32_t v2_5mgt_i; // 92
-                uint32_t v1_2mgt_v; // 96
-                uint32_t v1_2mgt_i; // 100
-                uint32_t v0_9mgt_v; // 104
-                uint32_t v0_9mgt_i; // 108
-            } pwr;
-            struct {
-            	uint32_t reg[3];  //112,116,120
-            	uint32_t pwrmgmt; //124
-            	uint32_t rsvd[3]; //124,128,132,136
-            } reg_temps;
-            struct {
-            	uint32_t temp[6];   //140,144,148,152,156,160
-            	uint32_t vcc[6];    //164,168,172,176,180,184
-            	uint32_t txbias[6]; //188,192,196,200,204,208
-            	uint32_t txpwr[6];  //212,216,220,224,228,232
-            	uint32_t rxpwr[6];  //236,240,244,248,252,256
-            }sfp;
-            // for backwards compatibility, must only append new values.
-        } msg = {};
 
         //read FPGA version (git checksum) from PL register
         msg.githash = Xil_In32(XPAR_M_AXI_BASEADDR + GIT_SHASUM);

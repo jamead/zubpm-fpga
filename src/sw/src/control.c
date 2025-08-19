@@ -249,6 +249,10 @@ void reg_settings(void *msg) {
           	//set_trigtobeam_thresh(data.u);
            	break;
 
+        case DDC_LPFILT_SEL_MSG:
+           	xil_printf("DDC LP Filter Select:   Value=%d\r\n",data.u);
+        	Xil_Out32(XPAR_M_AXI_BASEADDR + DDC_LPFILT_SEL_REG, data.u);
+           	break;
 
         case EVENT_NO_MSG:
            	xil_printf("DMA Event Number Message:   Value=%d\r\n",data.u);
@@ -280,6 +284,21 @@ void reg_settings(void *msg) {
            	xil_printf("Setting Event Source:   Value=%d\r\n",data.u);
            	Xil_Out32(XPAR_M_AXI_BASEADDR + EVENT_SRC_SEL_REG, data.u);
            	break;
+
+        case RFFESW_ENB_MSG:
+          	xil_printf("Setting RF Switching Enable   Value=%d\r\n",data.u);
+          	Xil_Out32(XPAR_M_AXI_BASEADDR + SWRFFE_ENB_REG, data.u);
+          	break;
+
+        case RFFESW_TRIGDLY_MSG:
+          	xil_printf("Setting RF Switching Trigger Delay   Value=%d\r\n",data.u);
+          	Xil_Out32(XPAR_M_AXI_BASEADDR + SWRFFE_TRIGDLY_REG, data.u);
+          	break;
+
+        case RFFESW_DEMUXDLY_MSG:
+          	xil_printf("Setting RF Switching Demux Delay   Value=%d\r\n",data.u);
+          	Xil_Out32(XPAR_M_AXI_BASEADDR + SWRFFE_DEMUXDLY_REG, data.u);
+          	break;
 
         case ADC_IDLY_MSG:
            	xil_printf("Setting ADC IDLY:  Value=%d\r\n",data.u);

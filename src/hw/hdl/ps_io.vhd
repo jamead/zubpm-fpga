@@ -106,6 +106,7 @@ reg_o_tbt.xpos_offset <= reg_o.xpos_offset.data.data;
 reg_o_tbt.ypos_offset <= reg_o.ypos_offset.data.data;
 reg_o_tbt.gate_delay <= reg_o.gate_delay.data.data;
 reg_o_tbt.gate_width <= reg_o.gate_width.data.data;
+reg_o_tbt.ddc_lpfilt_sel <= reg_o.ddc_lpfilt_sel.data.data(0);
 
 reg_o_adcfifo.enb <= reg_o.adcfifo_streamenb.data.swmod;
 reg_o_adcfifo.rst <= reg_o.adcfifo_reset.data.data(0);

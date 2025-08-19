@@ -36,6 +36,7 @@ entity beam_ddc is
     rst             : in std_logic;
     clk             : in std_logic;
     tbt_trig        : in std_logic;
+    lpfilt_sel      : in std_logic;
     din             : in signed(23 downto 0);
     sine            : in signed(15 downto 0);
     cos             : in signed(15 downto 0);
@@ -112,9 +113,13 @@ end component;
 signal qraw            : signed(39 downto 0);
 signal qraw_sc         : signed(23 downto 0);
 signal qfir            : signed(23 downto 0);
+signal qfir4tap        : signed(23 downto 0);
+signal qfir100tap      : signed(23 downto 0);
 signal iraw            : signed(39 downto 0);
 signal iraw_sc         : signed(23 downto 0);
 signal ifir            : signed(23 downto 0);
+signal ifir4tap        : signed(23 downto 0);
+signal ifir100tap      : signed(23 downto 0);
 
 signal qfilt_tready    : std_logic;
 signal qfilt_tvalid    : std_logic;
@@ -171,22 +176,22 @@ q_firfilt: fir_lp_ddc
       clk => clk, 
       rst => rst, 
       din => qraw_sc,
-      dout => qfir
+      dout => qfir4tap
    );
    
    
 -- 101 tap fir filter (to remove Pilot Tone)   
---q_fircompfilt:  fir_compiler_lp_ddc 
---  port map (
---    aclk => clk, 
---    s_axis_data_tvalid => '1', 
---    s_axis_data_tready => qfilt_tready,  
---    s_axis_data_tdata => std_logic_vector(qraw_sc), 
---    m_axis_data_tvalid => qfilt_tvalid, 
---    m_axis_data_tdata => qfilt_tdata_fp
---  );  
+q_fircompfilt:  fir_compiler_lp_ddc 
+  port map (
+    aclk => clk, 
+    s_axis_data_tvalid => '1', 
+    s_axis_data_tready => qfilt_tready,  
+    s_axis_data_tdata => std_logic_vector(qraw_sc), 
+    m_axis_data_tvalid => qfilt_tvalid, 
+    m_axis_data_tdata => qfilt_tdata_fp
+  );  
    
--- qfir <= signed(qfilt_tdata_fp(47 downto 24));  
+ qfir100tap <= signed(qfilt_tdata_fp(47 downto 24));  
 
 
 
@@ -196,26 +201,37 @@ i_firfilt: fir_lp_ddc
       clk => clk, 
       rst => rst, 
       din => iraw_sc,
-      dout => ifir
+      dout => ifir4tap
    );
 
 
 -- 101 tap fir filter (to remove Pilot Tone)   
---i_fircompfilt:  fir_compiler_lp_ddc 
---  port map (
---    aclk => clk, 
---    s_axis_data_tvalid => '1', 
---    s_axis_data_tready => ifilt_tready,  
---    s_axis_data_tdata => std_logic_vector(iraw_sc), 
---    m_axis_data_tvalid => ifilt_tvalid, 
---    m_axis_data_tdata => ifilt_tdata_fp
---  );  
+i_fircompfilt:  fir_compiler_lp_ddc 
+  port map (
+    aclk => clk, 
+    s_axis_data_tvalid => '1', 
+    s_axis_data_tready => ifilt_tready,  
+    s_axis_data_tdata => std_logic_vector(iraw_sc), 
+    m_axis_data_tvalid => ifilt_tvalid, 
+    m_axis_data_tdata => ifilt_tdata_fp
+  );  
    
--- ifir <= signed(ifilt_tdata_fp(47 downto 24));  
+ ifir100tap <= signed(ifilt_tdata_fp(47 downto 24));  
 
 
 
-
+process(clk)
+  begin
+    if (rising_edge(clk)) then
+      if (lpfilt_sel = '0') then
+         qfir <= qfir4tap;
+         ifir <= ifir4tap;
+      else
+         qfir <= qfir100tap;
+         ifir <= ifir100tap;
+      end if;
+    end if;
+end process;
 
 
 

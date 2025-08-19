@@ -91,7 +91,7 @@ proc doOnCreate {} {
   source ${TclPath}/adcdata_fifo.tcl 
   source ${TclPath}/div_gen.tcl
   source ${TclPath}/evr_gth.tcl
-  #source ${TclPath}/fir_compiler_lp_ddc.tcl
+  source ${TclPath}/fir_compiler_lp_ddc.tcl
   source ${TclPath}/rffe_sw_shift.tcl
 
   addSources "Sources" 

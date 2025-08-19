@@ -206,16 +206,17 @@ end record t_reg_o_swrffe;
 
 
 type t_reg_o_tbt is record
-    kx          : std_logic_vector(31 downto 0);
-    ky          : std_logic_vector(31 downto 0);
-    cha_gain    : std_logic_vector(15 downto 0);
-    chb_gain    : std_logic_vector(15 downto 0);
-    chc_gain    : std_logic_vector(15 downto 0);
-    chd_gain    : std_logic_vector(15 downto 0);      
-    xpos_offset : std_logic_vector(31 downto 0);
-    ypos_offset : std_logic_vector(31 downto 0); 
-    gate_delay  : std_logic_vector(8 downto 0); 
-    gate_width  : std_logic_vector(8 downto 0);
+    kx             : std_logic_vector(31 downto 0);
+    ky             : std_logic_vector(31 downto 0);
+    cha_gain       : std_logic_vector(15 downto 0);
+    chb_gain       : std_logic_vector(15 downto 0);
+    chc_gain       : std_logic_vector(15 downto 0);
+    chd_gain       : std_logic_vector(15 downto 0);      
+    xpos_offset    : std_logic_vector(31 downto 0);
+    ypos_offset    : std_logic_vector(31 downto 0); 
+    gate_delay     : std_logic_vector(8 downto 0); 
+    gate_width     : std_logic_vector(8 downto 0);
+    ddc_lpfilt_sel : std_logic; --0=4 tap FIR, 1=100 tap FIR
 end record t_reg_o_tbt;
 
 

@@ -12,7 +12,7 @@
 
 #include "local.h"
 #include "zubpm.h"
-#include "control.h"
+#include "pl_regs.h"
 
 #include "xsysmonpsu.h"
 #include "xtime_l.h"

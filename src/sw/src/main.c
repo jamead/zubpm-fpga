@@ -17,7 +17,6 @@
 #include "pm_api_sys.h"
 
 #include "local.h"
-#include "control.h"
 #include "pl_regs.h"
 #include "zubpm.h"
 
@@ -178,7 +177,7 @@ static void on_startup(void *pvt, psc_key *key)
     livedata_setup();
     dmadata_setup();
     gendata_setup();
-    //snapshot_setup();
+    thermistor_setup();
     console_setup();
 }
 
@@ -240,13 +239,6 @@ int main()
     xil_printf("Configuration done...\r\n");
 
     i2c_set_port_expander(I2C_PORTEXP1_ADDR,0x40);
-
-    //read_i2c_temp(BRDTEMP0_ADDR);
-
-
-    //read_si569();
-
-
     xil_printf("I2c\r\n");
     prog_si569();
     sleep(1);
@@ -254,10 +246,13 @@ int main()
     xil_printf("ADC Init...\r\n");
 	ltc2195_init();
 
-    // Enable Switching
-    Xil_Out32(XPAR_M_AXI_BASEADDR + SWRFFE_ENB_REG, 2);
+    // Disable Switching
+    Xil_Out32(XPAR_M_AXI_BASEADDR + SWRFFE_ENB_REG, 0);
 
+    // Enable 101Tap DDC FP Filt
+	Xil_Out32(XPAR_M_AXI_BASEADDR + DDC_LPFILT_SEL_REG, 1);
 
+    /*
     setup_thermistors(0);
     setup_thermistors(1);
     setup_thermistors(2);
@@ -271,6 +266,7 @@ int main()
     Xil_Out32(XPAR_M_AXI_BASEADDR + THERM_SEL_REG, 0x2);
     read_thermistors(2,&temp1,&temp2);
     printf("Chip2:  = %5.3f  %5.3f  \r\n",temp1,temp2);
+    */
 
 
     //read AFE temperature from i2c bus

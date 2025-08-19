@@ -222,6 +222,13 @@ reg {
   } therm_sel @0x64;
 
 
+reg {
+    desc="TBT DDC LP Filt Sel 0=tap, 1=100tap";
+    default sw = rw;
+    default hw = r;
+    field {} data[1];
+  } ddc_lpfilt_sel @0x68;
+
   
   
   
