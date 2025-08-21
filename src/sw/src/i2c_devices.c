@@ -179,8 +179,10 @@ s32 i2c_write(u8 *buf, u8 len, u8 addr) {
 
 	s32 status;
 
+	//xil_printf("start i2c write\r\n");
 	while (XIicPs_BusIsBusy(&IicPsInstance));
 	status = XIicPs_MasterSendPolled(&IicPsInstance, buf, len, addr);
+	//xil_printf("done i2c write\r\n");
 	return status;
 }
 

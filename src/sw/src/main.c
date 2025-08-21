@@ -220,6 +220,8 @@ static void realmain(void *arg)
 int main()
 {
 
+
+
     u32 ts_s, ts_ns;
     float temp1, temp2;
 
@@ -228,45 +230,33 @@ int main()
 
 
 	prog_ad9510();
-
-
 	xil_printf("Init I2c...\r\n");
 	init_i2c();
 	xil_printf("Init Sysmon...\r\n");
 	init_sysmon();
-	xil_printf("Init lmk1e2...\r\n");
-    write_lmk61e2();
-    xil_printf("Configuration done...\r\n");
+
 
     i2c_set_port_expander(I2C_PORTEXP1_ADDR,0x40);
-    xil_printf("I2c\r\n");
+    usleep(10000);
+    xil_printf("Programming Si569 VCXO via i2c\r\n");
+    read_si569();
+    sleep(1);
     prog_si569();
     sleep(1);
     read_si569();
-    xil_printf("ADC Init...\r\n");
-	ltc2195_init();
+    sleep(1);
+
+	xil_printf("Init lmk1e2...\r\n");
+    write_lmk61e2();
+
 
     // Disable Switching
     Xil_Out32(XPAR_M_AXI_BASEADDR + SWRFFE_ENB_REG, 0);
 
     // Enable 101Tap DDC FP Filt
-	Xil_Out32(XPAR_M_AXI_BASEADDR + DDC_LPFILT_SEL_REG, 1);
-
-    /*
-    setup_thermistors(0);
-    setup_thermistors(1);
-    setup_thermistors(2);
+	Xil_Out32(XPAR_M_AXI_BASEADDR + DDC_LPFILT_SEL_REG, 0);
 
 
-    xil_printf("Reading Thermistors...\r\n");
-    read_thermistors(0,&temp1,&temp2);
-    printf("Chip0:  = %5.3f  %5.3f  \r\n",temp1,temp2);
-    read_thermistors(1,&temp1,&temp2);
-    printf("Chip1:  = %5.3f  %5.3f  \r\n",temp1,temp2);
-    Xil_Out32(XPAR_M_AXI_BASEADDR + THERM_SEL_REG, 0x2);
-    read_thermistors(2,&temp1,&temp2);
-    printf("Chip2:  = %5.3f  %5.3f  \r\n",temp1,temp2);
-    */
 
 
     //read AFE temperature from i2c bus
@@ -275,7 +265,11 @@ int main()
     temp2 = read_i2c_temp(BRDTEMP2_ADDR);
     printf("AFE:  = %5.3f  %5.3f  \r\n",temp1,temp2);
     sleep(1);
+    i2c_set_port_expander(I2C_PORTEXP1_ADDR,0x0);
 
+
+    xil_printf("Initializing ADC...\r\n");
+	ltc2195_init();
 
 	//EVR reset
 	Xil_Out32(XPAR_M_AXI_BASEADDR + EVR_RST_REG, 1);
