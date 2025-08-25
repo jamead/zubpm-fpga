@@ -52,6 +52,8 @@
 
 #define DDC_LPFILT_SEL_REG 0x68
 
+#define IOC_ACCESS_REG 0x70
+
 #define KX_REG 0x90
 #define KY_REG 0x94
 #define CHA_GAIN_REG 0x98
@@ -87,6 +89,7 @@
 #define DMA_TRIGSRC_REG 0x124
 #define DMA_TRIGCNT_REG 0x128
 #define DMA_STATUS_REG 0x12C
+#define DMA_TXTOIOC_DONE_REG 0x130
 
 #define FP_LEDS_REG 0x140
 

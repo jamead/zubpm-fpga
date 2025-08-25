@@ -8,7 +8,7 @@
 -- Description:
 -- Provides logic to select which trigger source will be used to store to NPI.
 -- Choices are : 0=soft_trig, 1=event link, 2=front panel
--- Also provides programmable delay capability. 
+
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -- Modification history:
@@ -38,6 +38,7 @@ entity trig_logic is
     evr_ts          : in  std_logic_vector(63 downto 0);
     evr_ts_lat      : out std_logic_vector(63 downto 0);
     dma_permit      : out std_logic;
+    dma_busy        : out std_logic;
     dma_trig        : out std_logic
   );    
 end trig_logic;
@@ -45,17 +46,14 @@ end trig_logic;
 architecture behv of trig_logic is
 
  
- 
-  signal soft_trig_sr      : std_logic_vector(2 downto 0);
   signal soft_trig_s       : std_logic;
-  signal evr_trig_sr       : std_logic_vector(2 downto 0);  
   signal evr_trig_s        : std_logic;
   signal dma_active        : std_logic;
   signal dma_trig_lat      : std_logic;
   signal dma_running       : std_logic;
   signal dma_done          : std_logic;
   signal trig_cnt          : std_logic_vector(31 downto 0);
-  signal adc_enb_last      : std_logic;
+  signal txtoioc_done      : std_logic;
 
   --debug signals (connect to ila)
    attribute mark_debug     : string;
@@ -72,21 +70,18 @@ architecture behv of trig_logic is
    attribute mark_debug of dma_done: signal is "true";
    attribute mark_debug of trig_cnt: signal is "true";
    attribute mark_debug of evr_trig_s: signal is "true";
-   attribute mark_debug of soft_trig_sr: signal is "true";
    attribute mark_debug of soft_trig_s: signal is "true";
+   attribute mark_debug of txtoioc_done: signal is "true";
 
 
 begin  
 
 reg_i.trig_cnt <= trig_cnt;
-reg_i.status <= dma_adc_active & dma_tbt_active & dma_fa_active & dma_permit & dma_running;
-
-
+reg_i.status <= dma_adc_active & dma_tbt_active & dma_fa_active & dma_trig_lat & dma_running;
 
 dma_active <= dma_adc_active or dma_tbt_active or dma_fa_active;
 
---only allow trigger when all enables are asserted and dma is not running
-dma_permit <= reg_o.adc_enb and reg_o.tbt_enb and reg_o.fa_enb and not dma_trig_lat;
+dma_busy <= dma_trig_lat;
 
 
 
@@ -100,9 +95,9 @@ begin
       dma_trig <= '0';
     else
       if (reg_o.trigsrc = '0') then
-         dma_trig <= evr_trig_s when (dma_permit = '1') else '0';
+         dma_trig <= evr_trig_s when (dma_trig_lat = '0') else '0';
       else 
-         dma_trig <= soft_trig_s when (dma_permit = '1') else '0';
+         dma_trig <= soft_trig_s when (dma_trig_lat = '0') else '0';
       end if; 
     end if;
   end if;
@@ -120,7 +115,6 @@ begin
       dma_done <= '0';
       
     else
-      adc_enb_last <= reg_o.adc_enb;
       dma_done <= '0';
       if (dma_trig = '1') then
         dma_trig_lat <= '1';
@@ -132,7 +126,7 @@ begin
         dma_done <= '1';
         dma_running <= '0';
       end if;
-      if (dma_running = '0' and reg_o.adc_enb = '1' and adc_enb_last = '0') then
+      if (dma_trig_lat = '1' and reg_o.txtoioc_done = '1') then
         dma_trig_lat <= '0';
       end if;
     end if;
@@ -176,44 +170,34 @@ end process;
 
 
 
--- sync soft trig to adc clock domain
-process (adc_clk)
-begin
-  if (rising_edge(adc_clk)) then
-	if (reset = '1') then
-	  soft_trig_sr <= "000";
-    else
-      soft_trig_sr(0) <= reg_o.soft_trig;
-      soft_trig_sr(1) <= soft_trig_sr(0);
-      soft_trig_sr(2) <= soft_trig_sr(1);
-    end if;
-    if (soft_trig_sr(2) = '0' and soft_trig_sr(1) = '1') then
-      soft_trig_s <= '1';
-    else
-      soft_trig_s <= '0';
-    end if;
-  end if;
-end process;
+evr_sync_inst: entity work.sync_cdc
+  port map (
+    clk   => adc_clk,
+    reset => reset,
+    din   => evr_trig,
+    dout  => open,        
+    rise  => evr_trig_s   
+  );
 
 
--- sync evr trig to adc clock domain
-process (adc_clk)
-begin
-  if (rising_edge(adc_clk)) then
-	if (reset = '1') then
-	  evr_trig_sr <= "000";
-    else
-      evr_trig_sr(0) <= evr_trig;
-      evr_trig_sr(1) <= evr_trig_sr(0);
-      evr_trig_sr(2) <= evr_trig_sr(1);
-    end if;
-    if (evr_trig_sr(2) = '0' and evr_trig_sr(1) = '1') then
-      evr_trig_s <= '1';
-    else
-      evr_trig_s <= '0';
-    end if;
-  end if;
-end process;
+soft_sync_inst: entity work.sync_cdc
+  port map (
+    clk   => adc_clk,
+    reset => reset,
+    din   => reg_o.soft_trig,
+    dout  => open,       
+    rise  => soft_trig_s   
+  );
+
+
+txdone_sync_inst: entity work.sync_cdc
+  port map (
+    clk   => adc_clk,
+    reset => reset,
+    din   => reg_o.txtoioc_done,
+    dout  => open,       
+    rise  => txtoioc_done   
+  );
 
 
 

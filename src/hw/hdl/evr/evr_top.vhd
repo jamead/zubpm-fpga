@@ -435,7 +435,7 @@ event_gps : EventReceiverChannel
        eventstream => eventstream,
        myevent => (x"7D"),     -- 125d
        mydelay => (x"00000001"),
-       mywidth => (x"00000175"),   -- //creates a pulse about 3us long
+       mywidth => 32d"3125000",  --creates a pulse about 25ms long for SFP LED
        mypolarity => ('0'),
        trigger => gps_trig
 );

@@ -35,6 +35,10 @@ void setup_thermistors(u8);
 void trig_thermistors(u8);
 void read_thermistors(u8, float *, float *);
 
+void  ina226_init(void);
+float ina226_read_bus_voltage(void);
+float ina226_read_current(void);
+float ina226_read_power(void);
 
 void i2c_get_mac_address();
 void i2c_eeprom_readBytes(u8, u8 *, u8);

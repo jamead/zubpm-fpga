@@ -20,28 +20,26 @@
 
 
 
-static void gendata_push(void *unused)
+static void sadata_push(void *unused)
 {
     (void)unused;
     u32 sa_trigwait, sa_cnt=0, sa_cnt_prev=0;
 
+    static struct {
+       	u32 count;        // PSC Offset 0
+        u32 evr_ts_ns;    // PSC Offset 4
+       	u32 evr_ts_s;     // PSC Offset 8
+       	u32 cha_mag;      // PSC Offset 12
+       	u32 chb_mag;      // PSC Offset 16
+       	u32 chc_mag;      // PSC Offset 20
+       	u32 chd_mag;      // PSC Offset 24
+       	u32 sum;          // PSC Offset 28
+       	s32 xpos_nm;      // PSC Offset 32
+       	s32 ypos_nm;      // PSC Offset 36
+    } msg;
+
 
     while(1) {
-
-        struct {
-           	u32 count;        // PSC Offset 0
-            u32 evr_ts_ns;    // PSC Offset 4
-           	u32 evr_ts_s;     // PSC Offset 8
-           	u32 cha_mag;      // PSC Offset 12
-           	u32 chb_mag;      // PSC Offset 16
-           	u32 chc_mag;      // PSC Offset 20
-           	u32 chd_mag;      // PSC Offset 24
-           	u32 sum;          // PSC Offset 28
-           	s32 xpos_nm;      // PSC Offset 32
-           	s32 ypos_nm;      // PSC Offset 36
-        } msg = {};
-
-
 
         //vTaskDelay(pdMS_TO_TICKS(1000));
 		//loop here until next 10Hz event
@@ -75,9 +73,9 @@ static void gendata_push(void *unused)
     }
 }
 
-void gendata_setup(void)
+void sadata_setup(void)
 {
-    printf("INFO: Starting Gen Data daemon\n");
-    sys_thread_new("genata", gendata_push, NULL, THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
+    printf("INFO: Starting SA Data daemon\n");
+    sys_thread_new("sadata", sadata_push, NULL, THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
 }
 

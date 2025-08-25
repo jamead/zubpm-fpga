@@ -231,6 +231,7 @@ type t_reg_o_dma is record
     adc_enb      : std_logic;
     tbt_enb      : std_logic;
     fa_enb       : std_logic;
+    txtoioc_done : std_logic;
 end record t_reg_o_dma;
 
 type t_reg_i_dma is record

@@ -229,7 +229,12 @@ reg {
     field {} data[1];
   } ddc_lpfilt_sel @0x68;
 
-  
+reg {
+    desc="IOC Access";
+    default sw = rw;
+    default hw = r;
+    field {} data[1];
+  } ioc_access @0x70;  
   
   
 
@@ -473,6 +478,15 @@ reg {
     default hw = w;
     field {} data[5];
   } dma_status @0x12C;
+
+ reg {
+    desc="DMA TX to IOC Done";
+    default sw = rw;
+    default hw = r;
+    field {} data[1];
+  } dma_txtoioc_done @0x130;
+
+
 
 
  reg {

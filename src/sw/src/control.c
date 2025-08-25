@@ -29,7 +29,11 @@ void set_fpleds(u32 msgVal)  {
 
 
 void soft_trig(u32 msgVal) {
-	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_SOFTTRIG_REG, msgVal);
+	if (msgVal == 1) {
+      xil_printf("Soft Trigger...\r\n");
+	  Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_SOFTTRIG_REG, 1);
+	  Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_SOFTTRIG_REG, 0);
+	}
 }
 
 void set_atten(u32 msgVal) {
@@ -102,27 +106,50 @@ void set_bbaoffset(u32 axis, u32 msgVal) {
     }
 }
 
+
+static inline int clamp(int val, int min, int max) {
+    if (val < min) return min;
+    if (val > max) return max;
+    return val;
+}
+
+
 void set_dmalen(u32 channel, u32 msgVal) {
+
+   u32 dmalen;
+
+   xil_printf("Disable DMA\r\n");
+   Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_ADCENABLE_REG, 0);
+   Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TBTENABLE_REG, 0);
+   Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_FAENABLE_REG, 0);
+
 
   switch(channel) {
     case ADC:
-       Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_ADCBURSTLEN_REG, msgVal);
-       xil_printf("Setting ADC DMA length to %d\r\n",msgVal);
-	   break;
+    	dmalen = clamp(msgVal, 1000, 1000000);
+    	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_ADCBURSTLEN_REG, dmalen);
+    	xil_printf("Setting ADC DMA length to %d\r\n", dmalen);
+	    break;
+
 	case TBT:
-	   Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TBTBURSTLEN_REG, msgVal);
-       xil_printf("Setting TBT DMA length to %d\r\n",msgVal);
-	   break;
+    	dmalen = clamp(msgVal, 1000, 1000000);
+    	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TBTBURSTLEN_REG, dmalen);
+        xil_printf("Setting TBT DMA length to %d\r\n",dmalen);
+	    break;
+
     case FA:
-       Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_FABURSTLEN_REG, msgVal);
-       xil_printf("Setting FA DMA length to %d\r\n",msgVal);
-	   break;
+    	dmalen = clamp(msgVal, 1000, 100000);
+    	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_FABURSTLEN_REG, dmalen);
+        xil_printf("Setting FA DMA length to %d\r\n",dmalen);
+	    break;
+
     default:
-       xil_printf("Invalid channel number\r\n");
-	   break;
+        xil_printf("Invalid channel number\r\n");
+	    break;
     }
-  //need to re-arm the DMA engine with the new length
-  //dma_arm();
+
+  //now need to re-arm the DMA engine with the new length
+  dma_arm();
 
 }
 
@@ -174,13 +201,11 @@ void reg_settings(void *msg) {
     addr = htonl(msgptr[0]);
     data.u = htonl(msgptr[1]);
 
-    xil_printf("In Global Settings...\r\n");
-    xil_printf("Addr: %d    Data: %d\r\n",addr,data.u);
+    //xil_printf("Addr: %d    Data: %d\r\n",addr,data.u);
 
 
     switch(addr) {
         case SOFT_TRIG_MSG:
-            xil_printf("Soft Trigger Message:   Value=%d\r\n",data.u);
             soft_trig(data.u);
             break;
 

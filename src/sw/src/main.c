@@ -148,8 +148,8 @@ static void client_msg(void *pvt, psc_client *ckey, uint16_t msgid, uint32_t msg
 
 
     //blink front panel LED
-    //Xil_Out32(XPAR_M_AXI_BASEADDR + IOC_ACCESS_REG, 1);
-    //Xil_Out32(XPAR_M_AXI_BASEADDR + IOC_ACCESS_REG, 0);
+    Xil_Out32(XPAR_M_AXI_BASEADDR + IOC_ACCESS_REG, 1);
+    Xil_Out32(XPAR_M_AXI_BASEADDR + IOC_ACCESS_REG, 0);
 
     switch(msgid) {
         case 1: //register settings
@@ -237,7 +237,10 @@ int main()
 
 
     i2c_set_port_expander(I2C_PORTEXP1_ADDR,0x40);
+    //voltage and current readback device on AFE
+    ina226_init();
     usleep(10000);
+
     xil_printf("Programming Si569 VCXO via i2c\r\n");
     read_si569();
     sleep(1);
@@ -249,6 +252,29 @@ int main()
 	xil_printf("Init lmk1e2...\r\n");
     write_lmk61e2();
 
+    /*
+    ina226_init();
+    u16 reg_val;
+    float val, v, i, p;
+
+    while (1) {
+    	ina226_read_reg(0x00,&reg_val);
+    	printf("Config Reg: %x\n",reg_val);
+    	ina226_read_reg(0x05,&reg_val);
+    	printf("Calib Reg: %x\n",reg_val);
+    	ina226_read_reg(0xFE,&reg_val);
+    	printf("Manufacturer ID: %x\n",reg_val);
+        v = ina226_read_bus_voltage();
+        i = ina226_read_current();
+        p = ina226_read_power();
+        printf("INA226: V=%f   I=%f   P=%f\n",v,i,p);
+    	sleep(1);
+
+
+
+       //sleep(1);
+    }
+    */
 
     // Disable Switching
     Xil_Out32(XPAR_M_AXI_BASEADDR + SWRFFE_ENB_REG, 0);
@@ -281,7 +307,10 @@ int main()
     ts_ns = Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_NS_REG);
     xil_printf("ts= %d    %d\r\n",ts_s,ts_ns);
 
-
+    // Initialize DMA lengths to initial values
+	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_ADCBURSTLEN_REG, 10000);
+	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TBTBURSTLEN_REG, 10000);
+	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_FABURSTLEN_REG, 1000);
 
     // TODO:  This doesn't work
     //xil_printf("System is about to reset...\n");

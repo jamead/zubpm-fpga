@@ -43,7 +43,7 @@ entity ps_io is
 	 reg_o_evr       : out t_reg_o_evr;
 	 reg_i_evr       : in  t_reg_i_evr;
 	 reg_o_swrffe    : out t_reg_o_swrffe;
- 
+     ioc_access_led  : out std_logic;
      fp_leds         : out std_logic_vector(7 downto 0)
   );
 end ps_io;
@@ -56,6 +56,7 @@ architecture behv of ps_io is
   
   signal reg_i        : t_addrmap_pl_regs_in;
   signal reg_o        : t_addrmap_pl_regs_out;
+  signal ioc_access   : std_logic;
 
   --attribute mark_debug     : string;
   --attribute mark_debug of reg_o: signal is "true";
@@ -65,6 +66,7 @@ architecture behv of ps_io is
 begin
 
 fp_leds <= reg_o.FP_LEDS.val.data;
+ioc_access <= reg_o.ioc_access.data.data(0);
 
 reg_o_therm.spi_we <= reg_o.therm_spi.data.swmod;
 reg_o_therm.spi_wdata <= reg_o.therm_spi.data.data;
@@ -129,6 +131,7 @@ reg_o_dma.tbt_enb <= reg_o.dma_tbt_enb.data.data(0);
 reg_o_dma.tbt_len <= reg_o.dma_tbt_len.data.data;
 reg_o_dma.fa_enb <= reg_o.dma_fa_enb.data.data(0); 
 reg_o_dma.fa_len <= reg_o.dma_fa_len.data.data;
+reg_o_dma.txtoioc_done <= reg_o.dma_txtoioc_done.data.data(0);
 
 reg_i.dma_trigcnt.data.data <= reg_i_dma.trig_cnt;
 reg_i.dma_status.data.data <= reg_i_dma.status; 
@@ -161,11 +164,6 @@ reg_o_swrffe.adcdma_sel <= reg_o.swrffe_adcdma_sel.data.data(0);
 
 
 
-
-
-
-
-
 regs: pl_regs
   port map (
     pi_clock => pl_clock, 
@@ -179,6 +177,15 @@ regs: pl_regs
   );
 
 
+--stretch the signal so can be seen on LED
+iocaccess_stretch : entity work.stretch
+  port map (
+	clk => pl_clock,
+	reset => pl_reset, 
+	sig_in => ioc_access, 
+	len => 3000000, -- ~25ms;
+	sig_out => ioc_access_led
+);	 
 
 
 

@@ -60,7 +60,7 @@ static void gendata_push(void *unused)
 
 
         //update at 5Hz
-        vTaskDelay(pdMS_TO_TICKS(200));
+        vTaskDelay(pdMS_TO_TICKS(100));
 
         msg.cha_gain = htonl(Xil_In32(XPAR_M_AXI_BASEADDR + CHA_GAIN_REG));
         msg.chb_gain = htonl(Xil_In32(XPAR_M_AXI_BASEADDR + CHB_GAIN_REG));
@@ -90,6 +90,7 @@ static void gendata_push(void *unused)
         msg.dma_adc_active = htonl((dmastatus & 0x10) >> 4);
         msg.dma_tbt_active = htonl((dmastatus & 0x8) >> 3);
         msg.dma_fa_active = htonl((dmastatus & 0x4) >> 2);
+        //tx_active is really dma_permit signal in trigcntrl.vhd
         msg.dma_tx_active = htonl((dmastatus & 0x2) >> 1);
 
         //xil_printf("Sending GenRegs...\r\n");
@@ -97,9 +98,9 @@ static void gendata_push(void *unused)
     }
 }
 
-void sadata_setup(void)
+void gendata_setup(void)
 {
-    printf("INFO: Starting SA Data daemon\n");
+    printf("INFO: Starting General Data daemon\n");
     sys_thread_new("gendata", gendata_push, NULL, THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
 }
 

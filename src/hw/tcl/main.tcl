@@ -30,6 +30,7 @@ proc setSources {} {
   lappend Sources {"../hdl/dsp_cntrl.vhd" "VHDL 2008"}    
   lappend Sources {"../hdl/trig_logic.vhd" "VHDL 2008"} 
   lappend Sources {"../hdl/stretch.vhd" "VHDL 2008"} 
+  lappend Sources {"../hdl/sync_cdc.vhd" "VHDL 2008"}   
   lappend Sources {"../hdl/adc2dma.vhd" "VHDL 2008"} 
   lappend Sources {"../hdl/tbt2dma.vhd" "VHDL 2008"}    
   lappend Sources {"../hdl/fa2dma.vhd" "VHDL 2008"}   

@@ -38,43 +38,43 @@ static void lstats_push(void *unused)
 {
     (void)unused;
 
+    char ip_addr[16];
+
+    struct {
+        uint32_t uptime;  // 0
+        uint32_t nthread; // 4
+        // 8 - LINK_STATS
+        struct {
+            uint32_t xmit; // 8
+            uint32_t recv; // 12
+            uint32_t drop; // 16
+            uint32_t chkerr; // 20
+            uint32_t memerr; // 24
+            uint32_t proterr; // 28
+            uint32_t err; // 32
+        } link;
+        // MEM_STATS
+        struct {
+            uint32_t err; // 36
+            uint32_t avail; // 40
+            uint32_t used; // 44
+            uint32_t max; // 48
+            uint32_t illegal; // 52
+        } mem;
+        struct {
+            uint32_t avail; // 56
+            uint32_t avail_largest_block; // 60
+            uint32_t avail_lowest; // 64
+            uint32_t nactive; // 68
+        } os_mem;
+        // for backwards compatibility, must only append new values.
+    } msg;
+
+
     while(1) {
 
     	//xil_printf("Lstats Push...\r\n");
         vTaskDelay(pdMS_TO_TICKS(1000));
-
-        struct {
-            uint32_t uptime;  // 0
-            uint32_t nthread; // 4
-            // 8 - LINK_STATS
-            struct {
-                uint32_t xmit; // 8
-                uint32_t recv; // 12
-                uint32_t drop; // 16
-                uint32_t chkerr; // 20
-                uint32_t memerr; // 24
-                uint32_t proterr; // 28
-                uint32_t err; // 32
-            } link;
-            // MEM_STATS
-            struct {
-                uint32_t err; // 36
-                uint32_t avail; // 40
-                uint32_t used; // 44
-                uint32_t max; // 48
-                uint32_t illegal; // 52
-            } mem;
-            struct {
-                uint32_t avail; // 56
-                uint32_t avail_largest_block; // 60
-                uint32_t avail_lowest; // 64
-                uint32_t nactive; // 68
-            } os_mem;
-            // for backwards compatibility, must only append new values.
-        } msg = {};
-
-        char ip_addr[16];
-
 
         // uptime as float32
         msg.uptime = htonf((xTaskGetTickCount() * 1.0f) / configTICK_RATE_HZ);

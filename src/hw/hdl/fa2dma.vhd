@@ -175,35 +175,6 @@ u1fifo: adcdata_fifo
 
 
 
-
-
----- sync trig to adc clock domain
---process (adc_clk)
---begin
---  if (rising_edge(adc_clk)) then
---	if (reset = '1') then
---	  trig_s <= "000";
---	  trig_fifo <= '0';
---    else
---      trig_s(0) <= trig;
---      trig_s(1) <= trig_s(0);
---      trig_s(2) <= trig_s(1);
---    end if;
---    if (trig_s(2) = '0' and trig_s(1) = '1') and (dma_params.dma_tbt_enb = '1') then
---      trig_fifo <= '1';
---    else
---      trig_fifo <= '0';
---    end if;
---  end if;
---end process;
-    
-
-
-
-
-
-
-
 --keep fifo wren high for burstlen clocks
 process (adc_clk)
 begin 
@@ -223,7 +194,7 @@ begin
           s_axis_tlast <= '0';
           s_axis_tvalid <= '0';
           fa_tx_cnt <= 0;
-          if (trig = '1') and (reg_o.fa_enb = '1') then
+          if (trig = '1') then
             state <= active;
             fifo_wrlen <= burst_len;
             fifo_testdata <= (others => '0');

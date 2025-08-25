@@ -23,58 +23,33 @@
 
 void dma_arm() {
 
-	u32 i;
-	u32 *adc_ptr, *tbt_ptr, *fa_ptr;
+	//u32 *adc_ptr, *tbt_ptr, *fa_ptr;
 	u32 adclen, tbtlen, falen;
 
 	xil_printf("Arming DMA...\r\n");
+	//Disable the ADC,TbT,FA DMA logic (trig_logic.vhd)
+	//xil_printf("   Disable DMA\r\n");
+	//Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_ADCENABLE_REG, 0);
+	//Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TBTENABLE_REG, 0);
+	//Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_FAENABLE_REG, 0);
 
-	//Read the DMA length registers
+
+	//Read the DMA length registers, just so we can print them
 	adclen = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_ADCBURSTLEN_REG);
 	tbtlen = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_TBTBURSTLEN_REG);
 	falen = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_FABURSTLEN_REG);
-	if (adclen < 10000) {
-		adclen = 10000;
-		Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_ADCBURSTLEN_REG, adclen);
-	}
-	if (adclen > 1000000) {
-		adclen = 1000000;
-		Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_ADCBURSTLEN_REG, adclen);
-	}
-	if (tbtlen < 10000) {
-		tbtlen = 10000;
-		Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TBTBURSTLEN_REG, tbtlen);
-	}
-	if (tbtlen > 1000000) {
-		tbtlen = 1000000;
-		Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TBTBURSTLEN_REG, tbtlen);
-	}
-	if (falen < 1000) {
-		falen = 1000;
-		Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_FABURSTLEN_REG, falen);
-	}
-	if (falen > 100000) {
-		falen = 100000;
-		Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_FABURSTLEN_REG, falen);
-	}
 
+	xil_printf("   DMA ADC Length = %d\r\n",adclen);
+	xil_printf("   DMA TbT Length = %d\r\n",tbtlen);
+	xil_printf("   DMA FA Length = %d\r\n",falen);
 
-
-    //adclen = 1e5;
-    //tbtlen = 80e3;
-    //falen  = 20e3;  // 2 seconds
-
-	xil_printf("DMA ADC Length = %d\r\n",adclen);
-	xil_printf("DMA TbT Length = %d\r\n",tbtlen);
-	xil_printf("DMA FA Length = %d\r\n",falen);
-
-	//clear the DMA memory
-	adc_ptr = (u32 *) ADC_DMA_DATA;
-	tbt_ptr = (u32 *) TBT_DMA_DATA;
-	fa_ptr  = (u32 *) FA_DMA_DATA;
-	for (i=0;i<10000000;i++)  adc_ptr[i] = 0;
-	for (i=0;i<10000000;i++)  tbt_ptr[i] = 0;
-	for (i=0;i<10000000;i++)  fa_ptr[i]  = 0;
+	//clear the DMA memory, not necessary, already Invalidated it.
+	//adc_ptr = (u32 *) ADC_DMA_DATA;
+	//tbt_ptr = (u32 *) TBT_DMA_DATA;
+	//fa_ptr  = (u32 *) FA_DMA_DATA;
+	//for (i=0;i<10000000;i++)  adc_ptr[i] = 0;
+	//for (i=0;i<10000000;i++)  tbt_ptr[i] = 0;
+	//for (i=0;i<10000000;i++)  fa_ptr[i]  = 0;
 
 
 	//reset the PL DMA FIFO
@@ -85,20 +60,11 @@ void dma_arm() {
 	Xil_Out32(XPAR_AXI_DMA_ADC_BASEADDR + S2MM_DMACR, 4);
 	Xil_Out32(XPAR_AXI_DMA_TBT_BASEADDR + S2MM_DMACR, 4);
 	Xil_Out32(XPAR_AXI_DMA_FA_BASEADDR + S2MM_DMACR, 4);
-	//dmaadcbase[S2MM_DMACR] = 4;
-	//dmatbtbase[S2MM_DMACR] = 4;
-	//dmafabase[S2MM_DMACR]  = 4;
-
-	//write the number of ADC samples to DMA
-	//Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_ADCBURSTLEN_REG, adclen+16);
-	//Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TBTBURSTLEN_REG, tbtlen);
-	//Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_FABURSTLEN_REG, falen);
 
 	//Start the S2MM channel with all interrupts masked
 	Xil_Out32(XPAR_AXI_DMA_ADC_BASEADDR + S2MM_DMACR, 0xF001);
 	Xil_Out32(XPAR_AXI_DMA_TBT_BASEADDR + S2MM_DMACR, 0xF001);
 	Xil_Out32(XPAR_AXI_DMA_FA_BASEADDR + S2MM_DMACR, 0xF001);
-
 
 	//Write the Destination Address for the ADC data
 	Xil_Out32(XPAR_AXI_DMA_ADC_BASEADDR + S2MM_DA, ADC_DMA_DATA);
@@ -117,14 +83,13 @@ void dma_arm() {
 	Xil_Out32(XPAR_AXI_DMA_FA_BASEADDR + S2MM_LEN, (falen) * 10 * 4);
 
 
-	//Enable the ADC and TbT DMA
-	xil_printf("Enabling the DMA\r\n");
-	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_ADCENABLE_REG, 1);
-	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TBTENABLE_REG, 1);
-	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_FAENABLE_REG, 1);
+	//Enable the ADC,TbT,FA DMA logic (trig_logic.vhd)
+	//DMA triggers are disabled until rising edge of ADC_ENABLE_REG
+	//xil_printf("   Enabling DMA Triggers\r\n");
+	//Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TBTENABLE_REG, 1);
+	//Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_FAENABLE_REG, 1);
+	//Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_ADCENABLE_REG, 1);
 
-	//Allow Soft or EVR triggers
-	//Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_PERMIT_REG, 1);
 
 }
 
@@ -150,6 +115,7 @@ void process_FA_dma(famsg_t *famsg, u32 nsamples)
     }
 
     // Debug print first 10
+    /*
     for (i = 0; i < 10 && i < nsamples; i++) {
         xil_printf("FA Sample %lu: %8d  %8d  %8d  %8d\r\n",
                    (unsigned long)i,
@@ -158,7 +124,7 @@ void process_FA_dma(famsg_t *famsg, u32 nsamples)
                    ntohs(famsg[i].chc_mag),
                    ntohs(famsg[i].chd_mag));
     }
-
+    */
 
     psc_send(the_server, 55, nsamples * sizeof(famsg_t), famsg);
 }
@@ -197,7 +163,7 @@ void process_TbT_dma(tbtmsg_t *tbtmsg, u32 nsamples)
     }
 
     // Debug print first 10
-
+    /*
     for (i = 0; i < 10 && i < nsamples; i++) {
         xil_printf("Sample %lu: %8d  %8d  %8d  %8d\r\n",
                    (unsigned long)i,
@@ -206,7 +172,7 @@ void process_TbT_dma(tbtmsg_t *tbtmsg, u32 nsamples)
                    ntohs(tbtmsg[i].chc_mag),
                    ntohs(tbtmsg[i].chd_mag));
     }
-
+    */
 
     // Send buffer (size = nsamples * sizeof(adcmsg_t))
     psc_send(the_server, 54, nsamples * sizeof(tbtmsg_t), tbtmsg);
@@ -272,31 +238,35 @@ static void dmadata_push(void *unused)
 
     dma_arm();
 	//Read the DMA length registers
-	adclen = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_ADCBURSTLEN_REG);
-	tbtlen = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_TBTBURSTLEN_REG);
-	falen = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_FABURSTLEN_REG);
+	//adclen = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_ADCBURSTLEN_REG);
+	//tbtlen = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_TBTBURSTLEN_REG);
+	//falen = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_FABURSTLEN_REG);
 
 
     while (1) {
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        vTaskDelay(pdMS_TO_TICKS(10));
 
+        //trignum is incremented after DMA data is pushed to DDR
         trignum = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_TRIGCNT_REG);
 
-
-
         if (trignum != prevtrignum) {
-            xil_printf("Received DMA Trigger... Disabling DMA\r\n");
-            Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_ADCENABLE_REG, 0);
-            Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TBTENABLE_REG, 0);
-            Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_FAENABLE_REG, 0);
+            xil_printf("Received DMA Trigger Number: %d \r\n",trignum);
+            //Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_ADCENABLE_REG, 0);
+            //Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TBTENABLE_REG, 0);
+            //Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_FAENABLE_REG, 0);
 
-            xil_printf("\nTrig Num: %d\r\n", trignum);
+            //xil_printf("\nTrig Num: %d\r\n", trignum);
             prevtrignum = trignum;
 
             // Invalidate caches to see fresh DMA data
             Xil_DCacheInvalidateRange(ADC_DMA_DATA, ADC_DMA_MAX_LEN * sizeof(adcmsg_t));
             Xil_DCacheInvalidateRange(TBT_DMA_DATA, TBT_DMA_MAX_LEN * sizeof(tbtmsg_t));
             Xil_DCacheInvalidateRange(FA_DMA_DATA, FA_DMA_MAX_LEN * sizeof(famsg_t));
+
+            // get the DMA lengths
+           	adclen = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_ADCBURSTLEN_REG);
+        	tbtlen = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_TBTBURSTLEN_REG);
+        	falen = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_FABURSTLEN_REG);
 
             // Process DMA data into adcmsg array
             process_ADC_dma(adcmsg, adclen);
@@ -307,11 +277,16 @@ static void dmadata_push(void *unused)
             // Process DMA data into tbtmsg array
             process_FA_dma(famsg, falen);
 
+            // Clear DMA Trigger Latch, allows for next trigger
+            Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TXTOIOC_DONE_REG, 1);
+            Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_TXTOIOC_DONE_REG, 0);
+
+
+
+
             // Re-arm DMA for next trigger
             dma_arm();
-        	adclen = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_ADCBURSTLEN_REG);
-        	tbtlen = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_TBTBURSTLEN_REG);
-        	falen = Xil_In32(XPAR_M_AXI_BASEADDR + DMA_FABURSTLEN_REG);
+
         }
     }
 }

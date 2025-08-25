@@ -79,12 +79,16 @@ static void brdstats_push(void *unused)
             uint32_t v1_2mgt_i; // 100
             uint32_t v0_9mgt_v; // 104
             uint32_t v0_9mgt_i; // 108
-        } pwr;
+        } dfe_pwr;
         struct {
         	uint32_t reg[3];  //112,116,120
         	uint32_t pwrmgmt; //124
-        	uint32_t rsvd[3]; //124,128,132,136
+        	uint32_t rsvd;    //128
         } reg_temps;
+        struct {
+        	uint32_t vin;  //132
+        	uint32_t iin;  //136
+        } afe_pwr;
         struct {
         	uint32_t temp[6];   //140,144,148,152,156,160
         	uint32_t vcc[6];    //164,168,172,176,180,184
@@ -118,6 +122,10 @@ static void brdstats_push(void *unused)
         i2c_set_port_expander(I2C_PORTEXP1_ADDR,0x40);
         msg.brd_temps.afe_brd[0] = htonf(read_i2c_temp(BRDTEMP0_ADDR));
         msg.brd_temps.afe_brd[1] = htonf(read_i2c_temp(BRDTEMP2_ADDR));
+        msg.afe_pwr.vin = htonf(ina226_read_bus_voltage());
+        msg.afe_pwr.iin = htonf(ina226_read_current());
+        //printf("Vin: %f\n",ina226_read_bus_voltage());
+        //printf("Iin: %f\n",ina226_read_current());
 
         //read die temps
     	//printf("FPGA Temp: %f\r\n",sysmon_read_stats());
@@ -133,24 +141,24 @@ static void brdstats_push(void *unused)
         msg.reg_temps.reg[2] = htonf(i2c_ltc2991_reg3_temp());
 
         //read voltage & currents from LTC2991 chips
-        msg.pwr.vin_v = htonf(i2c_ltc2991_vcc_vin());
-        msg.pwr.vin_i = htonf(i2c_ltc2991_vcc_vin_current());
-        msg.pwr.v3_3_v = htonf(i2c_ltc2991_vcc_3v3());
-        msg.pwr.v3_3_i = htonf(i2c_ltc2991_vcc_3v3_current());
-        msg.pwr.v2_5_v = htonf(i2c_ltc2991_vcc_2v5());
-        msg.pwr.v2_5_i = htonf(i2c_ltc2991_vcc_2v5_current());
-        msg.pwr.v1_8_v = htonf(i2c_ltc2991_vcc_1v8());
-        msg.pwr.v1_8_i = htonf(i2c_ltc2991_vcc_1v8_current());
-        msg.pwr.v1_2ddr_v = htonf(i2c_ltc2991_vcc_1v2_ddr());
-        msg.pwr.v1_2ddr_i = htonf(i2c_ltc2991_vcc_1v2_ddr_current());
-        msg.pwr.v0_85_v = htonf(i2c_ltc2991_vcc_0v85());
-        msg.pwr.v0_85_i = htonf(i2c_ltc2991_vcc_0v85_current());
-        msg.pwr.v2_5mgt_v = htonf(i2c_ltc2991_vcc_mgt_2v5());
-        msg.pwr.v2_5mgt_i = htonf(i2c_ltc2991_vcc_mgt_2v5_current());
-        msg.pwr.v1_2mgt_v = htonf(i2c_ltc2991_vcc_mgt_1v2());
-        msg.pwr.v1_2mgt_i = htonf(i2c_ltc2991_vcc_mgt_1v2_current());
-        msg.pwr.v0_9mgt_v = htonf(i2c_ltc2991_vcc_mgt_0v9());
-        msg.pwr.v0_9mgt_i =  htonf(i2c_ltc2991_vcc_mgt_0v9_current());
+        msg.dfe_pwr.vin_v = htonf(i2c_ltc2991_vcc_vin());
+        msg.dfe_pwr.vin_i = htonf(i2c_ltc2991_vcc_vin_current());
+        msg.dfe_pwr.v3_3_v = htonf(i2c_ltc2991_vcc_3v3());
+        msg.dfe_pwr.v3_3_i = htonf(i2c_ltc2991_vcc_3v3_current());
+        msg.dfe_pwr.v2_5_v = htonf(i2c_ltc2991_vcc_2v5());
+        msg.dfe_pwr.v2_5_i = htonf(i2c_ltc2991_vcc_2v5_current());
+        msg.dfe_pwr.v1_8_v = htonf(i2c_ltc2991_vcc_1v8());
+        msg.dfe_pwr.v1_8_i = htonf(i2c_ltc2991_vcc_1v8_current());
+        msg.dfe_pwr.v1_2ddr_v = htonf(i2c_ltc2991_vcc_1v2_ddr());
+        msg.dfe_pwr.v1_2ddr_i = htonf(i2c_ltc2991_vcc_1v2_ddr_current());
+        msg.dfe_pwr.v0_85_v = htonf(i2c_ltc2991_vcc_0v85());
+        msg.dfe_pwr.v0_85_i = htonf(i2c_ltc2991_vcc_0v85_current());
+        msg.dfe_pwr.v2_5mgt_v = htonf(i2c_ltc2991_vcc_mgt_2v5());
+        msg.dfe_pwr.v2_5mgt_i = htonf(i2c_ltc2991_vcc_mgt_2v5_current());
+        msg.dfe_pwr.v1_2mgt_v = htonf(i2c_ltc2991_vcc_mgt_1v2());
+        msg.dfe_pwr.v1_2mgt_i = htonf(i2c_ltc2991_vcc_mgt_1v2_current());
+        msg.dfe_pwr.v0_9mgt_v = htonf(i2c_ltc2991_vcc_mgt_0v9());
+        msg.dfe_pwr.v0_9mgt_i =  htonf(i2c_ltc2991_vcc_mgt_0v9_current());
 
 
         // read SFP status information from i2c bus

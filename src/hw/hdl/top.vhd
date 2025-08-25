@@ -183,8 +183,6 @@ architecture behv of top is
    
   signal tbt_extclk      : std_logic;  
   
-  signal inttrig_enb     : std_logic_vector(3 downto 0);
-  signal trig_evrintsel  : std_logic;
   signal tbt_gate        : std_logic;
   signal tbt_trig        : std_logic;
   signal pt_trig         : std_logic;
@@ -193,7 +191,9 @@ architecture behv of top is
   signal sa_trig_stretch : std_logic;
   signal ps_fpled_stretch: std_logic;
   signal dma_trig        : std_logic;
-  signal dma_permit      : std_logic;
+  signal dma_busy        : std_logic;
+  
+  signal ioc_access_led  : std_logic;
 
 
 
@@ -214,7 +214,7 @@ reg_i_pll.locked <= not ad9510_status;
 
 
 dbg(0) <= pl_clk0;
-dbg(1) <= not dma_permit; --'0'; --adc_fco_dlystr(0); --'0';
+dbg(1) <= dma_busy; --'0'; --adc_fco_dlystr(0); --'0';
 dbg(2) <= adc_dbg(1);  --psdone 
 dbg(3) <= '0';
 dbg(4) <= adc_dbg(2); -- adc_fco_bufg 
@@ -243,13 +243,14 @@ fp_out(3) <= tbt_extclk; --tbt_trig;
 fp_led(7) <= dma_adc_active;
 fp_led(6) <= dma_tbt_active; 
 fp_led(5) <= dma_fa_active; 
-fp_led(4) <= not dma_permit; 
+fp_led(4) <= dma_busy; 
 fp_led(3) <= not ad9510_status;
-fp_led(2) <= ps_fpled_stretch; 
+fp_led(2) <= ioc_access_led; 
 fp_led(1) <= '0';
 fp_led(0) <= sa_trig_stretch;
 
-
+sfp_led(0) <= evr_gps_trig;
+sfp_led(11 downto 1) <= (others => '0');
 
 
 adc_clk_inst  : IBUFDS  port map (O => adc_clk_in, I => adc_clk_p, IB => adc_clk_n); 
@@ -405,7 +406,7 @@ dmatrig: entity work.trig_logic
     dma_fa_active => dma_fa_active,
     evr_ts => evr_ts,
     evr_ts_lat => open, --evr_ts_lat, 
-    dma_permit => dma_permit,
+    dma_busy => dma_busy,
     dma_trig => dma_trig
   );    
 
@@ -565,7 +566,8 @@ ps_pl: entity work.ps_io
 	reg_i_pll => reg_i_pll,
 	reg_o_evr => reg_o_evr, 
 	reg_i_evr => reg_i_evr,
-	reg_o_swrffe => reg_o_swrffe
+	reg_o_swrffe => reg_o_swrffe,
+	ioc_access_led => ioc_access_led
           
   );
 
