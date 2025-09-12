@@ -241,7 +241,8 @@ int main()
     ina226_init();
     usleep(10000);
 
-    xil_printf("Programming Si569 VCXO via i2c\r\n");
+
+    xil_printf("Reading Si569 VCXO via i2c\r\n");
     read_si569();
     sleep(1);
     prog_si569();

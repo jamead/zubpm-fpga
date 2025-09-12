@@ -122,6 +122,7 @@ void sdcard_netconf(net_config *conf, FIL *fd)
         } else if(strcmp(cmd, "hwaddr")==0) {
             uint8_t hwaddr[NETIF_MAX_HWADDR_LEN] = {};
             // expect arg: XX:XX:XX:XX:XX:XX
+            i2c_get_mac_address(conf->hwaddr);
             printf("cmd=hwaddr  Arg= %s\n", arg);
             if (!arg || strcmp(arg, "eeprom")==0) {
         		printf("Getting HW addr from EEPROM\n");

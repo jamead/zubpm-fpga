@@ -197,10 +197,10 @@ void process_ADC_dma(adcmsg_t *adcmsg, u32 nsamples)
         chc = (s16)((regval >> 16) & 0xFFFF);
         chd = (s16)(regval & 0xFFFF);
 
-        adcmsg[i].cha = htons(chc);
-        adcmsg[i].chb = htons(chd);
-        adcmsg[i].chc = htons(cha);
-        adcmsg[i].chd = htons(chb);
+        adcmsg[i].cha = htons(cha);
+        adcmsg[i].chb = htons(chb);
+        adcmsg[i].chc = htons(chc);
+        adcmsg[i].chd = htons(chd);
     }
 
     // Debug print first 10

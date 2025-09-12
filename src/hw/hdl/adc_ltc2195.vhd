@@ -448,13 +448,27 @@ adc_spi: ltc2195_spi
 
 adcdata_syn: if (SIM_MODE = 0) generate
 
+
+
+--ADC channel Layout (Top View)
+--    Back Panel
+------------------------------------
+-- (BO)  (TI)     (BI)  (TO)
+--  D     B        C     A     Power Supply
+--
+--
+--  1    0         3     2   
+--    ADC            ADC
+--
+------------------------------------
+
 process(adc_clk_out)
 begin
   if (rising_edge(adc_clk_out)) then
-     adc_data(0) <= adc_data_s(2);
-     adc_data(1) <= adc_data_s(0);
-     adc_data(2) <= adc_data_s(3);
-     adc_data(3) <= adc_data_s(1);
+     adc_data(0) <= adc_data_s(2); --adc chA 
+     adc_data(1) <= adc_data_s(0); --adc chB
+     adc_data(2) <= adc_data_s(3); --adc chC
+     adc_data(3) <= adc_data_s(1); --adc chD
   end if;
 end process;
 

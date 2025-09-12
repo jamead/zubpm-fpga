@@ -64,19 +64,19 @@ static void livedata_push(void *unused)
 
         // read out live adc data buffer from FIFO
         for (i=0;i<8000;i++) {
-             //chA and chB are in a single 32 bit word
-         	regval = Xil_In32(XPAR_M_AXI_BASEADDR + ADCFIFO_DATA_REG);
-         	cha = (s16) ((regval & 0xFFFF0000) >> 16);
-         	chb = (s16) (regval & 0xFFFF);
-            regval = Xil_In32(XPAR_M_AXI_BASEADDR + ADCFIFO_DATA_REG);
-         	chc = (s16) ((regval & 0xFFFF0000) >> 16);
-         	chd = (s16) (regval & 0xFFFF);
-
             //chC and chD are in a single 32 bit word
-            adcmsg[i].cha = htons(chc);
-            adcmsg[i].chb = htons(chd);
-            adcmsg[i].chc = htons(cha);
-            adcmsg[i].chd = htons(chb);
+        	//chB and chA are in a single 32 bit word
+        	regval = Xil_In32(XPAR_M_AXI_BASEADDR + ADCFIFO_DATA_REG);
+         	chd = (s16) ((regval & 0xFFFF0000) >> 16);
+         	chc = (s16) (regval & 0xFFFF);
+            regval = Xil_In32(XPAR_M_AXI_BASEADDR + ADCFIFO_DATA_REG);
+         	chb = (s16) ((regval & 0xFFFF0000) >> 16);
+         	cha = (s16) (regval & 0xFFFF);
+
+            adcmsg[i].cha = htons(cha);
+            adcmsg[i].chb = htons(chb);
+            adcmsg[i].chc = htons(chc);
+            adcmsg[i].chd = htons(chd);
 
          }
 

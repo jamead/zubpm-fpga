@@ -203,7 +203,8 @@ s32 i2c_read(u8 *buf, u8 len, u8 addr) {
 #define IIC_MAC_REG 0xFA
 
 void i2c_get_mac_address(u8 *mac){
-	i2c_set_port_expander(I2C_PORTEXP1_ADDR,0x80);
+	i2c_set_port_expander(I2C_PORTEXP0_ADDR,0x40);
+	i2c_set_port_expander(I2C_PORTEXP1_ADDR,0x0);
     u8 buf[6] = {0};
     buf[0] = IIC_MAC_REG;
     i2c_write(buf,1,IIC_EEPROM_ADDR);
