@@ -13,6 +13,11 @@ set_property IOSTANDARD LVDS [get_ports tbt_clk_n]
 set_property DIFF_TERM_ADV TERM_100 [get_ports tbt_clk_p]
 set_property DIFF_TERM_ADV TERM_100 [get_ports tbt_clk_n]
 
+# EVR rcvd clk out to AD9510
+set_property PACKAGE_PIN AA2 [get_ports evr_rcvd_clk_p]
+set_property IOSTANDARD LVDS [get_ports evr_rcvd_clk_p]
+set_property IOSTANDARD LVDS [get_ports evr_rcvd_clk_n]
+
 
 
 #afe power management
@@ -278,6 +283,7 @@ set_property IOSTANDARD LVDS [get_ports {adc_sdata_p[15]}]
 set_property IOSTANDARD LVDS [get_ports {adc_sdata_n[15]}]
 set_property DIFF_TERM_ADV TERM_100 [get_ports {adc_sdata_p[15]}]
 set_property DIFF_TERM_ADV TERM_100 [get_ports {adc_sdata_n[15]}]
+
 
 
 

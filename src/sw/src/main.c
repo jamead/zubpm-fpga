@@ -250,6 +250,7 @@ int main()
     read_si569();
     sleep(1);
 
+    // oscillator for EVR reference clock
 	xil_printf("Init lmk1e2...\r\n");
     write_lmk61e2();
 
@@ -299,7 +300,8 @@ int main()
 	ltc2195_init();
 
 	//EVR reset
-	Xil_Out32(XPAR_M_AXI_BASEADDR + EVR_RST_REG, 1);
+	Xil_Out32(XPAR_M_AXI_BASEADDR + EVR_RST_REG, 0xFF);
+	usleep(10);
 	Xil_Out32(XPAR_M_AXI_BASEADDR + EVR_RST_REG, 0);
     usleep(1000);
 

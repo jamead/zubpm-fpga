@@ -210,7 +210,7 @@ end component;
    signal eventclock        : std_logic;
    
    signal prev_datastream   : std_logic_vector(3 downto 0);
-   signal cnt               : integer range 3 downto 0;
+   signal cnt               : integer range 255 downto 0;
    signal trigactive        : std_logic;
    signal dma_trigno        : std_logic_vector(7 downto 0);
   
@@ -233,6 +233,8 @@ end component;
    attribute mark_debug of prev_datastream: signal is "true";
    attribute mark_debug of tbt_trig: signal is "true";
    attribute mark_debug of tbt_trig_i: signal is "true";
+   attribute mark_debug of cnt: signal is "true";
+   attribute mark_debug of trigactive: signal is "true";
    attribute mark_debug of dma_trigno: signal is "true";
    attribute mark_debug of usr_trig: signal is "true";
 
@@ -337,7 +339,7 @@ begin
             trigactive <= '1';
          end if;
          if (trigactive = '1') then
-           if (cnt = 3) then
+           if (cnt = 150) then
              tbt_trig <= '0';
              trigactive <= '0';
              cnt <= 0;
@@ -524,7 +526,7 @@ event_usr : EventReceiverChannel
      rxctrl1_out => gth_rxctrl1, 
      rxctrl2_out => gth_rxctrl2, 
      rxctrl3_out => gth_rxctrl3,  
-     rxpolarity_in => '1',
+     rxpolarity_in => '0',   -- '1' for Rev3 board
      rx8b10ben_in  => '1',
      rxcommadeten_in => '1', 
      rxmcommaalignen_in => '1', 

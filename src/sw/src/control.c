@@ -201,7 +201,7 @@ void reg_settings(void *msg) {
     addr = htonl(msgptr[0]);
     data.u = htonl(msgptr[1]);
 
-    //xil_printf("Addr: %d    Data: %d\r\n",addr,data.u);
+    xil_printf("Addr: %d    Data: %d\r\n",addr,data.u);
 
 
     switch(addr) {
@@ -324,6 +324,13 @@ void reg_settings(void *msg) {
           	xil_printf("Setting RF Switching Demux Delay   Value=%d\r\n",data.u);
           	Xil_Out32(XPAR_M_AXI_BASEADDR + SWRFFE_DEMUXDLY_REG, data.u);
           	break;
+
+        case RFFESW_ADCDMASEL_MSG:
+		    xil_printf("Setting ADC DMA Source Value=%d\r\n",data.u);
+            Xil_Out32(XPAR_M_AXI_BASEADDR + SWRFFE_ADCDMASEL_REG, data.u);
+            break;
+
+
 
         case ADC_IDLY_MSG:
            	xil_printf("Setting ADC IDLY:  Value=%d\r\n",data.u);
