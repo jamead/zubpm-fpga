@@ -1,22 +1,6 @@
-----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
--- Create Date: 05/25/2018 03:41:53 PM
--- Design Name: 
--- Module Name: gtx_wrapper - Behavioral
--- Project Name: 
--- Target Devices: 
--- Tool Versions: 
--- Description: 
--- 
--- Dependencies: 
--- 
--- Revision:
--- Revision 0.01 - File Created
--- Additional Comments:
--- 
-----------------------------------------------------------------------------------
+-- The evr_top module is a top-level entity for an Event Receiver (EVR) system, 
+-- designed to decode timing and control events in a high-precision timing environment. 
+-- The design leverages Gigabit Transceiver (GTX) functionality for data reception 
 
 
 library ieee;
@@ -70,32 +54,32 @@ architecture behv of evr_top is
 
 
 
-component timeofDayReceiver is
-   port (
-       clock        : in std_logic;
-       reset        : in std_logic; 
-       eventstream  : in std_logic_vector(7 downto 0);
-       timestamp    : out std_logic_vector(63 downto 0); 
-       seconds      : out std_logic_vector(31 downto 0); 
-       offset       : out std_logic_vector(31 downto 0); 
-       position     : out std_logic_vector(4 downto 0);
-       eventclock   : out std_logic
- );
-end component;
+--component timeofDayReceiver is
+--   port (
+--       clock        : in std_logic;
+--       reset        : in std_logic; 
+--       eventstream  : in std_logic_vector(7 downto 0);
+--       timestamp    : out std_logic_vector(63 downto 0); 
+--       seconds      : out std_logic_vector(31 downto 0); 
+--       offset       : out std_logic_vector(31 downto 0); 
+--       position     : out std_logic_vector(4 downto 0);
+--       eventclock   : out std_logic
+-- );
+--end component;
 
 
-component EventReceiverChannel is 
-    port (
-       clock        : in std_logic;
-       reset        : in std_logic;
-       eventstream  : in std_logic_vector(7 downto 0); 
-       myevent      : in std_logic_vector(7 downto 0);
-       mydelay      : in std_logic_vector(31 downto 0); 
-       mywidth      : in std_logic_vector(31 downto 0); 
-       mypolarity   : in std_logic;
-       trigger      : out std_logic 
-);
-end component;
+--component EventReceiverChannel is 
+--    port (
+--       clock        : in std_logic;
+--       reset        : in std_logic;
+--       eventstream  : in std_logic_vector(7 downto 0); 
+--       myevent      : in std_logic_vector(7 downto 0);
+--       mydelay      : in std_logic_vector(31 downto 0); 
+--       mywidth      : in std_logic_vector(31 downto 0); 
+--       mypolarity   : in std_logic;
+--       trigger      : out std_logic 
+--);
+--end component;
 
 
 
@@ -414,9 +398,11 @@ eventstream <= gth_rx_userdata(7 downto 0);
 
 
 
+
+
 	
 -- timestamp decoder
-ts : timeofDayReceiver
+ts : entity work.event_rcv_ts  --timeofDayReceiver
    port map(
        clock => gth_rxusr_clk,
        reset => sys_rst,
@@ -430,7 +416,7 @@ ts : timeofDayReceiver
 
 
 -- 1 Hz GPS tick	
-event_gps : EventReceiverChannel
+event_gps : entity work.event_rcv_chan  --EventReceiverChannel
     port map(
        clock => gth_rxusr_clk,
        reset => sys_rst,
@@ -444,7 +430,7 @@ event_gps : EventReceiverChannel
 
 
 -- 10 Hz 	
-event_10Hz : EventReceiverChannel
+event_10Hz : entity work.event_rcv_chan  --EventReceiverChannel
     port map(
        clock => gth_rxusr_clk,
        reset => sys_rst,
@@ -458,7 +444,7 @@ event_10Hz : EventReceiverChannel
 
 
 -- 10 KHz 	
-event_10KHz : EventReceiverChannel
+event_10KHz : entity work.event_rcv_chan  --EventReceiverChannel
     port map(
        clock => gth_rxusr_clk,
        reset => sys_rst,
@@ -472,7 +458,7 @@ event_10KHz : EventReceiverChannel
 		
 		
 -- On demand 	
-event_usr : EventReceiverChannel
+event_usr : entity work.event_rcv_chan  --EventReceiverChannel
     port map(
        clock => gth_rxusr_clk,
        reset => sys_rst,
