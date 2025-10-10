@@ -239,10 +239,10 @@ dbg(18) <= fp_in(2);
 dbg(19) <= fp_in(3);
 
 
-fp_out(0) <= evr_tbt_trig; --fa_trig; --pl_clk0;
-fp_out(1) <= tbt_extclk; --afe_sw_rffe_p; --evr_rcvd_clk; 
-fp_out(2) <= adc_clk_in; --adc_clk; 
-fp_out(3) <= evr_rcvd_clk; --tbt_extclk; --tbt_trig; 
+fp_out(0) <= tbt_trig; --fa_trig; --pl_clk0;
+fp_out(1) <= afe_sw_rffe_p; --evr_rcvd_clk; 
+fp_out(2) <= fa_trig; --adc_clk_in; --adc_clk; 
+fp_out(3) <= sw_rffe_time; --evr_rcvd_clk; --tbt_extclk; --tbt_trig; 
 
 fp_led(7) <= dma_adc_active;
 fp_led(6) <= dma_tbt_active; 

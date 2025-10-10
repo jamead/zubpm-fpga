@@ -49,8 +49,10 @@ proc setSources {} {
   lappend Sources {"../hdl/dsp/sa_dsp.vhd" "VHDL 2008"}  
   
   lappend Sources {"../hdl/evr/evr_top.vhd" "VHDL 2008"}  
-  lappend Sources {"../hdl/evr/EventReceiverChannel.v" "Verilog"}  
-  lappend Sources {"../hdl/evr/timeofDayReceiver.v" "Verilog"} 
+  lappend Sources {"../hdl/evr/event_rcv_chan.vhd" "VHDL 2008"} 
+  lappend Sources {"../hdl/evr/event_rcv_ts.vhd" "VHDL 2008"}  
+  #lappend Sources {"../hdl/evr/EventReceiverChannel.v" "Verilog"}  
+  #lappend Sources {"../hdl/evr/timeofDayReceiver.v" "Verilog"} 
 
   lappend Sources {"../cstr/pins.xdc"  "XDC"}
   lappend Sources {"../cstr/afepins.xdc"  "XDC"}
