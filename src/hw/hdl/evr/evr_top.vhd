@@ -53,38 +53,6 @@ end evr_top;
 architecture behv of evr_top is
 
 
-
---component timeofDayReceiver is
---   port (
---       clock        : in std_logic;
---       reset        : in std_logic; 
---       eventstream  : in std_logic_vector(7 downto 0);
---       timestamp    : out std_logic_vector(63 downto 0); 
---       seconds      : out std_logic_vector(31 downto 0); 
---       offset       : out std_logic_vector(31 downto 0); 
---       position     : out std_logic_vector(4 downto 0);
---       eventclock   : out std_logic
--- );
---end component;
-
-
---component EventReceiverChannel is 
---    port (
---       clock        : in std_logic;
---       reset        : in std_logic;
---       eventstream  : in std_logic_vector(7 downto 0); 
---       myevent      : in std_logic_vector(7 downto 0);
---       mydelay      : in std_logic_vector(31 downto 0); 
---       mywidth      : in std_logic_vector(31 downto 0); 
---       mypolarity   : in std_logic;
---       trigger      : out std_logic 
---);
---end component;
-
-
-
-
-
 component gth_wiz 
   port (
     gthrxn_in                            : in std_logic; 
@@ -260,28 +228,36 @@ refclk0_buf : IBUFDS_GTE4
 
 
 
+evg: entity work.evg_top
+  port map (
+  sys_clk => sys_clk, 
+  evg_clk => gth_txusr_clk, 
+  sys_rst => sys_rst, 
+  gth_txdata => gth_txdata_in, 
+  gth_txcharisk => gth_txcharisk_in
+); 
 
 -- tx a counter
-process (gth_txusr_clk)
-begin
-  if (rising_edge(gth_txusr_clk)) then
-    if (sys_rst = '1') then
-      gth_txdata_in <= x"50BC";
-      gth_txcharisk_in <= x"01";
-      txcnt <= 16d"0";
-    else
-      if (txcnt = 16d"500") then
-        gth_txdata_in <= x"50BC";
-        gth_txcharisk_in <= x"01";
-        txcnt <= 16d"0"; 
-      else
-        gth_txdata_in <= txcnt;
-        gth_txcharisk_in <= x"00";
-        txcnt <= txcnt + 1;
-      end if;
-    end if;
-  end if;
-end process;
+--process (gth_txusr_clk)
+--begin
+--  if (rising_edge(gth_txusr_clk)) then
+--    if (sys_rst = '1') then
+--      gth_txdata_in <= x"50BC";
+--      gth_txcharisk_in <= x"01";
+--      txcnt <= 16d"0";
+--    else
+--      if (txcnt = 16d"500") then
+--        gth_txdata_in <= x"50BC";
+--        gth_txcharisk_in <= x"01";
+--        txcnt <= 16d"0"; 
+--      else
+--        gth_txdata_in <= txcnt;
+--        gth_txcharisk_in <= x"00";
+--        txcnt <= txcnt + 1;
+--      end if;
+--    end if;
+--  end if;
+--end process;
              
 
 
