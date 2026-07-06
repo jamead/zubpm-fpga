@@ -138,16 +138,18 @@ void prog_ad9510()
    usleep(5000);
 
    //Register 0x0B: R Divider (MSB), Data: 0x00 (Default)
-   //Xil_Out32(XPAR_M_AXI_BASEADDR + AD9510_REG, 0x0b00);
-   Xil_Out32(XPAR_M_AXI_BASEADDR + AD9510_REG, 0x0b01);
+   //R = 0   -> for 378.545KHz Input
+   //R = 1 (0x21) -> for 124.92Mhz Input
+   Xil_Out32(XPAR_M_AXI_BASEADDR + AD9510_REG, 0x0b00);
+   //Xil_Out32(XPAR_M_AXI_BASEADDR + AD9510_REG, 0x0b01);
    usleep(5000);
 
    //Register 0x0C: R Divider (LSB), Data: 0x01 (Default=0x00)
    //R = 1   -> for 378.545KHz Input
-   //R = 33 (0x21) -> for 124.92Mhz Input
-   //Xil_Out32(XPAR_M_AXI_BASEADDR + AD9510_REG, 0x0c01);
-   Xil_Out32(XPAR_M_AXI_BASEADDR + AD9510_REG, 0x0c4A);
-   //Xil_Out32(XPAR_M_AXI_BASEADDR + AD9510_REG, 0x0c21);
+   //R = 33 (0x4A) -> for 124.92Mhz Input
+   Xil_Out32(XPAR_M_AXI_BASEADDR + AD9510_REG, 0x0c01);
+   //Xil_Out32(XPAR_M_AXI_BASEADDR + AD9510_REG, 0x0c4A);
+
    usleep(5000);
 
    //Register 0x0D: PLL 5, Data: 0x00 (Default)

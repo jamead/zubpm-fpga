@@ -285,7 +285,7 @@ BUFG_GT_tx : BUFG_GT
 
 
 
---stretch tbt_trig for a few clock cycles
+--make it a 50% duty cycle
 process (gth_rxusr_clk)
 begin 
    if (rising_edge(gth_rxusr_clk)) then
@@ -299,7 +299,7 @@ begin
             trigactive <= '1';
          end if;
          if (trigactive = '1') then
-           if (cnt = 150) then
+           if (cnt = 155) then
              tbt_trig <= '0';
              trigactive <= '0';
              cnt <= 0;
@@ -397,7 +397,7 @@ event_gps : entity work.event_rcv_chan  --EventReceiverChannel
        clock => gth_rxusr_clk,
        reset => sys_rst,
        eventstream => eventstream,
-       myevent => (x"7D"),     -- 125d
+       myevent => 8d"32",  --(x"7D"),     -- 125d
        mydelay => (x"00000001"),
        mywidth => 32d"3125000",  --creates a pulse about 25ms long for SFP LED
        mypolarity => ('0'),

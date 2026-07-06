@@ -239,10 +239,10 @@ dbg(18) <= fp_in(2);
 dbg(19) <= fp_in(3);
 
 
-fp_out(0) <= tbt_trig; --fa_trig; --pl_clk0;
-fp_out(1) <= afe_sw_rffe_p; --evr_rcvd_clk; 
-fp_out(2) <= fa_trig; --adc_clk_in; --adc_clk; 
-fp_out(3) <= sw_rffe_time; --evr_rcvd_clk; --tbt_extclk; --tbt_trig; 
+fp_out(0) <= evr_tbt_trig; --fa_trig; --pl_clk0;
+fp_out(1) <= tbt_extclk; --afe_sw_rffe_p; --evr_rcvd_clk; 
+fp_out(2) <= tbt_trig; --adc_clk_in; --adc_clk; 
+fp_out(3) <= evr_rcvd_clk; --sw_rffe_time; --evr_rcvd_clk; --tbt_extclk; --tbt_trig; 
 
 fp_led(7) <= dma_adc_active;
 fp_led(6) <= dma_tbt_active; 
@@ -260,8 +260,8 @@ sfp_led(11 downto 1) <= (others => '0');
 adc_clk_inst  : IBUFDS  port map (O => adc_clk_in, I => adc_clk_p, IB => adc_clk_n); 
 tbt_clk_inst  : IBUFDS  port map (O => tbt_extclk, I => tbt_clk_p, IB => tbt_clk_n); 
 
-evr_clk_inst : OBUFDS  generic map (IOSTANDARD => "LVDS", SLEW => "FAST") port map (O => evr_rcvd_clk_p,  OB => evr_rcvd_clk_n, I => evr_rcvd_clk);
---evr_clk_inst : OBUFDS  generic map (IOSTANDARD => "LVDS", SLEW => "FAST") port map (O => evr_rcvd_clk_p,  OB => evr_rcvd_clk_n, I => evr_tbt_trig);
+--evr_clk_inst : OBUFDS  generic map (IOSTANDARD => "LVDS", SLEW => "FAST") port map (O => evr_rcvd_clk_p,  OB => evr_rcvd_clk_n, I => evr_rcvd_clk);
+evr_clk_inst : OBUFDS  generic map (IOSTANDARD => "LVDS", SLEW => "FAST") port map (O => evr_rcvd_clk_p,  OB => evr_rcvd_clk_n, I => evr_tbt_trig);
 
 
 

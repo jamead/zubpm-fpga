@@ -7,6 +7,7 @@
 #include "lwip/inet.h"
 #include "FreeRTOS.h"
 
+
 #include "xparameters.h"
 #include "xsysmonpsu.h"
 #include "xiicps.h"
@@ -220,10 +221,9 @@ static void realmain(void *arg)
 int main()
 {
 
-
-
     u32 ts_s, ts_ns;
     float temp1, temp2;
+    u32 i;
 
 	xil_printf("zuBPM ...\r\n");
     print_firmware_version();
@@ -306,9 +306,12 @@ int main()
     usleep(1000);
 
     //read Timestamp
-    ts_s = Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_S_REG);
-    ts_ns = Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_NS_REG);
-    xil_printf("ts= %d    %d\r\n",ts_s,ts_ns);
+    for (i=0;i<5;i++) {
+       ts_s = Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_S_REG);
+       ts_ns = Xil_In32(XPAR_M_AXI_BASEADDR + EVR_TS_NS_REG);
+       xil_printf("ts= %d    %d\r\n",ts_s,ts_ns);
+       sleep(1);
+    }
 
     // Initialize DMA lengths to initial values
 	Xil_Out32(XPAR_M_AXI_BASEADDR + DMA_ADCBURSTLEN_REG, 10000);
