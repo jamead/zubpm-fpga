@@ -49,6 +49,8 @@ proc setSources {} {
   lappend Sources {"../hdl/dsp/sa_dsp.vhd" "VHDL 2008"}  
   
   lappend Sources {"../hdl/evr/evr_top.vhd" "VHDL 2008"} 
+  lappend Sources {"../hdl/evr/ts_gen.vhd" "VHDL 2008"} 
+  
   lappend Sources {"../hdl/evr/evg_top.vhd" "VHDL 2008"}   
   lappend Sources {"../hdl/evr/event_rcv_chan.vhd" "VHDL 2008"} 
   lappend Sources {"../hdl/evr/event_rcv_ts.vhd" "VHDL 2008"}  
